@@ -32,8 +32,8 @@ export default function myReducer(state, action) {
   - **rehydrateAction** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, data, type: 'REHYDRATE}`
   - **callback** *function* Will be called after rehydration is finished.
 
-###`persistStore.purge(keys)`
-**keys** *array* An array of keys to be purged from local storage.
+- persistStore.purge(keys)`
+  - **keys** *array* An array of keys to be purged from local storage.
 
-###`persistStore.purgeAll()`
-Purges all keys.
+- ###`persistStore.purgeAll()`
+  -  Purges all keys.
