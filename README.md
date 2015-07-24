@@ -57,5 +57,5 @@ persistStore(store, {storage: AsyncStorage}, () => {
 
 ##Implementation Notes
 For performance  
-**During Rehydration** getItem calls are invoked once per store key using setImmediate.  
+**During Rehydration** getItem calls are invoked once per key using setImmediate.  
 **During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
