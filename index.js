@@ -54,11 +54,7 @@ function persistStore(store, config, cb){
         clearInterval(timeIterator)
         return
       }
-      storage.setItem(createStorageKey(storesToProcess[i]), JSON.stringify(state[storesToProcess[i]]), function(err){
-        if(err){
-          console.warn('Error storing key ', storesToProcess[i], state[storesToProcess[i]])
-        }
-      })
+      storage.setItem(createStorageKey(storesToProcess[i]), JSON.stringify(state[storesToProcess[i]]), warnIfSetError)
       i += 1
     }, 33)
 
@@ -74,27 +70,36 @@ function persistStore(store, config, cb){
       }
       catch(e){
         console.warn('Error restoring data for key:', key, e)
-        storage.removeItem(key, function(err){
-          if(err){ /* @TODO */}
-        })
+        storage.removeItem(key, warnIfRemoveError)
       }
       cb()
     })
   }
-}
 
-persistStore.purge = function(keys){
-  forEach(keys, function(key){
-    localStorage.removeItem(createStorageKey(key))
-  })
-}
-
-persistStore.purgeAll = function(keys){
-  for (var key in localStorage){
-    if(key.indexOf(keyPrefix) === 0){
-      localStorage.removeItem(key)
+  return {
+    purge: function(keys){
+      forEach(keys, function(key){
+        storage.removeItem(createStorageKey(key), warnIfError)
+      })
+    },
+    purgeAll: function(keys){
+      storage.getAllKeys(function(err, keys){
+        forEach(keys, function(key){
+          if(key.indexOf(keyPrefix) === 0){
+            storage.removeItem(key, warnIfError)
+          }
+        })
+      })
     }
   }
+}
+
+function warnIfRemoveError(err){
+  if(err){ console.warn('Error removing data for key:', key, err) }
+}
+
+function warnIfSetError(err){
+  if(err){ console.warn('Error storing data for key:', key, err) }
 }
 
 function createStorageKey(key){
@@ -136,6 +141,10 @@ var defaultStorage = {
     catch(e){
       cb(e)
     }
+  },
+  getAllKeys: function(cb){
+    let keys = map(localStorage, function(value, key){ return key })
+    return keys
   }
 }
 
