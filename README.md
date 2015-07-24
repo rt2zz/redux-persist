@@ -10,15 +10,16 @@ import * as AppActions from '../actions/AppActions'
 persistStore(store, {}, AppActions.rehydrate)
 
 /**
-persist store will immediately begin reading from localStorage and dispatching 
+persist store will immediately begin reading from localStorage and dispatching
 rehydrate actions for each key in the store.
 **/
 
 //... elsewhere in your reducer
 export default function myReducer(state, action) {
   switch (action.type) {
-  case 'REHYDRATE':
-    return {...state, ...action.data}
+  case REHYDRATE:
+    if(action.key === 'myReducer') return {...state, ...action.data}
+    return state
   default:
     return state
   }

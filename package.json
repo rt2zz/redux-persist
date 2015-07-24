@@ -9,6 +9,8 @@
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^3.10.0"
+    "lodash.filter": "^3.1.1",
+    "lodash.foreach": "^3.0.0",
+    "lodash.map": "^3.1.4"
   }
 }

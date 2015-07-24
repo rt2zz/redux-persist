@@ -1,50 +1,70 @@
 'use strict'
 
-var _ = require('lodash')
+var filter = require('lodash.filter')
+var map = require('lodash.map')
+var forEach = require('lodash.forEach')
 
-exports['default'] = persistStore
+var keyPrefix = 'reduxPersistStore:'
 
-function persistStore(store, rules, actionCreator){
+function persistStore(store, rules, actionCreator, cb){
+  //defaults
   rules = rules || {}
+  actionCreator = actionCreator || defaultActionCreator
 
-  actionCreator = actionCreator || function(key, data){
-    return {
-      type: 'REHYDRATE',
-      reducer: key,
-      data: data,
-    }
-  }
+  //initialize values
+  let timeIterator = null
+  let lastState = store.getState()
 
-  var timeIterator = null
-  var lastState = store.getState()
-
-
-  _.each(lastState, function(subState, key){
+  //rehydrate
+  forEach(lastState, function(subState, key){
     if(rules[key] === false){ return }
-    let serialized = localStorage.getItem(createStorageKey(key))
-    let data = JSON.parse(serialized)
-    store.dispatch(actionCreator(key, data))
+    try{
+      let serialized = localStorage.getItem(createStorageKey(key))
+      let data = JSON.parse(serialized)
+      store.dispatch(actionCreator(key, data))
+    }
+    catch(e){
+      console.warn('Error restoring data for key:', key, e)
+      try {
+        localStorage.removeItem(key)
+      }
+      catch(e){
+        //uhoh..
+      }
+    }
   })
 
+  cb && cb()
+
+
+  //store state to disk
   var unsub = store.subscribe(function(){
 
+    //Clear unfinished timeIterator if exists
     if(timeIterator !== null){
       clearInterval(timeIterator)
     }
 
     let state = store.getState()
-    let storesToProcess = _.filter(_.map(state, function(subState, key){
+    let storesToProcess = filter(map(state, function(subState, key){
       if(rules[key] === false){ return }
+      //only store keys that have changed
       return lastState[key] !== state[key] ? key : false
     }))
 
+    //time iterator runs every 33ms (30fps)
     let i = 0
     var timeIterator = setInterval(function(){
       if(i === storesToProcess.length){
         clearInterval(timeIterator)
         return
       }
-      localStorage.setItem(createStorageKey(storesToProcess[i]), JSON.stringify(state[storesToProcess[i]]))
+      try{
+        localStorage.setItem(createStorageKey(storesToProcess[i]), JSON.stringify(state[storesToProcess[i]]))
+      }
+      catch(e){
+        console.warn('Error storing key ', storesToProcess[i], state[storesToProcess[i]])
+      }
       i += 1
     }, 33)
 
@@ -52,10 +72,8 @@ function persistStore(store, rules, actionCreator){
   })
 }
 
-var keyPrefix = 'reduxPersistStore:'
-
 persistStore.purge = function(keys){
-  _.each(keys, function(key){
+  forEach(keys, function(key){
     localStorage.removeItem(createStorageKey(key))
   })
 }
@@ -72,4 +90,12 @@ function createStorageKey(key){
   return keyPrefix+key
 }
 
-module.exports = exports['default']
+function defaultActionCreator(key, data){
+  return {
+    type: 'REHYDRATE',
+    reducer: key,
+    data: data,
+  }
+}
+
+module.exports = persistStore
