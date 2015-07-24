@@ -79,14 +79,14 @@ function persistStore(store, config, cb){
   return {
     purge: function(keys){
       forEach(keys, function(key){
-        storage.removeItem(createStorageKey(key), warnIfError)
+        storage.removeItem(createStorageKey(key), warnIfRemoveError)
       })
     },
-    purgeAll: function(keys){
+    purgeAll: function(){
       storage.getAllKeys(function(err, keys){
         forEach(keys, function(key){
           if(key.indexOf(keyPrefix) === 0){
-            storage.removeItem(key, warnIfError)
+            storage.removeItem(key, warnIfRemoveError)
           }
         })
       })
@@ -143,8 +143,16 @@ var defaultStorage = {
     }
   },
   getAllKeys: function(cb){
-    let keys = map(localStorage, function(value, key){ return key })
-    return keys
+    try{
+      var keys = []
+      for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+        keys.push(localStorage.key(i))
+      }
+      cb(null, keys)
+    }
+    catch(e){
+      cb(err)
+    }
   }
 }
 
