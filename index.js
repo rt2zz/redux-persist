@@ -2,7 +2,7 @@
 
 var filter = require('lodash.filter')
 var map = require('lodash.map')
-var forEach = require('lodash.forEach')
+var forEach = require('lodash.foreach')
 
 var keyPrefix = 'reduxPersistStore:'
 
