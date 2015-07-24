@@ -38,10 +38,10 @@ export default function myReducer(state, action) {
     - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
   - **callback** *function* Will be called after rehydration is finished.
 
-- `persistStore.purge(keys)`
+- `.purge(keys)`
   - **keys** *array* An array of keys to be purged from local storage.
 
-- `persistStore.purgeAll()`
+- `.purgeAll()`
   -  Purges all keys.
 
 ##React-Native
