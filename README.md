@@ -8,8 +8,7 @@ This module is an early experiment. Feedback welcome.
 ##Basic Usage
 ```js
 import persistStore from 'redux-persist-store'
-import * as AppActions from '../actions/AppActions'
-persistStore(store, {blacklist: ['someReducer'], actionCreator: AppActions.rehydrate}, () => {
+persistStore(store, {}, () => {
   console.log('restored')
 })
 
@@ -32,10 +31,10 @@ export default function myReducer(state, action) {
 
 ##API
 - `persistStore(store, [config, callback])`
+  - **store** *redux store* The store to be persisted.
   - **config** *object*
-    - **store** *redux store* The store to be persisted.
     - **blacklist** *array* keys (read: reducers) to ignore
-    - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, data, type: 'REHYDRATE}`
+    - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ reducer, data, type: 'REHYDRATE}`
     - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
   - **callback** *function* Will be called after rehydration is finished.
 
@@ -56,6 +55,6 @@ persistStore(store, {storage: AsyncStorage}, () => {
 ```
 
 ##Implementation Notes
-For performance
-**During Rehydration** getItem calls are invoked once per store key using setImmediate.
-**During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)
+For performance  
+**During Rehydration** getItem calls are invoked once per key using setImmediate.  
+**During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
