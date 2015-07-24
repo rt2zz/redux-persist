@@ -3,11 +3,15 @@ Persist and rehydrate a redux store (to localStorage)
 
 This module is an early experiment. Feedback welcome.
 
+**v0.2.0** the API has changed! see below:
+
 ##Basic Usage
 ```js
 import persistStore from 'redux-persist-store'
 import * as AppActions from '../actions/AppActions'
-persistStore(store, {}, AppActions.rehydrate)
+persistStore(store, {blacklist: ['someReducer'], actionCreator: AppActions.rehydrate}, () => {
+  console.log('restored')
+})
 
 /**
 persist store will immediately begin reading from localStorage and dispatching
@@ -18,7 +22,7 @@ rehydrate actions for each key in the store.
 export default function myReducer(state, action) {
   switch (action.type) {
   case REHYDRATE:
-    if(action.key === 'myReducer') return {...state, ...action.data}
+    if(action.reducer === 'myReducer') return {...state, ...action.data}
     return state
   default:
     return state
@@ -27,10 +31,12 @@ export default function myReducer(state, action) {
 ```
 
 ##API
-- `persistStore(store, [rules, rehydrateAction, callback])`
-  - **store** *redux store* The store to be persisted.
-  - **rules** *object* A object with rules about how persistStore should handle each keyspace of the app state. For example `rules = { user: false }` will result in the state.user being ignored. Right now each rule is a boolean, but in the future it will support rules as functions: `(state) => return {AccountID: state.AccountID}`
-  - **rehydrateAction** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, data, type: 'REHYDRATE}`
+- `persistStore(store, [config, callback])`
+  - **config** *object*
+    - **store** *redux store* The store to be persisted.
+    - **blacklist** *array* keys (read: reducers) to ignore
+    - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, data, type: 'REHYDRATE}`
+    - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
   - **callback** *function* Will be called after rehydration is finished.
 
 - `persistStore.purge(keys)`
@@ -38,3 +44,18 @@ export default function myReducer(state, action) {
 
 - `persistStore.purgeAll()`
   -  Purges all keys.
+
+##React-Native
+```js
+var { AsyncStorage } = require('react-native')
+var persistStore = require('redux-persist-store')
+
+persistStore(store, {storage: AsyncStorage}, () => {
+  console.log('restored')
+})
+```
+
+##Implementation Notes
+For performance
+**During Rehydration** getItem calls are invoked once per store key using setImmediate.
+**During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)
