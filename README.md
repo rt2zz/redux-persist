@@ -35,7 +35,7 @@ export default function myReducer(state, action) {
   - **config** *object*
     - **store** *redux store* The store to be persisted.
     - **blacklist** *array* keys (read: reducers) to ignore
-    - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, data, type: 'REHYDRATE}`
+    - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ reducer, data, type: 'REHYDRATE}`
     - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
   - **callback** *function* Will be called after rehydration is finished.
 
