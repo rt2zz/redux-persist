@@ -8,8 +8,7 @@ This module is an early experiment. Feedback welcome.
 ##Basic Usage
 ```js
 import persistStore from 'redux-persist-store'
-import { rehydrate } from '../actions/AppActions'
-persistStore(store, {blacklist: ['someReducer'], actionCreator: rehydrate}, () => {
+persistStore(store, {}, () => {
   console.log('restored')
 })
 
