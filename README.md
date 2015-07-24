@@ -8,8 +8,8 @@ This module is an early experiment. Feedback welcome.
 ##Basic Usage
 ```js
 import persistStore from 'redux-persist-store'
-import * as AppActions from '../actions/AppActions'
-persistStore(store, {blacklist: ['someReducer'], actionCreator: AppActions.rehydrate}, () => {
+import { rehydrate } from '../actions/AppActions'
+persistStore(store, {blacklist: ['someReducer'], actionCreator: rehydrate}, () => {
   console.log('restored')
 })
 
@@ -56,6 +56,6 @@ persistStore(store, {storage: AsyncStorage}, () => {
 ```
 
 ##Implementation Notes
-For performance
-**During Rehydration** getItem calls are invoked once per store key using setImmediate.
-**During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)
+For performance  
+**During Rehydration** getItem calls are invoked once per store key using setImmediate.  
+**During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
