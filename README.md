@@ -25,3 +25,16 @@ export default function myReducer(state, action) {
   }
 }
 ```
+
+##API
+- `persistStore(store, [rules, rehydrateAction, callback])`
+  - **store** *redux store* The store to be persisted.
+  - **rules** *object* A object with rules about how persistStore should handle each keyspace of the app state. For example `rules = { user: false }` will result in the state.user being ignored. Right now each rule is a boolean, but in the future it will support rules as functions: `(state) => return {AccountID: state.AccountID}`
+  - **rehydrateAction** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, data, type: 'REHYDRATE}`
+  - **callback** *function* Will be called after rehydration is finished.
+
+- `persistStore.purge(keys)`
+  - **keys** *array* An array of keys to be purged from local storage.
+
+- `persistStore.purgeAll()`
+  -  Purges all keys.
