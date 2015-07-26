@@ -159,4 +159,22 @@ var defaultStorage = {
   }
 }
 
+function autoRehydrate(reducer){
+  return function(state, action){
+    if(action.type === 'REHYDRATE'){
+      var finalState = {}
+      for (var key in state) { finalState[key] = state[key] }
+      for (var key in action.data) { state[action.key][key] = action.data[key] }
+      return finalState
+      //@TODO should we let the normal reducer operate on the rehydrate action?
+      // var realfinalstate = reducer(finalState, action)
+      // return realfinalstate
+    }
+    else{
+      return reducer(state, action)
+    }
+  }
+}
+
 module.exports = persistStore
+module.exports.experimentalAutoRehydrate = autoRehydrate
