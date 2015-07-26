@@ -1,9 +1,9 @@
 # Redux Persist Store
-Persist and rehydrate a redux store (to localStorage)
+Persist and rehydrate a redux store.
 
 This module is an early experiment. Feedback welcome.
 
-**v0.2.0** the API has changed! see below:
+**v0.2.3** Try out the new experimentalAutoRehydrate higher order reducer
 
 ##Basic Usage
 ```js
@@ -53,6 +53,32 @@ persistStore(store, {storage: AsyncStorage}, () => {
   console.log('restored')
 })
 ```
+
+##Experimental Auto Rehydrate
+The basic usage works well, but requires a fair amount of boilerplate, and can be error prone. Enter experimentalAutoRehydrate:
+```js
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import persistStore, { experimentalAutoRehydrate } from 'redux-persist-store'
+
+import * as reducers from '../reducers'
+
+const reducer = experimentalAutoRehydrate(combineReducers(reducers))
+const store = createStore(reducer)
+
+persistStore(store, {}, (err) => {
+  console.log('State has been rehydrated to: ', store.getState())
+  //@NOTE do not dispatch any actions before rehydrate completes as state will be overwritten.
+})
+
+```
+Thats it, no need to create constants or mess with your individual reducers.
+
+#### Why might this be a terrible idea?
+- Not well tested
+- Short circuits the normal reducer for 'REHYDRATE' actions
+- Does not use ActionType Constant
+- Does not support custom ActionCreators
+- May not play well with other extensions like devtools
 
 ##Implementation Notes
 For performance  
