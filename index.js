@@ -33,6 +33,7 @@ function persistStore(store, config, cb){
     })
   })
 
+  let storesToProcess = []
   //store state to disk
   var unsub = store.subscribe(function(){
     //Clear unfinished timeIterator if exists
@@ -41,21 +42,23 @@ function persistStore(store, config, cb){
     }
 
     let state = store.getState()
-    let storesToProcess = filter(map(state, function(subState, key){
+    forEach(state, function(subState, key){
       if(blacklist.indexOf(key) !== -1){ return }
       //only store keys that have changed
-      return lastState[key] !== state[key] ? key : false
-    }))
+      if(lastState[key] === state[key]){ return }
+      if(storesToProcess.indexOf(key) !== -1){ return }
+      storesToProcess.push(key)
+    })
 
     //time iterator runs every 33ms (30fps)
-    let i = 0
     timeIterator = setInterval(function(){
-      if(i === storesToProcess.length){
+      if(storesToProcess.length === 0){
         clearInterval(timeIterator)
         return
       }
-      storage.setItem(createStorageKey(storesToProcess[i]), JSON.stringify(state[storesToProcess[i]]), warnIfSetError)
-      i += 1
+
+      storage.setItem(createStorageKey(storesToProcess[0]), JSON.stringify(state[storesToProcess[0]]), warnIfSetError)
+      storesToProcess.shift()
     }, 33)
 
     lastState = state
