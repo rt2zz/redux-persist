@@ -21,7 +21,7 @@ rehydrate actions for each key in the store.
 export default function myReducer(state, action) {
   switch (action.type) {
   case REHYDRATE:
-    if(action.reducer === 'myReducer') return {...state, ...action.data}
+    if(action.key === 'myReducer') return {...state, ...action.data}
     return state
   default:
     return state

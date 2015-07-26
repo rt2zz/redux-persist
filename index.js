@@ -112,7 +112,7 @@ function createStorageKey(key){
 function defaultActionCreator(key, data){
   return {
     type: 'REHYDRATE',
-    reducer: key,
+    key: key,
     data: data,
   }
 }
