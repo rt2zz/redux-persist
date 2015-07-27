@@ -1,10 +1,8 @@
 'use strict'
 
-var filter = require('lodash.filter')
-var map = require('lodash.map')
 var forEach = require('lodash.foreach')
 
-var keyPrefix = 'reduxPersistStore:'
+var keyPrefix = 'reduxPersist:'
 
 function persistStore(store, config, cb){
   //defaults
@@ -162,13 +160,15 @@ var defaultStorage = {
 function autoRehydrate(reducer){
   return function(state, action){
     if(action.type === 'REHYDRATE'){
-      var finalState = {}
-      for (var key in state) { finalState[key] = state[key] }
-      for (var key in action.data) { state[action.key][key] = action.data[key] }
-      return finalState
-      //@TODO should we let the normal reducer operate on the rehydrate action?
-      // var realfinalstate = reducer(finalState, action)
-      // return realfinalstate
+      var reducedState = reducer(state, action)
+      if(state[action.key] !== reducedState[action.key]){
+        return reducedState
+      }
+      var subState = {}
+      for (var key in reducedState[action.key]) { subState[key] = reducedState[action.key][key] }
+      for (var key in action.data) { subState[key] = action.data[key] }
+      reducedState[action.key] = subState
+      return reducedState
     }
     else{
       return reducer(state, action)
@@ -176,5 +176,5 @@ function autoRehydrate(reducer){
   }
 }
 
-module.exports = persistStore
-module.exports.experimentalAutoRehydrate = autoRehydrate
+module.exports.persistStore = persistStore
+module.exports.autoRehydrate = autoRehydrate

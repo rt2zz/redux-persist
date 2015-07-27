@@ -1,13 +1,17 @@
-# Redux Persist Store
+# Redux Persist
 Persist and rehydrate a redux store.
 
 This module is an early experiment. Feedback welcome.
 
-**v0.2.3** Try out the new experimentalAutoRehydrate higher order reducer
+**v0.2.3** Try out the new autoRehydrate higher order reducer
 
 ##Basic Usage
 ```js
-import persistStore from 'redux-persist-store'
+import { persistStore, autoRehydrate } from 'redux-persist'
+
+const reducer = autoRehydrate(combineReducers(reducers))
+const store = createStoreWithMiddleware(reducer)
+
 persistStore(store, {}, () => {
   console.log('restored')
 })
@@ -54,7 +58,7 @@ persistStore(store, {storage: AsyncStorage}, () => {
 })
 ```
 
-##Experimental Auto Rehydrate
+##Auto Rehydrate
 The basic usage works well, but requires a fair amount of boilerplate, and can be error prone. Enter experimentalAutoRehydrate:
 ```js
 import { createStore, applyMiddleware, combineReducers } from 'redux'

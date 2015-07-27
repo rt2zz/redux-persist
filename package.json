@@ -1,6 +1,6 @@
 {
-  "name": "redux-persist-store",
-  "version": "0.2.4",
+  "name": "redux-persist",
+  "version": "0.2.5",
   "description": "persist and rehydrate redux stores",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,6 @@
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {
-    "lodash.filter": "^3.1.1",
     "lodash.foreach": "^3.0.0",
-    "lodash.map": "^3.1.4"
   }
 }
