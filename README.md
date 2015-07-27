@@ -17,20 +17,29 @@ persistStore(store, {}, () => {
 })
 
 /**
-persist store will immediately begin reading from localStorage and dispatching
-rehydrate actions for each key in the store.
+persist store will immediately begin reading from disk and dispatching
+rehydrate actions for each key in the store. autoRehydrate will handle
+these actions automatically. If you need a custom handler add it in your
+reducer roughly as follows:
 **/
 
-//... elsewhere in your reducer
-export default function myReducer(state, action) {
-  switch (action.type) {
-  case REHYDRATE:
-    if(action.key === 'myReducer') return {...state, ...action.data}
-    return state
-  default:
-    return state
+case REHYDRATE:
+  if(action.key === 'myReducer'){
+
+    //remove transient state
+    delete action.data.someTransientKey
+
+    //expire old data
+    if(action.data.someCache.date < Date.getTime() - 1000*60*60){
+      delete action.data.someCache
+    }
+
+    //update something 
+    action.data.initializationTime = Date.getTime()
+
+    return {...state, ...action.data}
   }
-}
+  return state
 ```
 
 ##API
@@ -59,23 +68,11 @@ persistStore(store, {storage: AsyncStorage}, () => {
 ```
 
 ##Auto Rehydrate
-The basic usage works well, but requires a fair amount of boilerplate, and can be error prone. Enter experimentalAutoRehydrate:
-```js
-import { createStore, applyMiddleware, combineReducers } from 'redux'
-import persistStore, { experimentalAutoRehydrate } from 'redux-persist-store'
+Auto rehydrate is a higher order reducer that automatically rehydrates state. If you have a reducer that needs to handle its own hydration, perhaps with special time expiration rules, simply add a rehydration handler in your reducer, and autoRehydrate will ignore that reducer's keyspace.
 
-import * as reducers from '../reducers'
+Generally speaking if you have transient state that you do not want to rehydrate, you should put that in a separate reducer which you can blacklist.
 
-const reducer = experimentalAutoRehydrate(combineReducers(reducers))
-const store = createStore(reducer)
-
-persistStore(store, {}, (err) => {
-  console.log('State has been rehydrated to: ', store.getState())
-  //@NOTE do not dispatch any actions before rehydrate completes as state will be overwritten.
-})
-
-```
-Thats it, no need to create constants or mess with your individual reducers.
+**NOTE**: autoRehydrate does not currently support custom actionCreators
 
 #### Why might this be a terrible idea?
 - Not well tested

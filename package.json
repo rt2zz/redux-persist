@@ -9,6 +9,6 @@
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {
-    "lodash.foreach": "^3.0.0",
+    "lodash.foreach": "^3.0.0"
   }
 }
