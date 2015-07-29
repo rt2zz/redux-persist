@@ -53,11 +53,14 @@ case REHYDRATE:
     - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
   - **callback** *function* Will be called after rehydration is finished.
 
-- `.purge(keys)`
-  - **keys** *array* An array of keys to be purged from local storage.
+  - `.purge(keys)`
+    - **keys** *array* An array of keys to be purged from local storage.
 
-- `.purgeAll()`
-  -  Purges all keys.
+  - `.purgeAll()`
+    -  Purges all keys.
+
+- `autoRehydrate(reducer)`
+  - This is a higher order reducer that will automatically shallow merge the persisted state for each key.
 
 ##React-Native
 ```js

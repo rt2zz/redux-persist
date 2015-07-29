@@ -45,7 +45,7 @@ export default class AppProvider extends Component {
 ```
 
 ### Blacklist & Custom Rehydration
-```
+```js
 // ## app.js
 import { createStore, combineReducers } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
