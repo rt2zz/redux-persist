@@ -3,6 +3,8 @@ Persist and rehydrate a redux store.
 
 This module is an early experiment. Feedback welcome.
 
+Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
+
 **v0.2.3** Try out the new autoRehydrate higher order reducer
 
 ##Basic Usage
@@ -34,7 +36,7 @@ case REHYDRATE:
       delete action.data.someCache
     }
 
-    //update something 
+    //update something
     action.data.initializationTime = Date.getTime()
 
     return {...state, ...action.data}
@@ -60,7 +62,7 @@ case REHYDRATE:
 ##React-Native
 ```js
 var { AsyncStorage } = require('react-native')
-var persistStore = require('redux-persist-store')
+var { persistStore } = require('redux-persist')
 
 persistStore(store, {storage: AsyncStorage}, () => {
   console.log('restored')
