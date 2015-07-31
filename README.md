@@ -12,7 +12,7 @@ Implementing rehydration is very application specific. Check out some [recipes](
 import { persistStore, autoRehydrate } from 'redux-persist'
 
 const reducer = autoRehydrate(combineReducers(reducers))
-const store = createStoreWithMiddleware(reducer)
+const store = createStore(reducer)
 
 persistStore(store, {}, () => {
   console.log('restored')
