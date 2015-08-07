@@ -1,30 +1,23 @@
 # Redux Persist
-Persist and rehydrate a redux store.
+Persist a redux store.
 
-This module is an early experiment. Feedback welcome.
+Use any storage backend including: **localStorage**, react-native **AsyncStorage**, or a conforming **custom** storage api. Supports auto rehydration, and custom per reducer rehydration. Optionally, supply your own actions and action type constants.
+
+Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible, and to be performant out of the box. Additionally individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation.
 
 Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
 
-**v0.2.3** Try out the new autoRehydrate higher order reducer
-
 ##Basic Usage
+Basic usage requires adding three lines to a traditional redux application:
 ```js
 import { persistStore, autoRehydrate } from 'redux-persist'
-
 const reducer = autoRehydrate(combineReducers(reducers))
 const store = createStore(reducer)
 
-persistStore(store, {}, () => {
-  console.log('restored')
-})
-
-/**
-persist store will immediately begin reading from disk and dispatching
-rehydrate actions for each key in the store. autoRehydrate will handle
-these actions automatically. If you need a custom handler add it in your
-reducer roughly as follows:
-**/
-
+persistStore(store)
+```
+For more complex rehydration, add a handler to your reducer:
+```js
 case REHYDRATE:
   if(action.key === 'myReducer'){
 
@@ -36,12 +29,18 @@ case REHYDRATE:
       delete action.data.someCache
     }
 
-    //update something
-    action.data.initializationTime = Date.getTime()
+    //immutable data
+    let someIndex = Immutable.List(action.data.someIndex)
 
-    return {...state, ...action.data}
+    return {...state, ...action.data, someIndex}
   }
   return state
+```
+You may need to configure the persistance layer, or take action after rehydration has completed:
+```js
+persistStore(store, {blacklist: ['someTransientReducer']}, () => {
+  store.dispatch({type: 'REHYDRATION_COMPLETE'})
+})
 ```
 
 ##API
@@ -53,16 +52,16 @@ case REHYDRATE:
     - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
   - **callback** *function* Will be called after rehydration is finished.
 
-  - `.purge(keys)`
-    - **keys** *array* An array of keys to be purged from local storage.
-
-  - `.purgeAll()`
-    -  Purges all keys.
-
 - `autoRehydrate(reducer)`
   - This is a higher order reducer that will automatically shallow merge the persisted state for each key.
 
-##React-Native
+- `.purge(keys)`
+  - **keys** *array* An array of keys to be purged from local storage.
+
+- `.purgeAll()`
+  -  Purges all keys.
+
+## React-Native
 ```js
 var { AsyncStorage } = require('react-native')
 var { persistStore } = require('redux-persist')
@@ -78,13 +77,6 @@ Auto rehydrate is a higher order reducer that automatically rehydrates state. If
 Generally speaking if you have transient state that you do not want to rehydrate, you should put that in a separate reducer which you can blacklist.
 
 **NOTE**: autoRehydrate does not currently support custom actionCreators
-
-#### Why might this be a terrible idea?
-- Not well tested
-- Short circuits the normal reducer for 'REHYDRATE' actions
-- Does not use ActionType Constant
-- Does not support custom ActionCreators
-- May not play well with other extensions like devtools
 
 ##Implementation Notes
 For performance  
