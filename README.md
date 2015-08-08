@@ -1,9 +1,11 @@
 # Redux Persist
 Persist a redux store.
 
-Use any storage backend including: **localStorage**, react-native **AsyncStorage**, or a conforming **custom** storage api. Supports auto rehydration, and custom per reducer rehydration. Optionally, supply your own actions and action type constants.
-
-Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible, and to be performant out of the box. Additionally individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation.
+Key Points
+* Operates on a per reducer basis
+* Performant out of the box (uses a time interator and by operating on smaller pieces of state)
+* Knows as little as possible about your application state
+* Supports any storage backend including localStorage, react-native AsyncStorage, or any conforming api
 
 Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
 
@@ -61,7 +63,10 @@ persistStore(store, {blacklist: ['someTransientReducer']}, () => {
 - `.purgeAll()`
   -  Purges all keys.
 
-## React-Native
+## Storage Backends
+Use any storage backend including: **localStorage** (default), react-native **AsyncStorage**, or a conforming **custom** storage api.
+
+#### React-Native Example
 ```js
 var { AsyncStorage } = require('react-native')
 var { persistStore } = require('redux-persist')
@@ -71,7 +76,14 @@ persistStore(store, {storage: AsyncStorage}, () => {
 })
 ```
 
-##Auto Rehydrate
+## Motivations & Explanations
+Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible. This is important, reducers should be the single source of truth for your state manipulation. 
+
+It also enables great out of the box performance, as each save only operates on chunks of state, rather than the entire state object. 
+
+While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
+
+## Auto Rehydrate
 Auto rehydrate is a higher order reducer that automatically rehydrates state. If you have a reducer that needs to handle its own hydration, perhaps with special time expiration rules, simply add a rehydration handler in your reducer, and autoRehydrate will ignore that reducer's keyspace.
 
 Generally speaking if you have transient state that you do not want to rehydrate, you should put that in a separate reducer which you can blacklist.
