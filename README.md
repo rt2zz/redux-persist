@@ -3,8 +3,8 @@ Persist a redux store.
 
 Key Points
 * Operates on a per reducer basis
-* Performant out of the box (uses a time interator and by operating on smaller pieces of state)
-* Knows as little as possible about your application state
+* Performant out of the box (uses a time interator and operates on states partials)
+* Knows as little as possible about your application state and reducer internals
 * Supports any storage backend including localStorage, react-native AsyncStorage, or any conforming api
 
 Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
