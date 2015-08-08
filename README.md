@@ -1,9 +1,8 @@
 # Redux Persist
 Persist a redux store.
 
-Key Points
 * Operates on a per reducer basis
-* Performant out of the box (uses a time interator and operates on states partials)
+* Performant out of the box (uses a time interator and operates on state partials)
 * Knows as little as possible about your application state and reducer internals
 * Supports any storage backend including localStorage, react-native AsyncStorage, or any conforming api
 
