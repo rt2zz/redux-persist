@@ -6,6 +6,8 @@ Persist a redux store.
 * Knows as little as possible about your application state and reducer internals
 * Supports any storage backend including localStorage, react-native AsyncStorage, or any conforming api
 
+**NOTE** 0.2.7 switched to flux standard actions. If you are using custom rehydration be sure to update `action.key => action.payload.key` and `action.data => action.payload.data`
+
 Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
 
 ##Basic Usage
@@ -76,9 +78,9 @@ persistStore(store, {storage: AsyncStorage}, () => {
 ```
 
 ## Motivations & Explanations
-Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible. This is important, reducers should be the single source of truth for your state manipulation. 
+Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible. This is important, reducers should be the single source of truth for your state manipulation.
 
-It also enables great out of the box performance, as each save only operates on chunks of state, rather than the entire state object. 
+It also enables great out of the box performance, as each save only operates on chunks of state, rather than the entire state object.
 
 While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
 

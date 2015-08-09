@@ -6,6 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rt2zz/redux-persist.git"
+  },
+  "homepage": "https://github.com/rt2zz/redux-persist",
+  "keywords": [
+    "redux",
+    "redux-middleware",
+    "react-native",
+    "flux",
+    "persistent",
+    "localstorage"
+  ],
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {

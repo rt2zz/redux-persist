@@ -110,8 +110,10 @@ function createStorageKey(key){
 function defaultActionCreator(key, data){
   return {
     type: 'REHYDRATE',
-    key: key,
-    data: data,
+    payload: {
+      key: key,
+      data: data,
+    }
   }
 }
 
@@ -162,14 +164,17 @@ function autoRehydrate(reducer, config){
 
   return function(state, action){
     if(action.type === actionConstant){
+      let key = action.payload.key
+      let data = action.payload.data
+
       var reducedState = reducer(state, action)
-      if(state[action.key] !== reducedState[action.key]){
+      if(state[key] !== reducedState[key]){
         return reducedState
       }
       var subState = {}
-      for (var key in reducedState[action.key]) { subState[key] = reducedState[action.key][key] }
-      for (var key in action.data) { subState[key] = action.data[key] }
-      reducedState[action.key] = subState
+      for (var subkey in reducedState[key]) { subState[subkey] = reducedState[key][subkey] }
+      for (var subkey in data) { subState[subkey] = data[subkey] }
+      reducedState[key] = subState
       return reducedState
     }
     else{
