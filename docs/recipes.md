@@ -69,11 +69,11 @@ export default function someReducer(state = initialState, action) {
     return {...state, initialized: true}
 
   case 'REHYDRATE':
-    if(action.key === 'app'){
-      delete action.data.initialized
-      rehydrationCounter = action.data.rehydrationCounter || 0
+    if(action.payload.key === 'app'){
+      delete action.payload.data.initialized
+      rehydrationCounter = action.payload.data.rehydrationCounter || 0
       rehydrationCounter++
-      return {...state, ...action.data}
+      return {...state, ...action.payload.data, rehyrationCounter}
     }
     return state
 
