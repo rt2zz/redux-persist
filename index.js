@@ -157,9 +157,11 @@ var defaultStorage = {
   }
 }
 
-function autoRehydrate(reducer){
+function autoRehydrate(reducer, config){
+  let actionConstant = config.actionConstant || 'REHYDRATE'
+
   return function(state, action){
-    if(action.type === 'REHYDRATE'){
+    if(action.type === actionConstant){
       var reducedState = reducer(state, action)
       if(state[action.key] !== reducedState[action.key]){
         return reducedState
