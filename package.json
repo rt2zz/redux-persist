@@ -16,8 +16,10 @@
     "redux-middleware",
     "react-native",
     "flux",
-    "persistent",
-    "localstorage"
+    "localstorage",
+    "redux-persist",
+    "redux-storage",
+    "redux-rehydrate"
   ],
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",

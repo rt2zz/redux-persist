@@ -6,11 +6,11 @@ Persist a redux store.
 * Knows as little as possible about your application state and reducer internals
 * Supports any storage backend including localStorage, react-native AsyncStorage, or any conforming api
 
-**NOTE** 0.2.7 switched to flux standard actions. If you are using custom rehydration be sure to update `action.key => action.payload.key` and `action.data => action.payload.data`
+**NOTE** 0.2.8 switched to flux standard actions. If you are using custom rehydration be sure to update `action.key => action.payload.key` and `action.data => action.payload.data`
 
 Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
 
-##Basic Usage
+## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
 ```js
 import { persistStore, autoRehydrate } from 'redux-persist'
@@ -46,7 +46,7 @@ persistStore(store, {blacklist: ['someTransientReducer']}, () => {
 })
 ```
 
-##API
+## API
 - `persistStore(store, [config, callback])`
   - **store** *redux store* The store to be persisted.
   - **config** *object*
@@ -91,7 +91,7 @@ Generally speaking if you have transient state that you do not want to rehydrate
 
 **NOTE**: autoRehydrate does not currently support custom actionCreators
 
-##Implementation Notes
+## Implementation Notes
 For performance  
 **During Rehydration** getItem calls are invoked once per key using setImmediate.  
 **During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
