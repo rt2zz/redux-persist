@@ -68,9 +68,9 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
 
 ## Customization
 #### Immutable Support
-The redux-persist-immutable transform will serialize immutable objects using [transit-immutable-js](https://github.com/glenjamin/transit-immutable-js) and automatically restore them.
+The `redux-persist-immutable` transform will serialize immutable objects using [transit-immutable-js](https://github.com/glenjamin/transit-immutable-js) and automatically restore them.
 ```js
-import reduxPersistImmutable from 'reduxPersistImmutable'
+import reduxPersistImmutable from 'redux-persist-immutable'
 persistStore(store, {transforms: [reduxPersistImmutable]})
 
 // It works on nested and mixed immutable objects as well:
