@@ -38,9 +38,9 @@ persistStore(store, {blacklist: ['someTransientReducer']}, () => {
 ```
 
 ## Rationale
-The core idea behind redux-persist is to provide performant persistence rehydration methods. Additionally redux-persist is designed to minimize complexity by knowing as little as possible about your application and state schema. All of this is achieved through the `persistStore` method with no additional configuration.
+The core idea behind redux-persist is to provide performant persistence and rehydration methods. Additionally redux-persist is designed to minimize complexity by knowing as little as possible about your application and state schema. All of this is achieved through the `persistStore` method with no additional configuration.
 
-However because persistence is such a common problem, and because applications tend to have similar but slightly different persistence rules, redux-persist also provides several convenience methods and configuration options. Do not let these scare you away, they are really just "shortcuts" for achieving various functionality.
+However because persistence is such a common problem, and because applications tend to have similar but slightly different persistence rules, redux-persist also provides several convenience methods (e.g. `autoRehydrate`) and configuration options (e.g. `config.transforms`). Do not let these scare you away, they are really just "shortcuts" for achieving various functionality.
 
 Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration. If you have some transient state that should not be persisted, it is probably best to split that state into it's own reducer which can then be added to the persistStore blacklist.
 
@@ -65,7 +65,7 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
 
 ## Customization
 #### Automatic (shallow) Immutable Support
-This transform will mark all immutablejs data keys during storage and restore them using `Immutable.fromJS` during rehydration. While it will successfully serialize any Iterable, it can only restore to Maps and Lists for now (see [immutablejs#336](https://github.com/facebook/immutable-js/issues/336)). As the name suggests this only works shallowly across each keyspace, see comments below. If you need more fine tuned control you should use rehydration handlers.
+This transform will mark all immutablejs data keys during storage and restore them using `Map` or `List` during rehydration. While it will successfully serialize any Iterable, it can only restore to Maps and Lists for now (see [immutablejs#336](https://github.com/facebook/immutable-js/issues/336)). As the name suggests this only works shallowly across each keyspace, see comments below. If you need more fine tuned control you should use rehydration handlers.
 ```js
 import immutableShallow from 'redux-persist/transforms/immutableShallow'
 persistStore(store, {transforms: [immutableShallow]})
@@ -105,7 +105,7 @@ const rehydrateAction = (key, data) => {
 persistStore(store, {actionCreator: rehydrateAction})
 ```
 #### Without Auto Rehydration
-The heavy lifting in redux-persist is in restoration. autoRehydrate is purely provided as a convenience. In a larger or application, or one with atypical reducer composition, auto rehydration may not be convenient - simply do not wrap your reducer. You can then either write a custom rehydration function, or handle your rehydration on a reducer by reducer basis.
+The heavy lifting in redux-persist is in restoration. autoRehydrate is purely provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient - simply do not wrap your reducer. You can then either write a custom rehydration function, or handle your rehydration on a reducer by reducer basis.
 
 ## Storage Backends
 **localStorage** (default), react-native **AsyncStorage**, or a conforming **custom** storage api. Custom storage API should be an object with the following methods: `setItem` `getItem` `removeItem` `getAllKeys` each with the function signature as found in [react-native AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
@@ -121,19 +121,29 @@ persistStore(store, {storage: AsyncStorage}, () => {
 })
 ```
 
-## Motivations & Explanations
-Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible. This is important, reducers should be the single source of truth for your state manipulation.
-
-It also enables great out of the box performance, as each save only operates on chunks of state, rather than the entire state object.
+## Auto Rehydrate Notes
+Auto rehydrate is a higher order reducer that automatically rehydrates state. 
 
 While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
 
-## Auto Rehydrate
-Auto rehydrate is a higher order reducer that automatically rehydrates state. If you have a reducer that needs to handle its own hydration, perhaps with special time expiration rules, simply add a rehydration handler in your reducer, and autoRehydrate will ignore that reducer's keyspace.
+```js
+case REHYDRATE:
+  //make sure to check the key that is currently being rehydrated!
+  if(action.key === 'myReducer'){
+    //delete transient data
+    delete action.payload.someTransientData
+    
+    //increment a counter
+    var rehydrationCount = action.payload.rehydrationCount + 1
+    
+    //invalidate a cache
+    var someCachedData = Date.now()-10000 > action.payload.someCachedData.time ? null : action.payload.someCachedData
 
-Generally speaking if you have transient state that you do not want to rehydrate, you should put that in a separate reducer which you can blacklist.
-
-**NOTE**: autoRehydrate does not currently support custom actionCreators
+    return {...state, rehydrationCount, someCachedData}
+  }
+  else return state
+  
+```
 
 ## Implementation Notes
 For performance  
