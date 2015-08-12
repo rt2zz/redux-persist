@@ -32,7 +32,7 @@ module.exports = function autoRehydrate(config){
 
   function createRehydrationReducer(reducer){
     return function(state, action){
-      if(action.meta && action.meta[constants.actionMeta.rehydrate] === true){
+      if(action.type === constants.REHYDRATE){
         let key = action.key
         let data = action.payload
 

@@ -121,22 +121,16 @@ function createStorageKey(key){
 }
 
 function defaultRehydrateAction(key, data){
-  var meta = {}
-  meta[constants.actionMeta.rehydrate] = true
   return {
     type: constants.REHYDRATE,
-    meta: meta,
     key: key,
     payload: data,
   }
 }
 
 function defaultCompleteAction(){
-  var meta = {}
-  meta[constants.actionMeta.complete] = true
   return {
     type: constants.REHYDRATE_COMPLETE,
-    meta: meta
   }
 }
 

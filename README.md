@@ -54,14 +54,17 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
     - **transforms** *array* transforms to be applied during storage and during rehydration.
   - **callback** *function* Will be called after rehydration is finished.
 
-- `autoRehydrate(reducer)`
-  - This is a higher order reducer that will automatically shallow merge the persisted state for each key.
+- `autoRehydrate`
+  - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
 
 - `.purge(keys)`
   - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
 
 - `.purgeAll()`
   -  Purges all keys. (this method is available on the return value of persistStore)
+
+- `constants`
+  - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
 ## Customization
 #### Automatic (shallow) Immutable Support
@@ -91,13 +94,13 @@ state = {
 #### Custom Action Creator
 Custom action creators are one way to take action during rehydration, such as validating access tokens.
 ```js
+import { REHYDRATE } from 'redux-persist/constants' // be sure to use the provided action type constants if using autoRehydrate
 const rehydrateAction = (key, data) => {
   if(key === 'auth'){
     validateToken(data.token)
   }
   return {
-    type: 'REHYDRATE',
-    meta: { reduxPersistRehydration: true }, // set true if using autoRehydrate
+    type: REHYDRATE,
     key: key,
     payload: data
   }
@@ -117,14 +120,16 @@ var { AsyncStorage } = require('react-native')
 var { persistStore } = require('redux-persist')
 
 persistStore(store, {storage: AsyncStorage}, () => {
-  console.log('restored')
+  console.log('rehydration complete')
 })
 ```
 
 ## Auto Rehydrate Notes
-Auto rehydrate is a higher order reducer that automatically rehydrates state. 
+Auto rehydrate is a higher order reducer that automatically rehydrates state.
 
 While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
+
+autoRehydrate will automatically queue any actions dispatched before rehydration is complete, and fire them immediately after rehydration is complete. This is to avoid the tricky problem of rehydration over-writing earlier state changes.
 
 ```js
 case REHYDRATE:
@@ -132,17 +137,17 @@ case REHYDRATE:
   if(action.key === 'myReducer'){
     //delete transient data
     delete action.payload.someTransientData
-    
+
     //increment a counter
     var rehydrationCount = action.payload.rehydrationCount + 1
-    
+
     //invalidate a cache
     var someCachedData = Date.now()-10000 > action.payload.someCachedData.time ? null : action.payload.someCachedData
 
     return {...state, rehydrationCount, someCachedData}
   }
   else return state
-  
+
 ```
 
 ## Implementation Notes

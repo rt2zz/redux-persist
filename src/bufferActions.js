@@ -9,11 +9,11 @@ module.exports = function bufferActions(cb) {
       return next(action)
     }
 
-    if(action.meta && action.meta[constants.actionMeta.rehydrate]){
+    if(action.type === constants.REHYDRATE){
       return next(action)
     }
 
-    if (action.meta && action.meta[constants.actionMeta.complete]) {
+    if (action.type === constants.REHYDRATE_COMPLETE) {
       active = false
       next(action)
       queue.forEach((queuedAction) => next(queuedAction))
