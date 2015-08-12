@@ -3,12 +3,16 @@
 var forEach = require('lodash.foreach')
 
 var keyPrefix = 'reduxPersist:'
+var REHYDRATE = 'REHYDRATE'
 
 function persistStore(store, config, cb){
   //defaults
   config = config || {}
   var blacklist = config.blacklist || []
   var actionCreator = config.actionCreator || defaultActionCreator
+  var serialize = config.serialize || defaultSerialize
+  var deserialize = config.deserialize || defaultDeserialize
+  var transforms = config.transforms || []
   var storage = config.storage || defaultStorage
 
   //initialize values
@@ -55,7 +59,14 @@ function persistStore(store, config, cb){
         return
       }
 
-      storage.setItem(createStorageKey(storesToProcess[0]), JSON.stringify(state[storesToProcess[0]]), warnIfSetError)
+      let key = createStorageKey(storesToProcess[0])
+      let endState = transforms.reduce(function(subState, transformer){
+        return transformer.in(subState)
+      }, state[storesToProcess[0]])
+      if(typeof endState !== 'undefined'){
+        let serial = serialize(endState)
+        storage.setItem(key, serial, warnIfSetError)
+      }
       storesToProcess.shift()
     }, 33)
 
@@ -66,8 +77,11 @@ function persistStore(store, config, cb){
     storage.getItem(createStorageKey(key), function(err, serialized){
       try{
         if(err){ throw err }
-        let data = JSON.parse(serialized)
-        store.dispatch(actionCreator(key, data))
+        let data = deserialize(serialized)
+        let state = transforms.reduceRight(function(subState, transformer){
+          return transformer.out(subState)
+        }, data)
+        store.dispatch(actionCreator(key, state))
       }
       catch(e){
         console.warn('Error restoring data for key:', key, e)
@@ -109,12 +123,19 @@ function createStorageKey(key){
 
 function defaultActionCreator(key, data){
   return {
-    type: 'REHYDRATE',
-    payload: {
-      key: key,
-      data: data,
-    }
+    type: REHYDRATE,
+    meta: {reduxPersistRehydration: true},
+    key: key,
+    payload: data,
   }
+}
+
+function defaultSerialize(data){
+  return JSON.stringify(data)
+}
+
+function defaultDeserialize(serial){
+  return JSON.parse(serial)
 }
 
 var defaultStorage = {
@@ -159,14 +180,11 @@ var defaultStorage = {
   }
 }
 
-function autoRehydrate(reducer, config){
-  let actionConstant = 'REHYDRATE'
-  if(config && config.actionConstant){ actionConstant = config.actionConstant }
-
+function autoRehydrate(reducer){
   return function(state, action){
-    if(action.type === actionConstant){
-      let key = action.payload.key
-      let data = action.payload.data
+    if(action.meta && action.meta.reduxPersistRehydration === true){
+      let key = action.key
+      let data = action.payload
 
       var reducedState = reducer(state, action)
       if(state[key] !== reducedState[key]){
@@ -186,3 +204,6 @@ function autoRehydrate(reducer, config){
 
 module.exports.persistStore = persistStore
 module.exports.autoRehydrate = autoRehydrate
+module.exports.constants = {
+  REHYDRATE: REHYDRATE
+}
