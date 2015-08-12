@@ -5,20 +5,23 @@ Persist a redux store.
 * Performant out of the box (uses a time iterator and operates on state partials)
 * Supports localStorage, react-native AsyncStorage, or any conforming storage api
 
-**NOTE** a lot of changes in 0.3.0. Please submit an issue if you have any trouble migrating.
+**NOTE** a lot of changes in 0.4.0. Please submit an issue if you have any trouble migrating.
 
 Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
 
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
 ```js
+import { compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
-const reducer = autoRehydrate(combineReducers(reducers))
-const store = createStore(reducer)
+const reducer = combineReducers(reducers)
+const store = compose(autoRehydrate(), createStore)(reducer)
 persistStore(store)
 ```
 For more complex rehydration, like restoring immutable data, add a handler to your reducer:
 ```js
+import REHYDRATE from 'redux-persist/constants'
+//...
 case REHYDRATE:
   if(action.key === 'myReducer'){
     //restore immutable data
@@ -30,7 +33,7 @@ case REHYDRATE:
 You may also need to configure the persistence layer, or take action after rehydration has completed:
 ```js
 persistStore(store, {blacklist: ['someTransientReducer']}, () => {
-  store.dispatch({type: 'REHYDRATION_COMPLETE'})
+  console.log('rehydration complete')
 })
 ```
 
