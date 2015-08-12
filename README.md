@@ -67,27 +67,17 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
 ## Customization
-#### Automatic (shallow) Immutable Support
-This transform will mark all immutablejs data keys during storage and restore them using `Map` or `List` during rehydration. While it will successfully serialize any Iterable, it can only restore to Maps and Lists for now (see [immutablejs#336](https://github.com/facebook/immutable-js/issues/336)). As the name suggests this only works shallowly across each keyspace, see comments below. If you need more fine tuned control you should use rehydration handlers.
+#### Immutable Support
+The redux-persist-immutable transform will serialize immutable objects using [transit-immutable-js](https://github.com/glenjamin/transit-immutable-js) and automatically restore them.
 ```js
-import immutableShallow from 'redux-persist/transforms/immutableShallow'
-persistStore(store, {transforms: [immutableShallow]})
-```
-This only works shallowly! See following:
-```js
-// state before storage
+import reduxPersistImmutable from 'reduxPersistImmutable'
+persistStore(store, {transforms: [reduxPersistImmutable]})
+
+// It works on nested and mixed immutable objects as well:
 state = {
   reducerA: Map(),
   reducerB: {a: 1, b: Map()},
-  reducerC: {a: {aa: Map()}}
-  reducerD: {a: Map({aa: List([1, 2])})}
-}
-// state after restore (with immutableShallow transform)
-state = {
-  reducerA: Map(), //perfect
-  reducerB: {a: 1, b: Map()}, //perfect
-  reducerC: {a: {aa: {}}} //Lost Nested Map
-  reducerD: {a: Map({aa: [1, 2]})} //Lost Nested List (but preserved top level Map)
+  reducerC: {a: Map({aa: 'foo', bb: List([1, 2])})}
 }
 ```
 
