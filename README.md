@@ -35,9 +35,9 @@ persistStore(store, {blacklist: ['someTransientReducer']}, () => {
 ```
 
 ## Rationale
-The core idea behind redux-persist is to provide performant persistence rehydration methods. Additionally redux-persist is designed to minimize complexity by knowing as little as possible about your application and state schema. All of this is achieved through the `persistStore` method with no additional configuration.
+The core idea behind redux-persist is to provide performant persistence and rehydration methods. Additionally redux-persist is designed to minimize complexity by knowing as little as possible about your application and state schema. All of this is achieved through the `persistStore` method with no additional configuration.
 
-However because persistence is such a common problem, and because applications tend to have similar but slightly different persistence rules, redux-persist also provides several convenience methods and configuration options. Do not let these scare you away, they are really just "shortcuts" for achieving various functionality.
+However because persistence is such a common problem, and because applications tend to have similar but slightly different persistence rules, redux-persist also provides several convenience methods (e.g. `autoRehydrate`) and configuration options (e.g. `config.transforms`). Do not let these scare you away, they are really just "shortcuts" for achieving various functionality.
 
 Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration. If you have some transient state that should not be persisted, it is probably best to split that state into it's own reducer which can then be added to the persistStore blacklist.
 
