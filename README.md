@@ -98,7 +98,7 @@ const rehydrateAction = (key, data) => {
 persistStore(store, {actionCreator: rehydrateAction})
 ```
 #### Without Auto Rehydration
-The heavy lifting in redux-persist is in restoration. autoRehydrate is purely provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient - simply do not wrap your reducer. You can then either write a custom rehydration function, or handle your rehydration on a reducer by reducer basis.
+The heavy lifting in redux-persist is in restoration. `autoRehydrate` is purely provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient. In this case, simply omit autoRehydrate. Rehydration actions will still be fired by `persistStore`, and you can then either write a custom rehydration function, or handle your rehydration on a reducer by reducer basis.
 
 ## Storage Backends
 **localStorage** (default), react-native **AsyncStorage**, or a conforming **custom** storage api. Custom storage API should be an object with the following methods: `setItem` `getItem` `removeItem` `getAllKeys` each with the function signature as found in [react-native AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
