@@ -118,19 +118,29 @@ persistStore(store, {storage: AsyncStorage}, () => {
 })
 ```
 
-## Motivations & Explanations
-Conceptually redux-persist operates on a per reducer basis. This enables the persistance layer to know as little about the application as possible. This is important, reducers should be the single source of truth for your state manipulation.
-
-It also enables great out of the box performance, as each save only operates on chunks of state, rather than the entire state object.
+## Auto Rehydrate Notes
+Auto rehydrate is a higher order reducer that automatically rehydrates state. 
 
 While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
 
-## Auto Rehydrate
-Auto rehydrate is a higher order reducer that automatically rehydrates state. If you have a reducer that needs to handle its own hydration, perhaps with special time expiration rules, simply add a rehydration handler in your reducer, and autoRehydrate will ignore that reducer's keyspace.
+```js
+case REHYDRATE:
+  //make sure to check the key that is currently being rehydrated!
+  if(action.key === 'myReducer'){
+    //delete transient data
+    delete action.payload.someTransientData
+    
+    //increment a counter
+    var rehydrationCount = action.payload.rehydrationCount + 1
+    
+    //invalidate a cache
+    var someCachedData = Date.now()-10000 > action.payload.someCachedData.time ? null : action.payload.someCachedData
 
-Generally speaking if you have transient state that you do not want to rehydrate, you should put that in a separate reducer which you can blacklist.
-
-**NOTE**: autoRehydrate does not currently support custom actionCreators
+    return {...state, rehydrationCount, someCachedData}
+  }
+  else return state
+  
+```
 
 ## Implementation Notes
 For performance  
