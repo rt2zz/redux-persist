@@ -62,7 +62,7 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
 
 ## Customization
 #### Automatic (shallow) Immutable Support
-This transform will mark all immutablejs data keys during storage and restore them using `Immutable.fromJS` during rehydration. While it will successfully serialize any Iterable, it can only restore to Maps and Lists for now (see [immutablejs#336](https://github.com/facebook/immutable-js/issues/336)). As the name suggests this only works shallowly across each keyspace, see comments below. If you need more fine tuned control you should use rehydration handlers.
+This transform will mark all immutablejs data keys during storage and restore them using `Map` or `List` during rehydration. While it will successfully serialize any Iterable, it can only restore to Maps and Lists for now (see [immutablejs#336](https://github.com/facebook/immutable-js/issues/336)). As the name suggests this only works shallowly across each keyspace, see comments below. If you need more fine tuned control you should use rehydration handlers.
 ```js
 import immutableShallow from 'redux-persist/transforms/immutableShallow'
 persistStore(store, {transforms: [immutableShallow]})
