@@ -39,7 +39,7 @@ module.exports = function autoRehydrate(config){
         var reducedState = reducer(state, action)
         if(state[key] !== reducedState[key]){
           if(config.log){
-            console.log('redux-persist/autoRehydrate sub state for key %s modified, skipping autoRehydrate', key)
+            console.log('redux-persist/autoRehydrate sub state for key "%s" modified, skipping autoRehydrate', key)
           }
           return reducedState
         }
