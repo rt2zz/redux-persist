@@ -72,6 +72,8 @@ module.exports = function persistStore(store, config, cb){
     lastState = state
   })
 
+  var purgeMode = false
+
   function rehydrate(key, cb){
     storage.getItem(createStorageKey(key), function(err, serialized){
       try{
@@ -80,6 +82,7 @@ module.exports = function persistStore(store, config, cb){
         let state = transforms.reduceRight(function(subState, transformer){
           return transformer.out(subState)
         }, data)
+        if(purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)){ return }
         store.dispatch(rehydrateAction(key, state))
       }
       catch(e){
@@ -92,11 +95,13 @@ module.exports = function persistStore(store, config, cb){
 
   return {
     purge: function(keys){
+      purgeMode = keys
       forEach(keys, function(key){
         storage.removeItem(createStorageKey(key), warnIfRemoveError)
       })
     },
     purgeAll: function(){
+      purgeMode = '*'
       storage.getAllKeys(function(err, keys){
         forEach(keys, function(key){
           if(key.indexOf(constants.keyPrefix) === 0){
