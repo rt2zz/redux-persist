@@ -36,6 +36,10 @@ persistStore(store, {blacklist: ['someTransientReducer']}, () => {
   console.log('rehydration complete')
 })
 ```
+And if things get out of wack, just purge the storage
+```js
+persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
+```
 
 ## Rationale
 The core idea behind redux-persist is to provide performant persistence and rehydration methods. Additionally redux-persist is designed to minimize complexity by knowing as little as possible about your application and state schema. All of this is achieved through the `persistStore` method with no additional configuration.
