@@ -20,7 +20,7 @@ persistStore(store)
 ```
 For more complex rehydration, like restoring immutable data, add a handler to your reducer:
 ```js
-import REHYDRATE from 'redux-persist/constants'
+import {REHYDRATE} from 'redux-persist/constants'
 //...
 case REHYDRATE:
   if(action.key === 'myReducer'){
