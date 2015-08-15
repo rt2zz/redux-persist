@@ -12,9 +12,7 @@ Implementing rehydration is very application specific. Check out some [recipes](
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
 ```js
-import { compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
-const reducer = combineReducers(reducers)
 const store = compose(autoRehydrate(), createStore)(reducer)
 persistStore(store)
 ```
