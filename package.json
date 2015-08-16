@@ -2,9 +2,12 @@
   "name": "redux-persist",
   "version": "0.4.1",
   "description": "persist and rehydrate redux stores",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf lib dist",
+    "build": "babel src --out-dir lib",
+    "build:watch": "watch 'npm run build' ./src",
+    "prepublish": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",

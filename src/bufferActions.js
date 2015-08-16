@@ -18,7 +18,7 @@ module.exports = function bufferActions(cb) {
       next(action)
       queue.forEach((queuedAction) => next(queuedAction))
       cb(null, queue)
-      delete queue
+      queue = undefined
     }
     else {
       queue.push(action)
