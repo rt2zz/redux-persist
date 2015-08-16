@@ -7,7 +7,7 @@ module.exports = function autoRehydrate(config){
 
   return function(next){
     return function(reducer, initialState){
-      rehydrationReducer = createRehydrationReducer(reducer)
+      const rehydrationReducer = createRehydrationReducer(reducer)
 
       // buffer actions
       const store = next(rehydrationReducer, initialState)
