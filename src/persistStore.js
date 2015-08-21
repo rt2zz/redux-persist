@@ -184,7 +184,7 @@ var defaultStorage = {
       cb(null, keys)
     }
     catch(e){
-      cb(err)
+      cb(e)
     }
   }
 }
