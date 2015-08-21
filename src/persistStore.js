@@ -20,6 +20,7 @@ module.exports = function persistStore(store, config, cb){
   //rehydrate
   let restoreCount = 0
   let completionCount = 0
+  if(Object.keys(lastState).length === 0){ store.dispatch(completeAction()) }
   forEach(lastState, function(s, key){
     if(blacklist.indexOf(key) !== -1){ return }
     restoreCount += 1
