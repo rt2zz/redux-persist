@@ -5,13 +5,13 @@ var constants = require('./constants')
 module.exports = function persistStore(store, config, cb){
   //defaults
   config = config || {}
-  var blacklist = config.blacklist || []
-  var rehydrateAction = config.rehydrateAction || defaultRehydrateAction
-  var completeAction = config.completeAction || defaultCompleteAction
-  var serialize = config.serialize || defaultSerialize
-  var deserialize = config.deserialize || defaultDeserialize
-  var transforms = config.transforms || []
-  var storage = config.storage || defaultStorage
+  const blacklist = config.blacklist || []
+  const rehydrateAction = config.rehydrateAction || defaultRehydrateAction
+  const completeAction = config.completeAction || defaultCompleteAction
+  const serialize = config.serialize || defaultSerialize
+  const deserialize = config.deserialize || defaultDeserialize
+  const transforms = config.transforms || []
+  const storage = config.storage || defaultStorage
 
   //initialize values
   let timeIterator = null
@@ -72,7 +72,7 @@ module.exports = function persistStore(store, config, cb){
     lastState = state
   })
 
-  var purgeMode = false
+  let purgeMode = false
 
   function rehydrate(key, cb){
     storage.getItem(createStorageKey(key), function(err, serialized){

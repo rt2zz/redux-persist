@@ -4,6 +4,7 @@
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "scripts": {
+    "test": "mocha --compilers js:babel/register --recursive",
     "clean": "rimraf lib dist",
     "build": "babel src --out-dir lib",
     "build:watch": "watch 'npm run build' ./src",
@@ -28,5 +29,13 @@
   "license": "MIT",
   "dependencies": {
     "lodash.foreach": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "babel-core": "^5.8.22",
+    "expect": "^1.9.0",
+    "mocha": "^2.2.5",
+    "redux": "^1.0.1",
+    "rimraf": "^2.4.2"
   }
 }
