@@ -4,6 +4,7 @@ Persist a redux store.
 * Operates on a per reducer basis
 * Performant out of the box (uses a time iterator and operates on state partials)
 * Supports localStorage, react-native AsyncStorage, or any conforming storage api
+* ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
 
 **NOTE** a lot of changes in 0.4.0. Please submit an issue if you have any trouble migrating.
 
@@ -70,7 +71,7 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
 
 ## Customization
 #### Immutable Support
-The `redux-persist-immutable` transform will serialize immutable objects using [transit-immutable-js](https://github.com/glenjamin/transit-immutable-js) and automatically restore them.
+The [`redux-persist-immutable`](https://github.com/rt2zz/redux-persist-immutable) transform will serialize immutable objects using and automatically restore them.
 ```js
 import reduxPersistImmutable from 'redux-persist-immutable'
 persistStore(store, {transforms: [reduxPersistImmutable]})
