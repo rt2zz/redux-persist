@@ -65,7 +65,7 @@ module.exports = function persistStore(store, config, cb){
       }, state[storesToProcess[0]])
       if(typeof endState !== 'undefined'){
         let serial = serialize(endState)
-        storage.setItem(key, serial, warnIfSetError)
+        storage.setItem(key, serial, warnIfSetError(key))
       }
       storesToProcess.shift()
     }, 33)
@@ -118,8 +118,10 @@ function warnIfRemoveError(err){
   if(err){ console.warn('Error removing data for key:', key, err) }
 }
 
-function warnIfSetError(err){
-  if(err){ console.warn('Error storing data for key:', key, err) }
+function warnIfSetError(key){
+  return function setError(err) {
+    if(err){ console.warn('Error storing data for key:', key, err) }
+  }
 }
 
 function createStorageKey(key){
