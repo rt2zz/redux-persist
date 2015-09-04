@@ -77,18 +77,21 @@ module.exports = function persistStore(store, config, cb){
 
   function rehydrate(key, cb){
     storage.getItem(createStorageKey(key), function(err, serialized){
+      let state = null
       try{
         if(err){ throw err }
         let data = deserialize(serialized)
-        let state = transforms.reduceRight(function(subState, transformer){
+        state = transforms.reduceRight(function(subState, transformer){
           return transformer.out(subState)
         }, data)
-        if(purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)){ return }
-        store.dispatch(rehydrateAction(key, state))
       }
       catch(e){
         console.warn('Error restoring data for key:', key, e)
-        storage.removeItem(key, warnIfRemoveError)
+        storage.removeItem(key, warnIfRemoveError(key))
+      }
+      if(state !== null){
+        if(purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)){ return }
+        store.dispatch(rehydrateAction(key, state))
       }
       cb()
     })
@@ -98,7 +101,7 @@ module.exports = function persistStore(store, config, cb){
     purge: function(keys){
       purgeMode = keys
       forEach(keys, function(key){
-        storage.removeItem(createStorageKey(key), warnIfRemoveError)
+        storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
       })
     },
     purgeAll: function(){
@@ -106,7 +109,7 @@ module.exports = function persistStore(store, config, cb){
       storage.getAllKeys(function(err, keys){
         forEach(keys, function(key){
           if(key.indexOf(constants.keyPrefix) === 0){
-            storage.removeItem(key, warnIfRemoveError)
+            storage.removeItem(key, warnIfRemoveError(key))
           }
         })
       })
@@ -114,8 +117,10 @@ module.exports = function persistStore(store, config, cb){
   }
 }
 
-function warnIfRemoveError(err){
-  if(err){ console.warn('Error removing data for key:', key, err) }
+function warnIfRemoveError(key){
+  return function removeError(err) {
+    if(err){ console.warn('Error storing data for key:', key, err) }
+  }
 }
 
 function warnIfSetError(key){
