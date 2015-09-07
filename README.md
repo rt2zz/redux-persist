@@ -1,7 +1,6 @@
 # Redux Persist
 Persist a redux store.
 
-* Operates on a per reducer basis
 * Performant out of the box (uses a time iterator and operates on state partials)
 * Supports localStorage, react-native AsyncStorage, or any conforming storage api
 * ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
@@ -14,7 +13,7 @@ Implementing rehydration is very application specific. Check out some [recipes](
 Basic usage requires adding three lines to a traditional redux application:
 ```js
 import { persistStore, autoRehydrate } from 'redux-persist'
-const store = compose(autoRehydrate(), createStore)(reducer)
+const store = compose(autoRehydrate())(createStore)(reducer)
 persistStore(store)
 ```
 For more complex rehydration, like restoring immutable data, add a handler to your reducer:
