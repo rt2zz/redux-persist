@@ -1,7 +1,7 @@
 # Redux Persist
 Persist and rehydrate a redux store.
 
-Redux Persist is [performant](#Performance), easy to [implement](#Basic-Usage), and easy to [extend](#Extend-&-Customize).
+Redux Persist is [performant](#performance), easy to [implement](#basic-usage), and easy to [extend](#extend-and-customize).
 
 Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
 
@@ -69,7 +69,7 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
 - `constants`
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
-## Extend & Customize
+## Extend And Customize
 Redux-persist is very easy to extend with new functionality:
 * ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
 * Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
