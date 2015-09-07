@@ -4,7 +4,8 @@
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel/register --recursive",
+    "test": "NODE_ENV=production mocha --compilers js:babel/register --recursive",
+    "test:watch": "npm test -- --watch",
     "clean": "rimraf lib dist",
     "build": "babel src --out-dir lib",
     "build:watch": "watch 'npm run build' ./src",
@@ -18,8 +19,6 @@
   "keywords": [
     "redux",
     "redux-middleware",
-    "react-native",
-    "flux",
     "localstorage",
     "redux-persist",
     "redux-storage",

@@ -1,7 +1,7 @@
 'use strict'
 var forEach = require('lodash.foreach')
 var constants = require('./constants')
-var defaultStorage = require('./localStorageAdapter')
+var defaultStorage = require('./defaults/asyncLocalStorage')
 
 module.exports = function persistStore(store, config, cb){
   //defaults
@@ -78,10 +78,10 @@ module.exports = function persistStore(store, config, cb){
 
   function restoreKey(key, cb) {
     storage.getItem(createStorageKey(key), function (err, serialized) {
-      if (err) {
-        console.warn('Error restoring data for key:', key, err);
+      if (err && process.env.NODE_ENV !== 'production') { console.warn('Error restoring data for key:', key, err) }
+      else{
+        rehydrate(key, serialized, cb)
       }
-      rehydrate(key, serialized, cb)
     })
   }
 
@@ -94,7 +94,7 @@ module.exports = function persistStore(store, config, cb){
       }, data)
     }
     catch(err){
-      console.warn('Error restoring data for key:', key, err)
+      if(process.env.NODE_ENV !== 'production'){ console.warn('Error restoring data for key:', key, err) }
       storage.removeItem(key, warnIfRemoveError(key))
     }
     if(state !== null){
@@ -127,13 +127,13 @@ module.exports = function persistStore(store, config, cb){
 
 function warnIfRemoveError(key){
   return function removeError(err) {
-    if(err){ console.warn('Error storing data for key:', key, err) }
+    if(err && process.env.NODE_ENV !== 'production'){ console.warn('Error storing data for key:', key, err) }
   }
 }
 
 function warnIfSetError(key){
   return function setError(err) {
-    if(err){ console.warn('Error storing data for key:', key, err) }
+    if(err && process.env.NODE_ENV !== 'production'){ console.warn('Error storing data for key:', key, err) }
   }
 }
 

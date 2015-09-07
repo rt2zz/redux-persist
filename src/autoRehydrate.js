@@ -13,7 +13,6 @@ module.exports = function autoRehydrate(config){
       const store = next(rehydrationReducer, initialState)
       const dispatch = compose(
         bufferActions(onBufferEnd),
-        //@TODO middleware to unlift reducer?
         store.dispatch
       )
 
@@ -26,7 +25,7 @@ module.exports = function autoRehydrate(config){
 
   function onBufferEnd(err, queue){
     if(config.log){
-      console.log('redux-persist/autoRehydrate Buffer Released', queue)
+      console.log('redux-persist/autoRehydrate action buffer released', queue)
     }
   }
 
