@@ -2,8 +2,12 @@
 Persist a redux store.
 
 * Performant out of the box (uses a time iterator and operates on state partials)
+* Keeps custom rehydration logic in the reducers (where it intuitively belongs)
 * Supports localStorage, react-native AsyncStorage, or any conforming storage api
+
+Redux-persist is very easy to extend:
 * ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
+* Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
 
 **NOTE** a lot of changes in 0.4.0. Please submit an issue if you have any trouble migrating.
 
