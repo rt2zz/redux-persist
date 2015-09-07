@@ -4,24 +4,20 @@
 ```js
 import { createStore, combineReducers } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
-import * as reducers from '../reducers'
+import reducer from '../reducers'
 
-const reducer = autoRehydrate(combineReducers(reducers))
-const store = createStore(reducer)
-
+const store = compose(autoRehydrate())(createStore)(reducer)
 persistStore(store)
 ```
-Data will be read out of localStorage and dispatched (asynchronously).
-The reducer will take these actions and reyhdrate the state by merging it into the state of each reducer keyspace.
+Stored state will be read out of localStorage and dispatched (asynchronously), autoRehydrate will use these actions to merge the stored state into the initial state.
 
 ### Delay Render Until Rehydration Complete
 ```js
 import { createStore, combineReducers } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
-import * as reducers from '../reducers'
+import reducer from '../reducers'
 
-const reducer = autoRehydrate(combineReducers(reducers))
-const store = createStore(reducer)
+const store = compose(autoRehydrate())(createStore)(reducer)
 
 export default class AppProvider extends Component {
 
@@ -51,29 +47,37 @@ import { createStore, combineReducers } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import * as reducers from '../reducers'
 
-const reducer = autoRehydrate(combineReducers(reducers))
-const store = createStore(reducer, {blacklist: ['someTransientReducer']}, () => {
-  store.dispatch({ type: 'INITIALIZED' })
-})
+const store = compose(autoRehydrate())(createStore)(reducer)
+persistStore(store, {blacklist: ['aTransientReducer']})
 
 // ## someReducer.js
+import { REHYDRATE, REHYDRATE_COMPLETE } from 'redux-persist/constants'
+
 const initialState = {
+  rehydrationCount: 0,
   initialized: false,
-  rehydrationCounter: null,
 }
 
 export default function someReducer(state = initialState, action) {
   switch (action.type) {
 
-  case 'INITIALIZED':
+  case REHYDRATE_COMPLETE:
     return {...state, initialized: true}
 
-  case 'REHYDRATE':
-    if(action.key === 'app'){
-      delete action.payload.initialized
-      rehydrationCounter = action.payload.rehydrationCounter || 0
-      rehydrationCounter++
-      return {...state, ...action.payload, rehyrationCounter}
+  case REHYDRATE:
+    // *important* to make sure the rehydration key matches the reducer key.
+    if(action.key === 'someReducer'){
+
+      //delete transient data
+      delete action.payload.someTransientData
+
+      //increment a counter
+      var rehydrationCount = action.payload.rehydrationCount + 1
+
+      //invalidate a cache
+      var someCachedData = Date.now()-10000 > action.payload.someCachedData.time ? null : action.payload.someCachedData
+
+      return {...state, rehydrationCount, someCachedData}
     }
     return state
 
@@ -82,7 +86,6 @@ export default function someReducer(state = initialState, action) {
   }
 }
 ```
-Because we handle the rehydration in `someReducer` autoRehydrate will skip that rehydration. If you want to custom handle all of your rehydration, simply do not use the autoRehydrate reducer.
 
 ##React-Native
 simply plug in AsyncStorage:
@@ -90,12 +93,30 @@ simply plug in AsyncStorage:
 var { AsyncStorage } = require('react-native')
 import { createStore, combineReducers } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
-import * as reducers from '../reducers'
+import reducer from '../reducers'
 
-const reducer = autoRehydrate(combineReducers(reducers))
-const store = createStore(reducer)
+const store = compose(autoRehydrate())(createStore)(reducer)
 
 persistStore(store, {storage: AsyncStorage}, () => {
   console.log('restored')
 })
+```
+
+##Custom Action Creator
+Custom action creators are one way to take action during rehydration, such as validating access tokens.
+```js
+import { REHYDRATE } from 'redux-persist/constants'
+
+const rehydrateAction = (key, data) => {
+  if(key === 'auth'){
+    validateToken(data.token)
+  }
+  return {
+    type: REHYDRATE,
+    key: key,
+    payload: data
+  }
+}
+
+persistStore(store, {actionCreator: rehydrateAction})
 ```

@@ -1,15 +1,9 @@
 # Redux Persist
-Persist a redux store.
+Persist and rehydrate a redux store.
 
-* Performant out of the box (uses a time iterator and operates on state partials)
-* Keeps custom rehydration logic in the reducers (where it intuitively belongs)
-* Supports localStorage, react-native AsyncStorage, or any conforming storage api
+Redux Persist is [performant](#Performance), easy to [implement](#Basic-Usage), and easy to [extend](#Extend-&-Customize).
 
-Redux-persist is very easy to extend:
-* ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
-* Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
-
-Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
+Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
 
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
@@ -42,11 +36,16 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
 ```
 
 ## Rationale
-The core idea behind redux-persist is to provide performant persistence and rehydration methods. Additionally redux-persist is designed to minimize complexity by knowing as little as possible about your application and state schema. All of this is achieved through the `persistStore` method with no additional configuration.
 
-However because persistence is such a common problem, and because applications tend to have similar but slightly different persistence rules, redux-persist also provides several convenience methods (e.g. `autoRehydrate`) and configuration options (e.g. `config.transforms`). Do not let these scare you away, they are really just "shortcuts" for achieving various functionality.
+* Performant out of the box (uses a time iterator and operates on state partials)
+* Keeps custom rehydration logic in the reducers (where it intuitively belongs)
+* Supports localStorage, react-native AsyncStorage, or any conforming storage api
 
-Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration. If you have some transient state that should not be persisted, it is probably best to split that state into it's own reducer which can then be added to the persistStore blacklist.
+The core idea behind redux-persist is to provide performant persistence and rehydration methods. At the same time redux-persist is designed to minimize complexity by knowing as little about your application as possible.
+
+Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration.
+
+Because persisting state is inherently stateful, `persistStore` lives outside of the redux store. Importantly this keeps the store 'pure' and makes testing and extending the persistor much easier.
 
 ## API
 - `persistStore(store, [config, callback])`
@@ -70,81 +69,40 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
 - `constants`
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
-## Customization
-#### Immutable Support
-The [`redux-persist-immutable`](https://github.com/rt2zz/redux-persist-immutable) transform will serialize immutable objects using and automatically restore them.
+## Extend & Customize
+Redux-persist is very easy to extend with new functionality:
+* ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
+* Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
+
+#### Example
 ```js
 import reduxPersistImmutable from 'redux-persist-immutable'
-persistStore(store, {transforms: [reduxPersistImmutable]})
+import crosstabSync from 'redux-persist-crosstab'
 
-// It works on nested and mixed immutable objects as well:
-state = {
-  reducerA: Map(),
-  reducerB: {a: 1, b: Map()},
-  reducerC: {a: Map({aa: 'foo', bb: List([1, 2])})}
-}
+const persistor = persistStore(store, {transforms: [reduxPersistImmutable]})
+crosstabSync(persistor)
 ```
-
-#### Custom Action Creator
-Custom action creators are one way to take action during rehydration, such as validating access tokens.
-```js
-import { REHYDRATE } from 'redux-persist/constants' // be sure to use the provided action type constants if using autoRehydrate
-const rehydrateAction = (key, data) => {
-  if(key === 'auth'){
-    validateToken(data.token)
-  }
-  return {
-    type: REHYDRATE,
-    key: key,
-    payload: data
-  }
-}
-persistStore(store, {actionCreator: rehydrateAction})
-```
-#### Without Auto Rehydration
-The heavy lifting in redux-persist is in restoration. `autoRehydrate` is purely provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient. In this case, simply omit autoRehydrate. Rehydration actions will still be fired by `persistStore`, and you can then either write a custom rehydration function, or handle your rehydration on a reducer by reducer basis.
 
 ## Storage Backends
 **localStorage** (default), react-native **AsyncStorage**, or a conforming **custom** storage api. Custom storage API should be an object with the following methods: `setItem` `getItem` `removeItem` `getAllKeys` each with the function signature as found in [react-native AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
 
-
-#### React-Native Example
 ```js
-var { AsyncStorage } = require('react-native')
-var { persistStore } = require('redux-persist')
-
-persistStore(store, {storage: AsyncStorage}, () => {
-  console.log('rehydration complete')
-})
+import AsyncStorage from 'react-native'
+persistStore(store, {storage: AsyncStorage})
 ```
 
-## Auto Rehydrate Notes
-Auto rehydrate is a higher order reducer that automatically rehydrates state.
+## About Auto Rehydrate
+autoRehydrate is a store enhancer that automatically rehydrates state.
 
-While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like applying data transforms, or doing cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
+While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like data transforms and cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
 
-autoRehydrate will automatically queue any actions dispatched before rehydration is complete, and fire them immediately after rehydration is complete. This is to avoid the tricky problem of rehydration over-writing earlier state changes.
+With autoRehydrate, actions dispatched before rehydration is complete are buffered and released immediately after rehydration is complete.
 
-```js
-case REHYDRATE:
-  //make sure to check the key that is currently being rehydrated!
-  if(action.key === 'myReducer'){
-    //delete transient data
-    delete action.payload.someTransientData
+Auto rehydrate is provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient. In this case, simply omit autoRehydrate. Rehydration actions will still be fired by `persistStore`, and can then be handled individually by reducers or using a custom rehydration handler.
 
-    //increment a counter
-    var rehydrationCount = action.payload.rehydrationCount + 1
+## Performance
+JSON serialization and localStorage (which is sync!) can both hurt performance. To work around this redux-persist implements a few performance tricks:
+* **During Rehydration** getItem calls are invoked once per key using setImmediate.  
+* **During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
 
-    //invalidate a cache
-    var someCachedData = Date.now()-10000 > action.payload.someCachedData.time ? null : action.payload.someCachedData
-
-    return {...state, rehydrationCount, someCachedData}
-  }
-  else return state
-
-```
-
-## Implementation Notes
-For performance  
-**During Rehydration** getItem calls are invoked once per key using setImmediate.  
-**During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
+Additionally redux persist operates on a per reducer basis, which is a great lever for maximizing performance. If a piece of state is changing often (10+ times per second), isolate that state into it's own reducer, which will make the serialization and storage operations much faster.
