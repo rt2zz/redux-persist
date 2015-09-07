@@ -9,9 +9,7 @@ Redux-persist is very easy to extend:
 * ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
 * Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
 
-**NOTE** a lot of changes in 0.4.0. Please submit an issue if you have any trouble migrating.
-
-Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md).
+Implementing rehydration is very application specific. Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
 
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
