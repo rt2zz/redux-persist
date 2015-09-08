@@ -42,10 +42,17 @@ module.exports = function autoRehydrate(config){
           }
           return reducedState
         }
-        var subState = {}
-        for (var subkey in reducedState[key]) { subState[subkey] = reducedState[key][subkey] }
-        for (var subkey in data) { subState[subkey] = data[subkey] }
-        reducedState[key] = subState
+        if(typeof data !== 'object' || typeof reducedState[key] !== 'object'){
+          //@TODO use isPlainObject instead?
+          reducedState[key] = data
+        }
+        else{
+          //@TODO replace with es6 or lodash shallow merge
+          var subState = {}
+          for (var subkey in reducedState[key]) { subState[subkey] = reducedState[key][subkey] }
+          for (var subkey in data) { subState[subkey] = data[subkey] }
+          reducedState[key] = subState
+        }
         if(config.log){
           console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, subState)
         }
