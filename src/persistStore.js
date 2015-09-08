@@ -18,11 +18,11 @@ module.exports = function persistStore(store, config, cb){
   //initialize values
   let timeIterator = null
   let lastState = store.getState()
-
-  //rehydrate
+  let purgeMode = false
   let restoreCount = 0
   let completionCount = 0
-  if(Object.keys(lastState).length === 0){ store.dispatch(completeAction()) }
+  let storesToProcess = []
+
   forEach(lastState, function(s, key){
     //check blacklist, and whitelist if set
     if(whitelist && whitelist.indexOf(key) === -1){ return }
@@ -31,15 +31,17 @@ module.exports = function persistStore(store, config, cb){
     setImmediate(function(){
       restoreKey(key, function(){
         completionCount += 1
-        if(completionCount === restoreCount){
-          store.dispatch(completeAction())
-          cb && cb()
-        }
+        if(completionCount === restoreCount){ rehydrationComplete() }
       })
     })
   })
+  if(restoreCount === 0){ rehydrationComplete() }
 
-  let storesToProcess = []
+  function rehydrationComplete(){
+    store.dispatch(completeAction())
+    cb && cb()
+  }
+
   //store state to disk
   var unsub = store.subscribe(function(){
     //Clear unfinished timeIterator if exists
@@ -77,8 +79,6 @@ module.exports = function persistStore(store, config, cb){
 
     lastState = state
   })
-
-  let purgeMode = false
 
   function restoreKey(key, cb) {
     storage.getItem(createStorageKey(key), function (err, serialized) {
