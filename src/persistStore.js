@@ -7,6 +7,7 @@ module.exports = function persistStore(store, config, cb){
   //defaults
   config = config || {}
   const blacklist = config.blacklist || []
+  const whitelist = config.whitelist || false
   const rehydrateAction = config.rehydrateAction || defaultRehydrateAction
   const completeAction = config.completeAction || defaultCompleteAction
   const serialize = config.serialize || defaultSerialize
@@ -23,6 +24,8 @@ module.exports = function persistStore(store, config, cb){
   let completionCount = 0
   if(Object.keys(lastState).length === 0){ store.dispatch(completeAction()) }
   forEach(lastState, function(s, key){
+    //check blacklist, and whitelist if set
+    if(whitelist && whitelist.indexOf(key) === -1){ return }
     if(blacklist.indexOf(key) !== -1){ return }
     restoreCount += 1
     setImmediate(function(){
@@ -46,6 +49,7 @@ module.exports = function persistStore(store, config, cb){
 
     let state = store.getState()
     forEach(state, function(subState, key){
+      if(whitelist && whitelist.indexOf(key) === -1){ return }
       if(blacklist.indexOf(key) !== -1){ return }
       //only store keys that have changed
       if(lastState[key] === state[key]){ return }

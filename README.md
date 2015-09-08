@@ -52,6 +52,7 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
   - **store** *redux store* The store to be persisted.
   - **config** *object*
     - **blacklist** *array* keys (read: reducers) to ignore
+      **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
     - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, payload, type: 'REHYDRATE'}`
     - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
     - **transforms** *array* transforms to be applied during storage and during rehydration.
