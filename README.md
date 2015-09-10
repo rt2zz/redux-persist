@@ -9,7 +9,7 @@ Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs
 Basic usage requires adding three lines to a traditional redux application:
 ```js
 import { persistStore, autoRehydrate } from 'redux-persist'
-const store = compose(autoRehydrate())(createStore)(reducer)
+const store = autoRehydrate()(createStore)(reducer)
 persistStore(store)
 ```
 For more complex rehydration, like restoring immutable data, add a handler to your reducer:
