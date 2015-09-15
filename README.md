@@ -13,7 +13,7 @@ Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs
 Basic usage requires adding three lines to a traditional redux application:
 ```js
 import { persistStore, autoRehydrate } from 'redux-persist'
-const store = compose(autoRehydrate())(createStore)(reducer)
+const store = autoRehydrate()(createStore)(reducer)
 persistStore(store)
 ```
 For more complex rehydration, like restoring immutable data, add a handler to your reducer:
@@ -52,26 +52,30 @@ Conceptually redux-persist encourages you to think on a per-reducer basis. This 
 Because persisting state is inherently stateful, `persistStore` lives outside of the redux store. Importantly this keeps the store 'pure' and makes testing and extending the persistor much easier.
 
 ## API
-- `persistStore(store, [config, callback])`
-  - **store** *redux store* The store to be persisted.
-  - **config** *object*
-    - **blacklist** *array* keys (read: reducers) to ignore
-      **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
-    - **actionCreator** *action creator* The rehydrate action creator. absent will use a default action creator which returns: `{ key, payload, type: 'REHYDRATE'}`
-    - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
-    - **transforms** *array* transforms to be applied during storage and during rehydration.
-  - **callback** *function* Will be called after rehydration is finished.
+#### `persistStore(store, [config, callback])`
+  - arguments
+    - **store** *redux store* The store to be persisted.
+    - **config** *object*
+      - **blacklist** *array* keys (read: reducers) to ignore
+      - **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
+      - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
+      - **transforms** *array* transforms to be applied during storage and during rehydration.
+    - **callback** *function* Will be called after rehydration is finished.
+  - returns **persistor** object
 
-- `autoRehydrate`
+#### `persistor object`
+  - the persistor object is returned by persistStore with the following methods:
+    - `.purge(keys)`
+      - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
+    - `.purgeAll()`
+      - Purges all keys. (this method is available on the return value of persistStore) 
+    - `.rehydrate(key, serialDataString)`
+      - This can be used to trigger rehydration from outside of persistStore, for example in crosstab syncing.
+    
+#### `autoRehydrate()`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
 
-- `.purge(keys)`
-  - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
-
-- `.purgeAll()`
-  -  Purges all keys. (this method is available on the return value of persistStore)
-
-- `constants`
+#### `constants`
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
 ## Extend And Customize
