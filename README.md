@@ -5,6 +5,10 @@ Redux Persist is [performant](#performance), easy to [implement](#basic-usage), 
 
 Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
 
+[![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
+[![npm version](https://img.shields.io/npm/v/redux.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
+[![npm downloads](https://img.shields.io/npm/dm/redux.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
+
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
 ```js

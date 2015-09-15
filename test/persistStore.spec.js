@@ -67,4 +67,22 @@ describe('Scenarios', function() {
 
     persistStore(store, { storage: createMemoryStorage({}) })
   })
+
+  it('Does not rehydrate when purgeAll is invoked', function(done) {
+    let rehydrateCount = 0
+    let store = createMockStore({
+      mockState: {foo:1, bar:2},
+      dispatch: (action) => {
+        if(action.type === constants.REHYDRATE){
+          rehydrateCount++
+        }
+        if(action.type === constants.REHYDRATE_COMPLETE){
+          if(rehydrateCount === 0){ done() }
+          else{ throw new Error() }
+        }
+      }
+    })
+
+    persistStore(store, { storage: createMemoryStorage({foo:1, bar:2}) }).purgeAll()
+  })
 })
