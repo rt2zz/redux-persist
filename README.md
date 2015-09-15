@@ -6,8 +6,8 @@ Redux Persist is [performant](#performance), easy to [implement](#basic-usage), 
 Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
-[![npm version](https://img.shields.io/npm/v/redux.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
-[![npm downloads](https://img.shields.io/npm/dm/redux.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
+[![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
+[![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
@@ -68,10 +68,10 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
     - `.purge(keys)`
       - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
     - `.purgeAll()`
-      - Purges all keys. (this method is available on the return value of persistStore) 
+      - Purges all keys. (this method is available on the return value of persistStore)
     - `.rehydrate(key, serialDataString)`
       - This can be used to trigger rehydration from outside of persistStore, for example in crosstab syncing.
-    
+
 #### `autoRehydrate()`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
 
