@@ -22,9 +22,7 @@ import {REHYDRATE} from 'redux-persist/constants'
 //...
 case REHYDRATE:
   if(action.key === 'myReducer'){
-    //restore immutable data
-    let someList = Immutable.List(action.payload.someList)
-    return {...state, ...action.payload, someList}
+    return {...state, ...action.payload, someList: List(action.payload.someList}
   }
   return state
 ```
