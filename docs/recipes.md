@@ -118,5 +118,5 @@ const rehydrateAction = (key, data) => {
   }
 }
 
-persistStore(store, {actionCreator: rehydrateAction})
+persistStore(store, {rehydrateAction: rehydrateAction})
 ```
