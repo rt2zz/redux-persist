@@ -1,15 +1,15 @@
 var constants = require('./constants')
 
-module.exports = function bufferActions(cb) {
+module.exports = function bufferActions (cb) {
   let active = true
   let queue = []
 
   return next => action => {
-    if (!active){
+    if (!active) {
       return next(action)
     }
 
-    if(action.type === constants.REHYDRATE){
+    if (action.type === constants.REHYDRATE) {
       return next(action)
     }
 
@@ -19,8 +19,7 @@ module.exports = function bufferActions(cb) {
       queue.forEach((queuedAction) => next(queuedAction))
       cb(null, queue)
       queue = undefined
-    }
-    else {
+    } else {
       queue.push(action)
     }
   }

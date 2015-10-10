@@ -1,64 +1,59 @@
-var {compose} = require('redux')
-var bufferActions = require('./bufferActions')
-var constants = require('./constants')
+import { compose } from 'redux'
+import isPlainObject from 'lodash.isplainobject'
+import bufferActions from './bufferActions'
+import { REHYDRATE } from './constants'
 
-module.exports = function autoRehydrate(config){
+module.exports = function autoRehydrate (config) {
   config = config || {}
 
-  return function(next){
-    return function(reducer, initialState){
-      const rehydrationReducer = createRehydrationReducer(reducer)
+  return (next) => (reducer, initialState) => {
+    const rehydrationReducer = createRehydrationReducer(reducer)
 
-      // buffer actions
-      const store = next(rehydrationReducer, initialState)
-      const dispatch = compose(
-        bufferActions(onBufferEnd),
-        store.dispatch
-      )
+    // buffer actions
+    const store = next(rehydrationReducer, initialState)
+    const dispatch = compose(
+      bufferActions(onBufferEnd),
+      store.dispatch
+    )
 
-      return {
-        ...store,
-        dispatch
-      }
+    return {
+      ...store,
+      dispatch
     }
   }
 
-  function onBufferEnd(err, queue){
-    if(config.log){
-      console.log('redux-persist/autoRehydrate action buffer released', queue)
-    }
+  function onBufferEnd (err, queue) {
+    if (err) { console.error(err) }
+    if (config.log) { console.log('redux-persist/autoRehydrate action buffer released', queue) }
   }
 
-  function createRehydrationReducer(reducer){
-    return function(state, action){
-      if(action.type === constants.REHYDRATE){
+  function createRehydrationReducer (reducer) {
+    return (state, action) => {
+      if (action.type === REHYDRATE) {
         let key = action.key
         let data = action.payload
+        let reducedState = reducer(state, action)
 
-        var reducedState = reducer(state, action)
-        if(state[key] !== reducedState[key]){
-          if(config.log){
-            console.log('redux-persist/autoRehydrate sub state for key "%s" modified, skipping autoRehydrate', key)
-          }
+        if (state[key] !== reducedState[key]) {
+          // if reducer modifies substate, skip auto rehydration
+          if (config.log) { console.log('redux-persist/autoRehydrate sub state for key "%s" modified, skipping autoRehydrate', key) }
           return reducedState
         }
-        if(typeof data !== 'object' || typeof reducedState[key] !== 'object'){
-          //@TODO use isPlainObject instead?
+
+        if (!isPlainObject(data) || !isPlainObject(reducedState[key])) {
+          // substates are not objects -> assign value
           reducedState[key] = data
-        }
-        else{
-          //@TODO replace with es6 or lodash shallow merge
+        } else {
+          // substates are objects -> shallow merge
           var subState = {}
           for (var subkey in reducedState[key]) { subState[subkey] = reducedState[key][subkey] }
-          for (var subkey in data) { subState[subkey] = data[subkey] }
+          for (var datakey in data) { subState[datakey] = data[datakey] }
           reducedState[key] = subState
         }
-        if(config.log){
-          console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, subState)
-        }
+
+        if (config.log) { console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, subState) }
         return reducedState
-      }
-      else{
+      } else {
         return reducer(state, action)
       }
     }
