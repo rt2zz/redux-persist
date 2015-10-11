@@ -1,3 +1,5 @@
+/* global localStorage */
+
 var nextTick = process && process.nextTick ? process.nextTick : setImmediate
 
 export default {
