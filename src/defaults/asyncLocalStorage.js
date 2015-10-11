@@ -1,5 +1,4 @@
 var nextTick = process && process.nextTick ? process.nextTick : setImmediate
-var localStorage = localStorage || null
 
 export default {
   getItem: function (key, cb) {
