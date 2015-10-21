@@ -14,6 +14,7 @@ module.exports = function persistStore (store, config, cb) {
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
   const storage = config.storage || defaultStorage
+  const debounce = config.debounce || 33
 
   // initialize values
   let timeIterator = null
@@ -24,9 +25,7 @@ module.exports = function persistStore (store, config, cb) {
   let storesToProcess = []
 
   forEach(lastState, (s, key) => {
-    // check blacklist, and whitelist if set
-    if (whitelist && whitelist.indexOf(key) === -1) { return }
-    if (blacklist.indexOf(key) !== -1) { return }
+    if (whitelistBlacklistCheck(key)) { return }
     restoreCount += 1
     setImmediate(() => {
       restoreKey(key, () => {
@@ -37,11 +36,6 @@ module.exports = function persistStore (store, config, cb) {
   })
   if (restoreCount === 0) { rehydrationComplete() }
 
-  function rehydrationComplete () {
-    store.dispatch(completeAction())
-    cb && cb()
-  }
-
   // store state to disk
   store.subscribe(() => {
     // clear unfinished timeIterator if exists
@@ -51,15 +45,13 @@ module.exports = function persistStore (store, config, cb) {
 
     let state = store.getState()
     forEach(state, function (subState, key) {
-      if (whitelist && whitelist.indexOf(key) === -1) { return }
-      if (blacklist.indexOf(key) !== -1) { return }
-      // only store keys that have changed
+      if (whitelistBlacklistCheck(key)) { return }
       if (lastState[key] === state[key]) { return }
       if (storesToProcess.indexOf(key) !== -1) { return }
       storesToProcess.push(key)
     })
 
-    // time iterator runs every 33ms (30fps)
+    // time iterator (read: debounce)
     timeIterator = setInterval(() => {
       if (storesToProcess.length === 0) {
         clearInterval(timeIterator)
@@ -75,10 +67,16 @@ module.exports = function persistStore (store, config, cb) {
         storage.setItem(key, serial, warnIfSetError(key))
       }
       storesToProcess.shift()
-    }, 33)
+    }, debounce)
 
     lastState = state
   })
+
+  function whitelistBlacklistCheck (key) {
+    if (whitelist && whitelist.indexOf(key) === -1) { return true }
+    if (blacklist.indexOf(key) !== -1) { return true }
+    return false
+  }
 
   function restoreKey (key, cb) {
     storage.getItem(createStorageKey(key), function (err, serialized) {
@@ -104,6 +102,11 @@ module.exports = function persistStore (store, config, cb) {
       store.dispatch(rehydrateAction(key, state))
     }
     cb()
+  }
+
+  function rehydrationComplete () {
+    store.dispatch(completeAction())
+    cb && cb()
   }
 
   return {
