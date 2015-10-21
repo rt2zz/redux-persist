@@ -1,6 +1,6 @@
 {
   "name": "redux-persist",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "scripts": {
