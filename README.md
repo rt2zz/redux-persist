@@ -58,6 +58,7 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
       - **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
       - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
       - **transforms** *array* transforms to be applied during storage and during rehydration.
+        **debounce** *integer [33]* Debounce interval applied to storage calls.
     - **callback** *function* Will be called after rehydration is finished.
   - returns **persistor** object
 
@@ -80,6 +81,7 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
 Redux-persist is very easy to extend with new functionality:
 * ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
 * Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
+* Browser Extensions [browser-redux-sync](https://github.com/zalmoxisus/browser-redux-sync)
 
 #### Example
 ```js
