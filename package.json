@@ -37,7 +37,7 @@
     "expect": "1.12.2",
     "lodash.isequal": "^3.0.4",
     "mocha": "2.3.3",
-    "redux": "3.0.3",
+    "redux": "3.0.4",
     "rimraf": "2.4.3",
     "standard": "^5.3.1"
   },
