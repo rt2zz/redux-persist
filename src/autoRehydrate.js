@@ -1,4 +1,3 @@
-import { compose } from 'redux'
 import isPlainObject from 'lodash.isplainobject'
 import bufferActions from './bufferActions'
 import { REHYDRATE } from './constants'
@@ -37,19 +36,20 @@ module.exports = function autoRehydrate (config) {
           return reducedState
         }
 
+        var autoReducedState = {...reducedState}
         if (!isPlainObject(data) || !isPlainObject(reducedState[key])) {
           // substates are not objects -> assign value
-          reducedState[key] = data
+          autoReducedState[key] = data
         } else {
           // substates are objects -> shallow merge
           var subState = {}
           for (var subkey in reducedState[key]) { subState[subkey] = reducedState[key][subkey] }
           for (var datakey in data) { subState[datakey] = data[datakey] }
-          reducedState[key] = subState
+          autoReducedState[key] = subState
         }
 
-        if (config.log) { console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, subState) }
-        return reducedState
+        if (config.log) { console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, autoReducedState[key]) }
+        return autoReducedState
       } else {
         return reducer(state, action)
       }
