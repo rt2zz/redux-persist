@@ -88,8 +88,7 @@ Redux-persist is very easy to extend with new functionality:
 import reduxPersistImmutable from 'redux-persist-immutable'
 import crosstabSync from 'redux-persist-crosstab'
 
-const persistor = persistStore(store, {transforms: [reduxPersistImmutable]})
-crosstabSync(persistor)
+const persistor = persistStore(store, {transforms: [reduxPersistImmutable]}, () => crosstabSync(persistor))
 ```
 
 ## Storage Backends
