@@ -11,10 +11,7 @@ module.exports = function autoRehydrate (config) {
 
     // buffer actions
     const store = next(rehydrationReducer, initialState)
-    const dispatch = compose(
-      bufferActions(onBufferEnd),
-      store.dispatch
-    )
+    const dispatch = bufferActions(onBufferEnd)(store.dispatch)
 
     return {
       ...store,
