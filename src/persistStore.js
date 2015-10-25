@@ -15,6 +15,7 @@ module.exports = function persistStore (store, config, onComplete) {
   const transforms = config.transforms || []
   const storage = config.storage || defaultStorage
   const debounce = config.debounce || false
+  const shouldRehydrate = config.rehydrate || true
 
   // initialize values
   let timeIterator = null
@@ -102,13 +103,13 @@ module.exports = function persistStore (store, config, onComplete) {
 
     if (state !== null) {
       if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) { return }
-      store.dispatch(rehydrateAction(key, state))
+      if (shouldRehydrate) store.dispatch(rehydrateAction(key, state))
     }
     cb(null, state)
   }
 
   function rehydrationComplete () {
-    store.dispatch(completeAction())
+    if (shouldRehydrate) store.dispatch(completeAction())
     onComplete && onComplete(null, restoredState)
   }
 
