@@ -15,7 +15,7 @@ module.exports = function persistStore (store, config, onComplete) {
   const transforms = config.transforms || []
   const storage = config.storage || defaultStorage
   const debounce = config.debounce || false
-  const shouldRehydrate = config.rehydrate || true
+  const shouldRehydrate = !config.skipDispatch
 
   // initialize values
   let timeIterator = null

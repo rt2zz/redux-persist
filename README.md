@@ -56,11 +56,11 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
     - **config** *object*
       - **blacklist** *array* keys (read: reducers) to ignore
       - **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
-      - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
+      - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-backends) storage engine.
       - **transforms** *array* transforms to be applied during storage and during rehydration.
-      - **debounce** *integer [33]* Debounce interval applied to storage calls.
-        **rehydrate** *boolean [true]* False -> do not dispatch rehydrate actions.
-    - **callback** *function* Will be called after rehydration is finished.
+      - **debounce** *integer* debounce interval applied to storage calls.
+        **skipDispatch** *boolean* true -> do not dispatch rehydrate actions.
+    - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
 
 #### `persistor object`
