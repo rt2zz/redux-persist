@@ -100,7 +100,7 @@ module.exports = function persistStore (store, config, onComplete) {
     }
 
     if (state !== null) {
-      if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) return
+      if (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1) return
       if (shouldRehydrate) store.dispatch(rehydrateAction(key, state))
     }
     cb(null, state)

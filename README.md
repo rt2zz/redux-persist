@@ -28,8 +28,8 @@ case REHYDRATE:
 ```
 You may also need to configure the persistence layer, or take action after rehydration has completed:
 ```js
-persistStore(store, {blacklist: ['someTransientReducer']}, () => {
-  console.log('rehydration complete')
+persistStore(store, {blacklist: ['someTransientReducer']}, (err, state) => {
+  console.log('rehydration complete with state', state)
 })
 ```
 And if things get out of wack, just purge the storage
@@ -59,6 +59,7 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
       - **storage** *object* An object with the following methods implemented `setItem(key, string, cb)` `getItem(key, cb)` `removeItem(key, cb)`
       - **transforms** *array* transforms to be applied during storage and during rehydration.
       - **debounce** *integer [33]* Debounce interval applied to storage calls.
+        **rehydrate** *boolean [true]* False -> do not dispatch rehydrate actions.
     - **callback** *function* Will be called after rehydration is finished.
   - returns **persistor** object
 
@@ -111,6 +112,6 @@ Auto rehydrate is provided as a convenience. In a large application, or one with
 ## Performance
 JSON serialization and localStorage (which is sync!) can both hurt performance. To work around this redux-persist implements a few performance tricks:
 * **During Rehydration** getItem calls are invoked once per key using setImmediate.  
-* **During Storage** setItem calls are invoked only on keys whose state has changed, using a time iterator one key every 33 ms (i.e. 30fps)  
+* **During Storage** setItem calls are invoked only on keys whose state has changed. If performance is impacted, set `config.debounce = 33` to stagger (debounce) the calls by 33ms intervals (i.e. 30fps).  
 
 Additionally redux persist operates on a per reducer basis, which is a great lever for maximizing performance. If a piece of state is changing often (10+ times per second), isolate that state into it's own reducer, which will make the serialization and storage operations much faster.
