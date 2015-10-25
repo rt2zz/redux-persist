@@ -1,5 +1,8 @@
+import constants from '../../constants'
+import { mapKeys } from 'lodash'
+
 export default function createMemoryStorage (initialState) {
-  let state = initialState ? {...initialState} : {}
+  let state = mapKeys(initialState, (value, key) => constants.keyPrefix + key)
   return {
     getItem: function (key, cb) {
       cb(null, state[key])

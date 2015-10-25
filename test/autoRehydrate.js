@@ -2,7 +2,7 @@
 
 import { compose, createStore } from 'redux'
 import assert from 'assert'
-import isEqual from 'lodash.isequal'
+import { isEqual } from 'lodash'
 
 import { REHYDRATE } from '../constants'
 import { autoRehydrate } from '../src'

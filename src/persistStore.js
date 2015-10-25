@@ -121,7 +121,7 @@ module.exports = function persistStore (store, config, onComplete) {
   function purgeAll () {
     storage.getAllKeys((err, allKeys) => {
       if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
-      purge(allKeys.filter(key => key.indexOf(constants.keyPrefix) === 0))
+      purge(allKeys.filter(key => key.indexOf(constants.keyPrefix) === 0).map(key => key.slice(constants.keyPrefix.length)))
     })
   }
 

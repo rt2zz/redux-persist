@@ -3,6 +3,8 @@
 import { persistStore } from '../src'
 import constants from '../constants'
 import createMemoryStorage from './mock/createMemoryStorage'
+import assert from 'assert'
+import { isEqual } from 'lodash'
 
 function createMockStore (opts) {
   return {
@@ -30,7 +32,7 @@ describe('Scenarios', function () {
       }
     })
 
-    persistStore(store, { storage: createMemoryStorage({[constants.keyPrefix + 'foo']: '1', [constants.keyPrefix + 'bar']: '2'}) })
+    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}) })
   })
 
   it('Dispatch 0 REHYDRATE & 1 REHYDRATE_COMPLETE when restoring initialState: {} storedState: {foo:1, bar:2}', function (done) {
@@ -48,7 +50,7 @@ describe('Scenarios', function () {
       }
     })
 
-    persistStore(store, { storage: createMemoryStorage({[constants.keyPrefix + 'foo']: '1', [constants.keyPrefix + 'bar']: '2'}) })
+    persistStore(store, { storage: createMemoryStorage({foo: '1', bar: '2'}) })
   })
 
   it('Dispatch 0 REHYDRATE & 1 REHYDRATE_COMPLETE when restoring initialState: {foo:1, bar:2} storedState: {}', function (done) {
@@ -85,5 +87,37 @@ describe('Scenarios', function () {
     })
 
     persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}) }).purgeAll()
+  })
+
+  it('Does not rehydrate when skipDispatch:true', function (done) {
+    let store = createMockStore({
+      mockState: {foo: 1, bar: 2},
+      dispatch: (action) => {
+        if (action.type === constants.REHYDRATE) {
+          throw new Error('unexpected REHYDRATE')
+        }
+        if (action.type === constants.REHYDRATE_COMPLETE) {
+          throw new Error('unexpected REHYDRATE_COMPLETE')
+        }
+      }
+    })
+
+    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}), skipDispatch: true }, () => {
+      done()
+    })
+  })
+
+  it('Returns state to persistStore callback', function (done) {
+    let store = createMockStore({
+      mockState: {foo: 1, bar: 2},
+      dispatch: () => {}
+    })
+
+    let seedState = {foo: 3, bar: 4}
+    persistStore(store, { storage: createMemoryStorage(seedState) }, (err, state) => {
+      if (err) throw new Error()
+      assert(isEqual(state, seedState))
+      done()
+    })
   })
 })
