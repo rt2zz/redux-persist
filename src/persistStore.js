@@ -3,7 +3,7 @@ var forEach = require('lodash.foreach')
 var constants = require('./constants')
 var defaultStorage = require('./defaults/asyncLocalStorage')
 
-module.exports = function persistStore (store, config, cb) {
+module.exports = function persistStore (store, config, onComplete) {
   // defaults
   config = config || {}
   const blacklist = config.blacklist || []
@@ -14,7 +14,7 @@ module.exports = function persistStore (store, config, cb) {
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
   const storage = config.storage || defaultStorage
-  const debounce = config.debounce || 33
+  const debounce = config.debounce || false
 
   // initialize values
   let timeIterator = null
@@ -23,22 +23,25 @@ module.exports = function persistStore (store, config, cb) {
   let restoreCount = 0
   let completionCount = 0
   let storesToProcess = []
+  let restoredState = {}
 
+  // restore
   forEach(lastState, (s, key) => {
     if (whitelistBlacklistCheck(key)) { return }
     restoreCount += 1
     setImmediate(() => {
-      restoreKey(key, () => {
+      restoreKey(key, (err, substate) => {
+        if (err) substate = null
         completionCount += 1
+        restoredState[key] = substate
         if (completionCount === restoreCount) { rehydrationComplete() }
       })
     })
   })
   if (restoreCount === 0) { rehydrationComplete() }
 
-  // store state to disk
+  // store
   store.subscribe(() => {
-    // clear unfinished timeIterator if exists
     if (timeIterator !== null) {
       clearInterval(timeIterator)
     }
@@ -101,12 +104,12 @@ module.exports = function persistStore (store, config, cb) {
       if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) { return }
       store.dispatch(rehydrateAction(key, state))
     }
-    cb()
+    cb(null, state)
   }
 
   function rehydrationComplete () {
     store.dispatch(completeAction())
-    cb && cb()
+    onComplete && onComplete(null, restoredState)
   }
 
   return {
