@@ -5,22 +5,16 @@ module.exports = function bufferActions (cb) {
   let queue = []
 
   return next => action => {
-    if (!active) {
-      return next(action)
-    }
-
-    if (action.type === constants.REHYDRATE) {
-      return next(action)
-    }
-
+    if (!active) return next(action)
+    if (action.type === constants.REHYDRATE) return next(action)
     if (action.type === constants.REHYDRATE_COMPLETE) {
       active = false
-      next(action)
+      let result = next(action)
       queue.forEach((queuedAction) => next(queuedAction))
       cb(null, queue)
-      queue = undefined
-    } else {
-      queue.push(action)
+      return result
     }
+
+    queue.push(action)
   }
 }

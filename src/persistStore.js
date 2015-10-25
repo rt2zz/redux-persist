@@ -1,11 +1,10 @@
-'use strict'
+
 var forEach = require('lodash.foreach')
 var constants = require('./constants')
 var defaultStorage = require('./defaults/asyncLocalStorage')
 
-module.exports = function persistStore (store, config, onComplete) {
+module.exports = function persistStore (store, config = {}, onComplete) {
   // defaults
-  config = config || {}
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const rehydrateAction = config.rehydrateAction || defaultRehydrateAction
@@ -61,13 +60,8 @@ module.exports = function persistStore (store, config, onComplete) {
       }
 
       let key = createStorageKey(storesToProcess[0])
-      let endState = transforms.reduce((subState, transformer) => {
-        return transformer.in(subState)
-      }, state[storesToProcess[0]])
-      if (typeof endState !== 'undefined') {
-        let serial = serialize(endState)
-        storage.setItem(key, serial, warnIfSetError(key))
-      }
+      let endState = transforms.reduce((subState, transformer) => transformer.in(subState), state[storesToProcess[0]])
+      if (typeof endState !== 'undefined') storage.setItem(key, serialize(endState), warnIfSetError(key))
       storesToProcess.shift()
     }, debounce)
 
@@ -89,6 +83,7 @@ module.exports = function persistStore (store, config, onComplete) {
 
   function rehydrate (key, serialized, cb) {
     let state = null
+
     try {
       let data = deserialize(serialized)
       state = transforms.reduceRight((subState, transformer) => {
@@ -125,6 +120,7 @@ module.exports = function persistStore (store, config, onComplete) {
     })
   }
 
+  // return `persistor`
   return {
     rehydrate,
     purge,
