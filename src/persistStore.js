@@ -28,30 +28,28 @@ module.exports = function persistStore (store, config, onComplete) {
 
   // restore
   forEach(lastState, (s, key) => {
-    if (whitelistBlacklistCheck(key)) { return }
+    if (whitelistBlacklistCheck(key)) return
     restoreCount += 1
     setImmediate(() => {
       restoreKey(key, (err, substate) => {
         if (err) substate = null
         completionCount += 1
         restoredState[key] = substate
-        if (completionCount === restoreCount) { rehydrationComplete() }
+        if (completionCount === restoreCount) rehydrationComplete()
       })
     })
   })
-  if (restoreCount === 0) { rehydrationComplete() }
+  if (restoreCount === 0) rehydrationComplete()
 
   // store
   store.subscribe(() => {
-    if (timeIterator !== null) {
-      clearInterval(timeIterator)
-    }
+    if (timeIterator !== null) clearInterval(timeIterator)
 
     let state = store.getState()
     forEach(state, function (subState, key) {
-      if (whitelistBlacklistCheck(key)) { return }
-      if (lastState[key] === state[key]) { return }
-      if (storesToProcess.indexOf(key) !== -1) { return }
+      if (whitelistBlacklistCheck(key)) return
+      if (lastState[key] === state[key]) return
+      if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
 
@@ -77,8 +75,8 @@ module.exports = function persistStore (store, config, onComplete) {
   })
 
   function whitelistBlacklistCheck (key) {
-    if (whitelist && whitelist.indexOf(key) === -1) { return true }
-    if (blacklist.indexOf(key) !== -1) { return true }
+    if (whitelist && whitelist.indexOf(key) === -1) return true
+    if (blacklist.indexOf(key) !== -1) return true
     return false
   }
 
@@ -102,7 +100,7 @@ module.exports = function persistStore (store, config, onComplete) {
     }
 
     if (state !== null) {
-      if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) { return }
+      if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) return
       if (shouldRehydrate) store.dispatch(rehydrateAction(key, state))
     }
     cb(null, state)
@@ -113,25 +111,24 @@ module.exports = function persistStore (store, config, onComplete) {
     onComplete && onComplete(null, restoredState)
   }
 
+  function purge (keys) {
+    purgeMode = keys
+    forEach(keys, (key) => {
+      storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
+    })
+  }
+
+  function purgeAll () {
+    storage.getAllKeys((err, allKeys) => {
+      if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
+      purge(allKeys.filter(key => key.indexOf(constants.keyPrefix) === 0))
+    })
+  }
+
   return {
-    rehydrate: rehydrate,
-    purge: (keys) => {
-      purgeMode = keys
-      forEach(keys, (key) => {
-        storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
-      })
-    },
-    purgeAll: () => {
-      purgeMode = '*'
-      storage.getAllKeys((err, keys) => {
-        if (err) { console.warn(err) }
-        forEach(keys, function (key) {
-          if (key.indexOf(constants.keyPrefix) === 0) {
-            storage.removeItem(key, warnIfRemoveError(key))
-          }
-        })
-      })
-    }
+    rehydrate,
+    purge,
+    purgeAll
   }
 }
 
