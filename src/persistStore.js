@@ -1,4 +1,3 @@
-
 var forEach = require('lodash.foreach')
 var constants = require('./constants')
 var defaultStorage = require('./defaults/asyncLocalStorage')
