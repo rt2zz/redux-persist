@@ -1,6 +1,6 @@
 /* global it, describe */
 
-import { persistStore } from '../src'
+import { persistStore, getStoredState } from '../src'
 import constants from '../constants'
 import createMemoryStorage from './mock/createMemoryStorage'
 import assert from 'assert'
@@ -89,7 +89,7 @@ describe('Scenarios', function () {
     persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}) }).purgeAll()
   })
 
-  it('Does not rehydrate when skipDispatch:true', function (done) {
+  it('Does not rehydrate when skipRehydrate:true', function (done) {
     let store = createMockStore({
       mockState: {foo: 1, bar: 2},
       dispatch: (action) => {
@@ -102,7 +102,7 @@ describe('Scenarios', function () {
       }
     })
 
-    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}), skipDispatch: true }, () => {
+    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}), skipRehydrate: true }, () => {
       done()
     })
   })
@@ -115,6 +115,17 @@ describe('Scenarios', function () {
 
     let seedState = {foo: 3, bar: 4}
     persistStore(store, { storage: createMemoryStorage(seedState) }, (err, state) => {
+      if (err) throw new Error()
+      assert(isEqual(state, seedState))
+      done()
+    })
+  })
+})
+
+describe('getStoredState', function () {
+  it('returns stored state', function (done) {
+    let seedState = {foo: 3, bar: 4}
+    getStoredState({ storage: createMemoryStorage(seedState) }, (err, state) => {
       if (err) throw new Error()
       assert(isEqual(state, seedState))
       done()

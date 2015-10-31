@@ -1,8 +1,8 @@
-var forEach = require('lodash.foreach')
-var constants = require('./constants')
-var defaultStorage = require('./defaults/asyncLocalStorage')
+import forEach from 'lodash.foreach'
+import constants from './constants'
+import defaultStorage from './defaults/asyncLocalStorage'
 
-module.exports = function persistStore (store, config = {}, onComplete) {
+export default function persistStore (store, config = {}, onComplete) {
   // defaults
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
@@ -13,7 +13,7 @@ module.exports = function persistStore (store, config = {}, onComplete) {
   const transforms = config.transforms || []
   const storage = config.storage || defaultStorage
   const debounce = config.debounce || false
-  const shouldRehydrate = !config.skipDispatch
+  const shouldRehydrate = !config.skipRehydrate
 
   // initialize values
   let timeIterator = null
@@ -25,26 +25,29 @@ module.exports = function persistStore (store, config = {}, onComplete) {
   let restoredState = {}
 
   // restore
-  forEach(lastState, (s, key) => {
-    if (whitelistBlacklistCheck(key)) return
-    restoreCount += 1
-    setImmediate(() => {
-      restoreKey(key, (err, substate) => {
-        if (err) substate = null
-        completionCount += 1
-        restoredState[key] = substate
-        if (completionCount === restoreCount) rehydrationComplete()
+  if (shouldRehydrate) {
+    forEach(lastState, (s, key) => {
+      if (whitelistBlacklistCheck(key)) return
+      restoreCount += 1
+      setImmediate(() => {
+        restoreKey(key, (err, substate) => {
+          if (err) substate = null
+          completionCount += 1
+          restoredState[key] = substate
+          if (completionCount === restoreCount) rehydrationComplete()
+        })
       })
     })
-  })
-  if (restoreCount === 0) rehydrationComplete()
+    if (restoreCount === 0) rehydrationComplete()
+  }
+  else rehydrationComplete()
 
   // store
   store.subscribe(() => {
     if (timeIterator !== null) clearInterval(timeIterator)
 
     let state = store.getState()
-    forEach(state, function (subState, key) {
+    forEach(state, (subState, key) => {
       if (whitelistBlacklistCheck(key)) return
       if (lastState[key] === state[key]) return
       if (storesToProcess.indexOf(key) !== -1) return
@@ -74,7 +77,7 @@ module.exports = function persistStore (store, config = {}, onComplete) {
   }
 
   function restoreKey (key, cb) {
-    storage.getItem(createStorageKey(key), function (err, serialized) {
+    storage.getItem(createStorageKey(key), (err, serialized) => {
       if (err && process.env.NODE_ENV !== 'production') console.warn('Error restoring data for key:', key, err)
       else rehydrate(key, serialized, cb)
     })
