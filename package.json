@@ -31,7 +31,7 @@
     "lodash.isplainobject": "^3.2.0"
   },
   "devDependencies": {
-    "babel": "~6.0.14",
+    "babel": "^6.0.14",
     "babel-core": "^6.0.14",
     "babel-eslint": "^4.1.3",
     "expect": "~1.12.2",
