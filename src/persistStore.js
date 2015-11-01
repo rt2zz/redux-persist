@@ -13,7 +13,7 @@ export default function persistStore (store, config = {}, onComplete) {
   const transforms = config.transforms || []
   const storage = config.storage || defaultStorage
   const debounce = config.debounce || false
-  const shouldRehydrate = !config.skipRehydrate
+  const shouldRestore = !config.skipRestore
 
   // initialize values
   let timeIterator = null
@@ -25,7 +25,7 @@ export default function persistStore (store, config = {}, onComplete) {
   let restoredState = {}
 
   // restore
-  if (shouldRehydrate) {
+  if (shouldRestore) {
     forEach(lastState, (s, key) => {
       if (whitelistBlacklistCheck(key)) return
       restoreCount += 1
@@ -97,14 +97,14 @@ export default function persistStore (store, config = {}, onComplete) {
     }
 
     if (state !== null) {
-      if (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1) return
-      if (shouldRehydrate) store.dispatch(rehydrateAction(key, state))
+      if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) return
+      store.dispatch(rehydrateAction(key, state))
     }
     cb(null, state)
   }
 
   function rehydrationComplete () {
-    if (shouldRehydrate) store.dispatch(completeAction())
+    if (shouldRestore) store.dispatch(completeAction())
     onComplete && onComplete(null, restoredState)
   }
 
@@ -116,6 +116,7 @@ export default function persistStore (store, config = {}, onComplete) {
   }
 
   function purgeAll () {
+    purgeMode = '*'
     storage.getAllKeys((err, allKeys) => {
       if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
       purge(allKeys.filter(key => key.indexOf(constants.keyPrefix) === 0).map(key => key.slice(constants.keyPrefix.length)))
