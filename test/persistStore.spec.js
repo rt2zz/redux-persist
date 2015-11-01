@@ -16,7 +16,7 @@ function createMockStore (opts) {
   }
 }
 
-describe('Scenarios', function () {
+describe('persistStore scenarios', function () {
   it('Dispatch 2 REHYDRATE & 1 REHYDRATE_COMPLETE when restoring initialState: {foo:1, bar:2} storedState: {foo:1, bar:2}', function (done) {
     let rehydrateCount = 0
     let store = createMockStore({
@@ -89,7 +89,7 @@ describe('Scenarios', function () {
     persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}) }).purgeAll()
   })
 
-  it('Does not rehydrate when skipRehydrate:true', function (done) {
+  it('Does not restore when skipRestore:true', function (done) {
     let store = createMockStore({
       mockState: {foo: 1, bar: 2},
       dispatch: (action) => {
@@ -102,7 +102,7 @@ describe('Scenarios', function () {
       }
     })
 
-    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}), skipRehydrate: true }, () => {
+    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}), skipRestore: true }, () => {
       done()
     })
   })
@@ -129,6 +129,39 @@ describe('getStoredState', function () {
       if (err) throw new Error()
       assert(isEqual(state, seedState))
       done()
+    })
+  })
+})
+
+describe('adhoc rehydrate', function () {
+  it('processes adhoc rehydrate', function (done) {
+    let store = createMockStore({
+      mockState: { foo: 3, bar: [1] },
+      dispatch: (action) => {
+        if (action.type === constants.REHYDRATE) {
+          if (action.payload === 'adhocPayload') done()
+        }
+      }
+    })
+    let seedState = {foo: 3, bar: 4}
+    const persistor = persistStore(store, { storage: createMemoryStorage(seedState) }, (err, state) => {
+      if (err) throw new Error()
+      persistor.rehydrate('bar', '"adhocPayload"')
+    })
+  })
+  it('processes adhoc rehydrate when skipRestore: true', function (done) {
+    let store = createMockStore({
+      mockState: { foo: 3, bar: [1] },
+      dispatch: (action) => {
+        if (action.type === constants.REHYDRATE) {
+          if (action.key === 'bar' && action.payload === 'adhocPayload') done()
+        }
+      }
+    })
+    let seedState = {foo: 3, bar: 4}
+    const persistor = persistStore(store, { storage: createMemoryStorage(seedState), skipRestore: true }, (err, state) => {
+      if (err) throw new Error()
+      persistor.rehydrate('bar', '"adhocPayload"')
     })
   })
 })

@@ -100,12 +100,12 @@ export default function persistStore (store, config = {}, onComplete) {
       if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) return
       store.dispatch(rehydrateAction(key, state))
     }
-    cb(null, state)
+    cb && cb(null, state)
   }
 
   function rehydrationComplete () {
     if (shouldRestore) store.dispatch(completeAction())
-    onComplete && onComplete(null, restoredState)
+    setImmediate(() => onComplete && onComplete(null, restoredState))
   }
 
   function purge (keys) {

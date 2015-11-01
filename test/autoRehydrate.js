@@ -11,7 +11,7 @@ const reducer = (state = {arraySpace: ['someInitialValue']}) => state
 
 var finalCreateStore = compose(autoRehydrate())(createStore)
 
-describe('Rehydrate Actions', function () {
+describe('rehydrate actions', function () {
   it('with array payloud should overwrite substate', function () {
     let store = finalCreateStore(reducer)
     store.dispatch(rehydrate('arraySpace', [1, 2]))
