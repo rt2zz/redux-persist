@@ -93,6 +93,7 @@ const persistor = persistStore(store, {transforms: [reduxPersistImmutable]}, () 
 ```
 
 ## Semi Secret Advanced APIs
+**warning** these api's may change without warning
 #### initialState rehydration
 ```js
 import {getStoredState, autoRehydrate, persistStore} from 'redux-persist'
