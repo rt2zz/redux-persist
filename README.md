@@ -115,9 +115,9 @@ getStoredState(persistConfig, (err, initialState) => {
 ```
 
 #### Secondary Persistor
-```
+```js
 const persistor = persistStore(store)
-const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, shouldRestore: false})
+const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, skipRestore: false})
 ```
 
 ## Storage Backends
