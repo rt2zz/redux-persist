@@ -4,20 +4,42 @@ import { compose, createStore } from 'redux'
 import assert from 'assert'
 import { isEqual } from 'lodash'
 
-import { REHYDRATE } from '../constants'
+import { REHYDRATE, REHYDRATE_COMPLETE } from '../constants'
 import { autoRehydrate } from '../src'
 
-const reducer = (state = {arraySpace: ['someInitialValue']}) => state
+const createReducer = (actionCallback) => {
+  return (state = {arraySpace: ['someInitialValue']}, action) => {
+    actionCallback && actionCallback(action)
+    return state
+  }
+}
 
 var finalCreateStore = compose(autoRehydrate())(createStore)
 
 describe('rehydrate actions', function () {
-  it('with array payloud should overwrite substate', function () {
-    let store = finalCreateStore(reducer)
+  it('with array payload should overwrite substate', function () {
+    let store = finalCreateStore(createReducer())
     store.dispatch(rehydrate('arraySpace', [1, 2]))
     let state = store.getState()
     assert(isEqual(state.arraySpace, [1, 2]))
   })
+  it('buffers actions correctly', function (done) {
+    var actionHistory = []
+
+    let store = finalCreateStore(createReducer(actionCallback))
+    store.dispatch({type: 'TEST1'})
+    store.dispatch(rehydrate('arraySpace', [1, 2]))
+    store.dispatch(rehydrateComplete())
+
+    function actionCallback (action) {
+      if (action.type.indexOf('@@redux') !== 0) actionHistory.push(action.type)
+      if (action.type === 'TEST1') {
+        assert(actionHistory.indexOf(action.type) === 2)
+        done()
+      }
+    }
+  })
 })
 
 const rehydrate = (key, payload) => ({type: REHYDRATE, key, payload})
+const rehydrateComplete = (key, payload) => ({type: REHYDRATE_COMPLETE})

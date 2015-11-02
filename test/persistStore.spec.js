@@ -96,9 +96,6 @@ describe('persistStore scenarios', function () {
         if (action.type === constants.REHYDRATE) {
           throw new Error('unexpected REHYDRATE')
         }
-        if (action.type === constants.REHYDRATE_COMPLETE) {
-          throw new Error('unexpected REHYDRATE_COMPLETE')
-        }
       }
     })
 
