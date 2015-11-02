@@ -12,24 +12,24 @@ Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs
 ## Basic Usage
 Basic usage requires adding three lines to a traditional redux application:
 ```js
-import { persistStore, autoRehydrate } from 'redux-persist'
+import {persistStore, autoRehydrate} from 'redux-persist'
 const store = autoRehydrate()(createStore)(reducer)
 persistStore(store)
 ```
-For more complex rehydration, like restoring immutable data, add a handler to your reducer:
+For per reducer rehydration logic, you can opt-in by adding a handler to your reducer:
 ```js
 import {REHYDRATE} from 'redux-persist/constants'
 //...
 case REHYDRATE:
   if(action.key === 'myReducer'){
-    return {...state, ...action.payload, someList: List(action.payload.someList}
+    return {...state, ...action.payload, specialKey: processSpecial(action.payload.specialKey)}
   }
   return state
 ```
 You may also need to configure the persistence layer, or take action after rehydration has completed:
 ```js
-persistStore(store, {blacklist: ['someTransientReducer']}, (err, state) => {
-  console.log('rehydration complete with state', state)
+persistStore(store, {blacklist: ['someTransientReducer']}, () => {
+  console.log('rehydration complete with state')
 })
 ```
 And if things get out of wack, just purge the storage
@@ -90,6 +90,34 @@ import reduxPersistImmutable from 'redux-persist-immutable'
 import crosstabSync from 'redux-persist-crosstab'
 
 const persistor = persistStore(store, {transforms: [reduxPersistImmutable]}, () => crosstabSync(persistor))
+```
+
+## Semi Secret Advanced APIs
+#### initialState rehydration
+```js
+import {getStoredState, autoRehydrate, persistStore} from 'redux-persist'
+
+//... set up everything per normal: finalCreateStore, reducer etc.
+
+const persistConfig = {
+  skipRestore: true
+}
+
+getStoredState(persistConfig, (err, initialState) => {
+  const store = finalCreateStore(reducer, initialState)
+  persistStore(store, persistConfig)
+  render(
+    <Root store={store} />,
+       document.getElementById('root')
+    </Root>
+  )
+})
+```
+
+#### Secondary Persistor
+```
+const persistor = persistStore(store)
+const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, shouldRestore: false})
 ```
 
 ## Storage Backends
