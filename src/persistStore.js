@@ -104,7 +104,7 @@ export default function persistStore (store, config = {}, onComplete) {
   }
 
   function rehydrationComplete () {
-    if (shouldRestore) store.dispatch(completeAction())
+    store.dispatch(completeAction())
     setImmediate(() => onComplete && onComplete(null, restoredState))
   }
 
