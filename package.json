@@ -8,7 +8,7 @@
     "test:watch": "npm test -- --watch",
     "clean": "rimraf lib dist",
     "build": "babel src --out-dir lib",
-    "build:watch": "watch 'npm run build' ./src",
+    "build:watch": "npm run build ./src -- -watch",
     "prepublish": "npm run clean && npm run build"
   },
   "repository": {
