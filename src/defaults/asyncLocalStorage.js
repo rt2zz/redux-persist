@@ -7,8 +7,8 @@ const noLS = process && process.env && process.env.NODE_ENV === 'production'
     return null
   }
 
-var localStorage = typeof localStorage !== 'undefined'
-  ? localStorage
+var localStorage = window && typeof window.localStorage !== 'undefined'
+  ? window.localStorage
   : { getItem: noLS, setItem: noLS, removeItem: noLS, getAllKeys: noLS }
 
 export default {
