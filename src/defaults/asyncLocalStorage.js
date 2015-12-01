@@ -7,7 +7,7 @@ const noLS = process && process.env && process.env.NODE_ENV === 'production'
     return null
   }
 
-var localStorage = window && typeof window.localStorage !== 'undefined'
+var localStorage = typeof window === 'object' && typeof window.localStorage !== 'undefined'
   ? window.localStorage
   : { getItem: noLS, setItem: noLS, removeItem: noLS, getAllKeys: noLS }
 
