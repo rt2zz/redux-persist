@@ -37,18 +37,6 @@ And if things get out of wack, just purge the storage
 persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
 ```
 
-## Rationale
-
-* Performant out of the box (uses a time iterator and operates on state partials)
-* Keeps custom rehydration logic in the reducers (where it intuitively belongs)
-* Supports localStorage, react-native AsyncStorage, or any conforming storage api
-
-The core idea behind redux-persist is to provide performant persistence and rehydration methods. At the same time redux-persist is designed to minimize complexity by knowing as little about your application as possible.
-
-Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration.
-
-Because persisting state is inherently stateful, `persistStore` lives outside of the redux store. Importantly this keeps the store 'pure' and makes testing and extending the persistor much easier.
-
 ## API
 #### `persistStore(store, [config, callback])`
   - arguments
@@ -128,6 +116,17 @@ const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, s
 import {AsyncStorage} from 'react-native'
 persistStore(store, {storage: AsyncStorage})
 ```
+## Rationale
+
+* Performant out of the box (uses a time iterator and operates on state partials)
+* Keeps custom rehydration logic in the reducers (where it intuitively belongs)
+* Supports localStorage, react-native AsyncStorage, or any conforming storage api
+
+The core idea behind redux-persist is to provide performant persistence and rehydration methods. At the same time redux-persist is designed to minimize complexity by knowing as little about your application as possible.
+
+Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration.
+
+Because persisting state is inherently stateful, `persistStore` lives outside of the redux store. Importantly this keeps the store 'pure' and makes testing and extending the persistor much easier.
 
 ## About Auto Rehydrate
 autoRehydrate is a store enhancer that automatically rehydrates state.
