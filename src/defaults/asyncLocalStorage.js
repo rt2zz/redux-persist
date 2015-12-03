@@ -7,7 +7,16 @@ const noLS = process && process.env && process.env.NODE_ENV === 'production'
     return null
   }
 
-var localStorage = typeof window === 'object' && typeof window.localStorage !== 'undefined'
+function hasLocalStorage()  {
+  try {
+    return typeof window.localStorage !== 'undefined';
+  } catch (e) {
+    // window.localStorage does not exist of we have no access
+    return false;
+  }
+}
+
+var localStorage = hasLocalStorage()
   ? window.localStorage
   : { getItem: noLS, setItem: noLS, removeItem: noLS, getAllKeys: noLS }
 
