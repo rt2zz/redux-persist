@@ -7,12 +7,11 @@ const noLS = process && process.env && process.env.NODE_ENV === 'production'
     return null
   }
 
-function hasLocalStorage()  {
+function hasLocalStorage () {
   try {
-    return typeof window.localStorage !== 'undefined';
+    return typeof window === 'object' && typeof window.localStorage !== 'undefined'
   } catch (e) {
-    // window.localStorage does not exist of we have no access
-    return false;
+    return false
   }
 }
 
