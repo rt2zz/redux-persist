@@ -43,7 +43,8 @@
   },
   "files": [
     "lib",
-    "src"
+    "src",
+    "constants.js"
   ],
   "standard": {
     "parser": "babel-eslint"
