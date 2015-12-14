@@ -22,7 +22,9 @@ module.exports = function autoRehydrate (config = {}) {
   }
 
   function checkIsObject (data, reducedState, key) {
-    if ((data.size || data.hasOwnProperty('size')) || (reducedState[key].size || reducedState[key].hasOwnProperty('size'))) {
+    if (data.size || data.hasOwnProperty('size')) {
+      return true
+    } else if (reducedState[key] && (reducedState[key].size || reducedState[key].hasOwnProperty('size'))) {
       return true
     } else if (isPlainObject(data) || isPlainObject(reducedState[key])) {
       return true
