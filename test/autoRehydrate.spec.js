@@ -7,6 +7,8 @@ import { isEqual } from 'lodash'
 import { REHYDRATE, REHYDRATE_COMPLETE } from '../constants'
 import { autoRehydrate } from '../src'
 
+const someString = 'someString'
+
 const createReducer = (actionCallback) => {
   return (state = {arraySpace: ['someInitialValue']}, action) => {
     actionCallback && actionCallback(action)
@@ -22,6 +24,12 @@ describe('rehydrate actions', function () {
     store.dispatch(rehydrate('arraySpace', [1, 2]))
     let state = store.getState()
     assert(isEqual(state.arraySpace, [1, 2]))
+  })
+  it('rehydrates string state', function () {
+    let store = finalCreateStore(createReducer())
+    store.dispatch(rehydrate('stringSpace', someString))
+    let state = store.getState()
+    assert(isEqual(state.stringSpace, someString))
   })
   it('buffers actions correctly', function (done) {
     var actionHistory = []
