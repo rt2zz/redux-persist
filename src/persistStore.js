@@ -14,7 +14,7 @@ export default function persistStore (store, config = {}, onComplete) {
   const storage = config.storage || defaultStorage
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
-  if (typeof setImmediate === 'undefined') { const setImmediate = global.setImmediate }
+  const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 
   // initialize values
   let timeIterator = null
@@ -30,7 +30,7 @@ export default function persistStore (store, config = {}, onComplete) {
     forEach(lastState, (s, key) => {
       if (whitelistBlacklistCheck(key)) return
       restoreCount += 1
-      setImmediate(() => {
+      genericSetImmediate(() => {
         restoreKey(key, (err, substate) => {
           if (err) substate = null
           completionCount += 1
@@ -106,7 +106,7 @@ export default function persistStore (store, config = {}, onComplete) {
 
   function rehydrationComplete () {
     store.dispatch(completeAction())
-    setImmediate(() => onComplete && onComplete(null, restoredState))
+    genericSetImmediate(() => onComplete && onComplete(null, restoredState))
   }
 
   function purge (keys) {

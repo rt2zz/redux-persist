@@ -1,4 +1,5 @@
-var nextTick = process && process.nextTick ? process.nextTick : setImmediate
+const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
+const nextTick = process && process.nextTick ? process.nextTick : genericSetImmediate
 
 const noLS = process && process.env && process.env.NODE_ENV === 'production'
   ? () => { /* noop */ return null }
