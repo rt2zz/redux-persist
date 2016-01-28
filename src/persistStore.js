@@ -14,6 +14,7 @@ export default function persistStore (store, config = {}, onComplete) {
   const storage = config.storage || defaultStorage
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
+  if (typeof setImmediate === 'undefined') { const setImmediate = global.setImmediate }
 
   // initialize values
   let timeIterator = null
