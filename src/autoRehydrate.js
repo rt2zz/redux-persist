@@ -21,17 +21,6 @@ module.exports = function autoRehydrate (config = {}) {
     if (config.log) console.log('redux-persist/autoRehydrate action buffer released', queue)
   }
 
-  function checkIsObject (data, reducedState, key) {
-    if (data.size || data.hasOwnProperty('size')) {
-      return true
-    } else if (reducedState[key] && (reducedState[key].size || reducedState[key].hasOwnProperty('size'))) {
-      return true
-    } else if (isPlainObject(data) || isPlainObject(reducedState[key])) {
-      return true
-    }
-    return false
-  }
-
   function createRehydrationReducer (reducer) {
     return (state, action) => {
       if (action.type === REHYDRATE) {
@@ -46,8 +35,8 @@ module.exports = function autoRehydrate (config = {}) {
         }
 
         let autoReducedState = {...reducedState}
-        let isObject = checkIsObject(data, reducedState, key)
-        if (!isObject) {
+        let statesArePlain = isPlainObject(data) && isPlainObject(reducedState[key])
+        if (!statesArePlain) {
           // assign value
           autoReducedState[key] = data
         } else {
