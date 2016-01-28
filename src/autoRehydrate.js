@@ -3,11 +3,11 @@ import bufferActions from './bufferActions'
 import { REHYDRATE } from './constants'
 
 module.exports = function autoRehydrate (config = {}) {
-  return (next) => (reducer, initialState) => {
+  return (next) => (reducer, initialState, enhancer) => {
     const rehydrationReducer = createRehydrationReducer(reducer)
 
     // buffer actions
-    const store = next(rehydrationReducer, initialState)
+    const store = next(rehydrationReducer, initialState, enhancer)
     const dispatch = bufferActions(onBufferEnd)(store.dispatch)
 
     return {
