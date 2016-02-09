@@ -97,9 +97,8 @@ export default function persistStore (store, config = {}, onComplete) {
       storage.removeItem(key, warnIfRemoveError(key))
     }
 
-    if (state !== null) {
-      if (purgeMode === '*' || (Array.isArray(purgeMode) && purgeMode.indexOf(key) !== -1)) return
-      store.dispatch(rehydrateAction(key, state))
+    if (state !== null && purgeMode !== '*') {
+      if (!Array.isArray(purgeMode) || purgeMode.indexOf(key) === -1) store.dispatch(rehydrateAction(key, state))
     }
     cb && cb(null, state)
   }
