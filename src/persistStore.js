@@ -1,6 +1,6 @@
 import forEach from 'lodash.foreach'
 import constants from './constants'
-import defaultStorage from './defaults/asyncLocalStorage'
+import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function persistStore (store, config = {}, onComplete) {
   // defaults
@@ -11,7 +11,7 @@ export default function persistStore (store, config = {}, onComplete) {
   const serialize = config.serialize || defaultSerialize
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
-  const storage = config.storage || defaultStorage
+  const storage = config.storage || createAsyncLocalStorage('local')
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
   const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
