@@ -23,35 +23,32 @@ module.exports = function autoRehydrate (config = {}) {
 
   function createRehydrationReducer (reducer) {
     return (state, action) => {
-      if (action.type === REHYDRATE) {
-        let key = action.key
-        let data = action.payload
+      if (action.type !== REHYDRATE) return reducer(state, action)
+      else {
+        let inboundState = action.payload
         let reducedState = reducer(state, action)
+        let newState = {}
 
-        // if reducer modifies substate, skip auto rehydration
-        if (state[key] !== reducedState[key]) {
-          if (config.log) console.log('redux-persist/autoRehydrate sub state for key "%s" modified, skipping autoRehydrate', key)
-          return reducedState
-        }
+        Object.keys(inboundState).forEach((key) => {
+          // if reducer modifies substate, skip auto rehydration
+          if (state[key] !== reducedState[key]) {
+            if (config.log) console.log('redux-persist/autoRehydrate sub state for key "%s" modified, skipping autoRehydrate', key)
+            newState[key] = reducedState[key]
+            return
+          }
 
-        let autoReducedState = {...reducedState}
-        let statesArePlain = isPlainObject(data) && isPlainObject(reducedState[key])
-        if (!statesArePlain) {
-          // assign value
-          autoReducedState[key] = data
-        } else {
-          // shallow merge
-          var subState = {}
-          for (var subkey in reducedState[key]) { subState[subkey] = reducedState[key][subkey] }
-          for (var datakey in data) { subState[datakey] = data[datakey] }
-          autoReducedState[key] = subState
-        }
+          // otherwise take the inboundState
+          if (statesArePlain(inboundState[key], reducedState[key])) newState[key] = {...state[key], ...inboundState[key]} // shallow merge
+          else newState[key] = inboundState[key] // hard set
 
-        if (config.log) console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, autoReducedState[key])
-        return autoReducedState
-      } else {
-        return reducer(state, action)
+          if (config.log) console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, newState[key])
+        })
+        return newState
       }
     }
   }
+}
+
+function statesArePlain (a, b) {
+  return isPlainObject(a) && isPlainObject(b)
 }

@@ -1,47 +1,37 @@
 import forEach from 'lodash.foreach'
 import constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
+import getStoredState from './getStoredState'
+
+const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 
 export default function persistStore (store, config = {}, onComplete) {
   // defaults
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
-  const rehydrateAction = config.rehydrateAction || defaultRehydrateAction
-  const completeAction = config.completeAction || defaultCompleteAction
   const serialize = config.serialize || defaultSerialize
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
   const storage = config.storage || createAsyncLocalStorage('local')
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
-  const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 
   // initialize values
   let timeIterator = null
   let lastState = store.getState()
   let purgeMode = false
-  let restoreCount = 0
-  let completionCount = 0
   let storesToProcess = []
-  let restoredState = {}
 
   // restore
   if (shouldRestore) {
-    forEach(lastState, (s, key) => {
-      if (whitelistBlacklistCheck(key)) return
-      restoreCount += 1
-      genericSetImmediate(() => {
-        restoreKey(key, (err, substate) => {
-          if (err) substate = null
-          completionCount += 1
-          restoredState[key] = substate
-          if (completionCount === restoreCount) rehydrationComplete()
-        })
+    genericSetImmediate(() => {
+      getStoredState({...config, purgeMode}, (err, restoredState) => {
+        if (err && process.env.NODE_ENV !== 'production') console.warn('Error in getStoredState', err)
+        rehydrateAction(restoredState)
+        onComplete && onComplete(null, restoredState)
       })
     })
-    if (restoreCount === 0) rehydrationComplete()
-  }
-  else rehydrationComplete()
+  } else onComplete && genericSetImmediate(onComplete)
 
   // store
   store.subscribe(() => {
@@ -77,35 +67,20 @@ export default function persistStore (store, config = {}, onComplete) {
     return false
   }
 
-  function restoreKey (key, cb) {
-    storage.getItem(createStorageKey(key), (err, serialized) => {
-      if (err && process.env.NODE_ENV !== 'production') console.warn('Error restoring data for key:', key, err)
-      else rehydrate(key, serialized, cb)
-    })
-  }
-
-  function rehydrate (key, serialized, cb) {
+  function adhocRehydrate (serialized, cb) {
     let state = null
 
     try {
       let data = deserialize(serialized)
-      state = transforms.reduceRight((subState, transformer) => {
-        return transformer.out(subState)
+      state = transforms.reduceRight((interState, transformer) => {
+        return transformer.out(interState)
       }, data)
     } catch (err) {
-      if (process.env.NODE_ENV !== 'production') console.warn('Error restoring data for key:', key, err)
-      storage.removeItem(key, warnIfRemoveError(key))
+      if (process.env.NODE_ENV !== 'production') console.warn('Error rehydrating data:', serialized, err)
     }
 
-    if (state !== null && purgeMode !== '*') {
-      if (!Array.isArray(purgeMode) || purgeMode.indexOf(key) === -1) store.dispatch(rehydrateAction(key, state))
-    }
+    store.dispatch(rehydrateAction(state))
     cb && cb(null, state)
-  }
-
-  function rehydrationComplete () {
-    store.dispatch(completeAction())
-    genericSetImmediate(() => onComplete && onComplete(null, restoredState))
   }
 
   function purge (keys) {
@@ -125,7 +100,7 @@ export default function persistStore (store, config = {}, onComplete) {
 
   // return `persistor`
   return {
-    rehydrate,
+    rehydrate: adhocRehydrate,
     purge,
     purgeAll
   }
@@ -147,17 +122,10 @@ function createStorageKey (key) {
   return constants.keyPrefix + key
 }
 
-function defaultRehydrateAction (key, data) {
+function rehydrateAction (data) {
   return {
     type: constants.REHYDRATE,
-    key: key,
     payload: data
-  }
-}
-
-function defaultCompleteAction () {
-  return {
-    type: constants.REHYDRATE_COMPLETE
   }
 }
 

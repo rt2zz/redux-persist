@@ -17,78 +17,6 @@ function createMockStore (opts) {
 }
 
 describe('persistStore scenarios', function () {
-  it('Dispatch 2 REHYDRATE & 1 REHYDRATE_COMPLETE when restoring initialState: {foo:1, bar:2} storedState: {foo:1, bar:2}', function (done) {
-    let rehydrateCount = 0
-    let store = createMockStore({
-      mockState: { foo: 1, bar: 2 },
-      dispatch: (action) => {
-        if (action.type === constants.REHYDRATE) {
-          rehydrateCount++
-        }
-        if (action.type === constants.REHYDRATE_COMPLETE) {
-          if (rehydrateCount === 2) { done() }
-          else throw new Error()
-        }
-      }
-    })
-
-    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}) })
-  })
-
-  it('Dispatch 0 REHYDRATE & 1 REHYDRATE_COMPLETE when restoring initialState: {} storedState: {foo:1, bar:2}', function (done) {
-    let rehydrateCount = 0
-    let store = createMockStore({
-      mockState: {},
-      dispatch: (action) => {
-        if (action.type === constants.REHYDRATE) {
-          rehydrateCount++
-        }
-        if (action.type === constants.REHYDRATE_COMPLETE) {
-          if (rehydrateCount === 0) { done() }
-          else throw new Error()
-        }
-      }
-    })
-
-    persistStore(store, { storage: createMemoryStorage({foo: '1', bar: '2'}) })
-  })
-
-  it('Dispatch 0 REHYDRATE & 1 REHYDRATE_COMPLETE when restoring initialState: {foo:1, bar:2} storedState: {}', function (done) {
-    let rehydrateCount = 0
-    let store = createMockStore({
-      mockState: {foo: 1, bar: 2},
-      dispatch: (action) => {
-        if (action.type === constants.REHYDRATE) {
-          rehydrateCount++
-        }
-        if (action.type === constants.REHYDRATE_COMPLETE) {
-          if (rehydrateCount === 0) { done() }
-          else throw new Error()
-        }
-      }
-    })
-
-    persistStore(store, { storage: createMemoryStorage({}) })
-  })
-
-  it('Does not rehydrate when purgeAll is invoked', function (done) {
-    let rehydrateCount = 0
-    let store = createMockStore({
-      mockState: {foo: 1, bar: 2},
-      dispatch: (action) => {
-        if (action.type === constants.REHYDRATE) {
-          rehydrateCount++
-        }
-        if (action.type === constants.REHYDRATE_COMPLETE) {
-          if (rehydrateCount === 0) { done() }
-          else throw new Error()
-        }
-      }
-    })
-
-    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}) }).purgeAll()
-  })
-
   it('Does not restore when skipRestore:true', function (done) {
     let store = createMockStore({
       mockState: {foo: 1, bar: 2},
@@ -136,14 +64,16 @@ describe('adhoc rehydrate', function () {
       mockState: { foo: 3, bar: [1] },
       dispatch: (action) => {
         if (action.type === constants.REHYDRATE) {
-          if (action.payload === 'adhocPayload') done()
+          if (isEqual(action.payload, {bar: 'adhocPayload'})) {
+            done()
+          }
         }
       }
     })
     let seedState = {foo: 3, bar: 4}
     const persistor = persistStore(store, { storage: createMemoryStorage(seedState) }, (err, state) => {
       if (err) throw new Error()
-      persistor.rehydrate('bar', '"adhocPayload"')
+      persistor.rehydrate(JSON.stringify({bar: 'adhocPayload'}))
     })
   })
   it('processes adhoc rehydrate when skipRestore: true', function (done) {
@@ -151,14 +81,16 @@ describe('adhoc rehydrate', function () {
       mockState: { foo: 3, bar: [1] },
       dispatch: (action) => {
         if (action.type === constants.REHYDRATE) {
-          if (action.key === 'bar' && action.payload === 'adhocPayload') done()
+          if (isEqual(action.payload, {bar: 'adhocPayload'})) {
+            done()
+          }
         }
       }
     })
     let seedState = {foo: 3, bar: 4}
     const persistor = persistStore(store, { storage: createMemoryStorage(seedState), skipRestore: true }, (err, state) => {
       if (err) throw new Error()
-      persistor.rehydrate('bar', '"adhocPayload"')
+      persistor.rehydrate(JSON.stringify({bar: 'adhocPayload'}))
     })
   })
 })

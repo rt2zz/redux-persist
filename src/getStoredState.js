@@ -6,6 +6,7 @@ export default function getStoredState (config, onComplete) {
   const storage = config.storage || defaultStorage
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
+  const purgeMode = config.purgeMode || false
 
   let restoredState = {}
   let completionCount = 0
@@ -13,10 +14,13 @@ export default function getStoredState (config, onComplete) {
   storage.getAllKeys((err, allKeys) => {
     if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
     let persistKeys = allKeys.filter(key => key.indexOf(constants.keyPrefix) === 0).map(key => key.slice(constants.keyPrefix.length))
-    let restoreCount = persistKeys.length
+    let keysToRestore = Array.isArray(purgeMode)
+      ? persistKeys.filter(key => purgeMode.indexOf(key) === -1)
+      : purgeMode === '*' ? [] : persistKeys
 
+    let restoreCount = keysToRestore.length
     if (restoreCount === 0) complete(null, restoredState)
-    forEach(persistKeys, (key) => {
+    forEach(keysToRestore, (key) => {
       storage.getItem(createStorageKey(key), (err, serialized) => {
         if (err && process.env.NODE_ENV !== 'production') console.warn('Error restoring data for key:', key, err)
         else restoredState[key] = rehydrate(key, serialized)
