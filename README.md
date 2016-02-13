@@ -1,5 +1,5 @@
 # Redux Persist
-** redux persist 2.0 is coming! try the rc now `npm i redux-persist@2.0.0-rc`. Docs forthcoming.**  
+** redux persist 2.0 is coming! try the rc now `npm i redux-persist@next`. Docs forthcoming.**  
 
 Persist and rehydrate a redux store.
 
