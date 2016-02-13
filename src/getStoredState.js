@@ -1,9 +1,9 @@
 import forEach from 'lodash.foreach'
 import constants from './constants'
-import defaultStorage from './defaults/asyncLocalStorage'
+import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
-  const storage = config.storage || defaultStorage
+  const storage = config.storage || createAsyncLocalStorage('local')
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
   const purgeMode = config.purgeMode || false
