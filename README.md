@@ -1,4 +1,6 @@
 # Redux Persist
+** redux persist 2.0 is coming! try the rc now `npm i redux-persist@2.0.0-rc`. Docs forthcoming.**  
+
 Persist and rehydrate a redux store.
 
 Redux Persist is [performant](#performance), easy to [implement](#basic-usage), and easy to [extend](#extend-and-customize).
