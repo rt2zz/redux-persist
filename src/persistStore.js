@@ -27,7 +27,7 @@ export default function persistStore (store, config = {}, onComplete) {
     genericSetImmediate(() => {
       getStoredState({...config, purgeMode}, (err, restoredState) => {
         if (err && process.env.NODE_ENV !== 'production') console.warn('Error in getStoredState', err)
-        rehydrateAction(restoredState)
+        store.dispatch(rehydrateAction(restoredState))
         onComplete && onComplete(null, restoredState)
       })
     })

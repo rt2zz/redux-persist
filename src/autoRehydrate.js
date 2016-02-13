@@ -27,7 +27,7 @@ module.exports = function autoRehydrate (config = {}) {
       else {
         let inboundState = action.payload
         let reducedState = reducer(state, action)
-        let newState = {}
+        let newState = {...state}
 
         Object.keys(inboundState).forEach((key) => {
           // if reducer modifies substate, skip auto rehydration
