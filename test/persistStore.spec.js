@@ -1,7 +1,7 @@
 /* global it, describe */
 
 import { persistStore, getStoredState } from '../src'
-import constants from '../constants'
+import constants from '../src/constants'
 import createMemoryStorage from './mock/createMemoryStorage'
 import assert from 'assert'
 import { isEqual } from 'lodash'

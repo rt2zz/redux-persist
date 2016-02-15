@@ -35,7 +35,7 @@ module.exports = function autoRehydrate (config = {}) {
         }
 
         let autoReducedState = {...reducedState}
-        let statesArePlain = isPlainObject(data) && isPlainObject(reducedState[key])
+        let statesArePlain = checkIfPlain(data, reducedState[key])
         if (!statesArePlain) {
           // assign value
           autoReducedState[key] = data
@@ -54,4 +54,12 @@ module.exports = function autoRehydrate (config = {}) {
       }
     }
   }
+}
+
+function checkIfPlain (a, b) {
+  // isPlainObject + duck type not immutable
+  if (typeof a !== 'object' || typeof b !== 'object') return false
+  if (typeof a.mergeDeep === 'function' || typeof b.mergeDeep === 'function') return false
+  if (!isPlainObject(a) || !isPlainObject(b)) return false
+  return true
 }

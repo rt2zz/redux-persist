@@ -3,8 +3,9 @@
 import { compose, createStore } from 'redux'
 import assert from 'assert'
 import { isEqual } from 'lodash'
+import Immutable from 'immutable'
 
-import { REHYDRATE, REHYDRATE_COMPLETE } from '../constants'
+import { REHYDRATE, REHYDRATE_COMPLETE } from '../src/constants'
 import { autoRehydrate } from '../src'
 
 const someString = 'someString'
@@ -46,6 +47,16 @@ describe('rehydrate actions', function () {
         done()
       }
     }
+  })
+})
+
+describe('when rehydrating immutable data', () => {
+  it('does not warn', () => {
+    let store = finalCreateStore(createReducer())
+    let immutableData = Immutable.Map({a: 1})
+    store.dispatch(rehydrate('immutableSpace', immutableData))
+    let state = store.getState()
+    assert(state.immutableSpace.equals(immutableData))
   })
 })
 
