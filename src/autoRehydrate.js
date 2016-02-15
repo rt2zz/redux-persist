@@ -38,7 +38,7 @@ module.exports = function autoRehydrate (config = {}) {
           }
 
           // otherwise take the inboundState
-          if (statesArePlain(inboundState[key], reducedState[key])) newState[key] = {...state[key], ...inboundState[key]} // shallow merge
+          if (checkIfPlain(inboundState[key], reducedState[key])) newState[key] = {...state[key], ...inboundState[key]} // shallow merge
           else newState[key] = inboundState[key] // hard set
 
           if (config.log) console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, newState[key])
@@ -49,6 +49,10 @@ module.exports = function autoRehydrate (config = {}) {
   }
 }
 
-function statesArePlain (a, b) {
-  return isPlainObject(a) && isPlainObject(b)
+function checkIfPlain (a, b) {
+  // isPlainObject + duck type not immutable
+  if (typeof a !== 'object' || typeof b !== 'object') return false
+  if (typeof a.mergeDeep === 'function' || typeof b.mergeDeep === 'function') return false
+  if (!isPlainObject(a) || !isPlainObject(b)) return false
+  return true
 }
