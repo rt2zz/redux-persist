@@ -1,11 +1,11 @@
 # Redux Persist
-** redux persist 2.0 is coming! try the rc now `npm i redux-persist@next`. Docs forthcoming.**  
+These docs are for redux-persist@2. If you are still on 1.x check the [old docs](https://github.com/rt2zz/redux-persist/tree/v1.5.3)
 
 Persist and rehydrate a redux store.
 
 Redux Persist is [performant](#performance), easy to [implement](#basic-usage), and easy to [extend](#extend-and-customize).
 
-Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs/recipes.md), or open an issue to discuss your use case.
+`npm i --save redux-persist@next`
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
 [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
@@ -15,7 +15,7 @@ Check out some [recipes](https://github.com/rt2zz/redux-persist/blob/master/docs
 Basic usage requires adding three lines to a traditional redux application:
 ```js
 import {persistStore, autoRehydrate} from 'redux-persist'
-const store = autoRehydrate()(createStore)(reducer)
+const store = createStore(reducer, null, autoRehydrate())
 persistStore(store)
 ```
 For per reducer rehydration logic, you can opt-in by adding a handler to your reducer:
@@ -23,15 +23,14 @@ For per reducer rehydration logic, you can opt-in by adding a handler to your re
 import {REHYDRATE} from 'redux-persist/constants'
 //...
 case REHYDRATE:
-  if(action.key === 'myReducer'){
-    return {...state, ...action.payload, specialKey: processSpecial(action.payload.specialKey)}
-  }
+  var incoming = action.payload.myReducer
+  if (incoming) return {...state, ...incoming, specialKey: processSpecial(incoming.specialKey)}
   return state
 ```
 You may also need to configure the persistence layer, or take action after rehydration has completed:
 ```js
 persistStore(store, {blacklist: ['someTransientReducer']}, () => {
-  console.log('rehydration complete with state')
+  console.log('rehydration complete')
 })
 ```
 And if things get out of wack, just purge the storage
@@ -59,8 +58,6 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
       - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
     - `.purgeAll()`
       - Purges all keys. (this method is available on the return value of persistStore)
-    - `.rehydrate(key, serialDataString)`
-      - This can be used to trigger rehydration from outside of persistStore, for example in crosstab syncing.
 
 #### `autoRehydrate()`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
@@ -68,22 +65,7 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
 #### `constants`
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
-## Extend And Customize
-Redux-persist is very easy to extend with new functionality:
-* ImmutableJS support with [redux-persist-immutable](https://github.com/rt2zz/redux-persist-immutable)
-* Cross tab syncing with [redux-persist-crosstab](https://github.com/rt2zz/redux-persist-crosstab)
-* Browser Extensions [browser-redux-sync](https://github.com/zalmoxisus/browser-redux-sync)
-
-#### Example
-```js
-import reduxPersistImmutable from 'redux-persist-immutable'
-import crosstabSync from 'redux-persist-crosstab'
-
-const persistor = persistStore(store, {transforms: [reduxPersistImmutable]}, () => crosstabSync(persistor))
-```
-
-## Semi Secret Advanced APIs
-**warning** these api's may change without warning
+## Alternate Usage
 #### initialState rehydration
 ```js
 import {getStoredState, autoRehydrate, persistStore} from 'redux-persist'
