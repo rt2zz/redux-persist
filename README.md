@@ -1,5 +1,5 @@
 # Redux Persist
-These docs are for redux-persist@2. If you are still on 1.x check the [old docs](https://github.com/rt2zz/redux-persist/tree/v1.5.3). [Read more about 2.x changes.](https://github.com/rt2zz/redux-persist/issues/59)
+These docs are for redux-persist v2.x. If you are still on 1.x check the [old docs](https://github.com/rt2zz/redux-persist/tree/v1.5.3). [Read more about 2.x changes.](https://github.com/rt2zz/redux-persist/issues/59)
 
 Persist and rehydrate a redux store.
 
