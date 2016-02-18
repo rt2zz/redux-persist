@@ -27,7 +27,7 @@ function getStorage (type) {
       : { getItem: noStorage, setItem: noStorage, removeItem: noStorage, getAllKeys: noStorage }
   }
   if (type === 'session') {
-    hasSessionStorage()
+    return hasSessionStorage()
       ? window.sessionStorage
       : { getItem: noStorage, setItem: noStorage, removeItem: noStorage, getAllKeys: noStorage }
   }
