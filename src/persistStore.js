@@ -16,10 +16,8 @@ export default function persistStore (store, config = {}, onComplete) {
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
 
-  // Add compatability with Mozilla's LocalForage library
-  if ('keys' in storage) {
-    storage.getAllKeys = (cb) => storage.keys(cb)
-  }
+  // fallback getAllKeys to `keys` if present (LocalForage compatability)
+  if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   // initialize values
   let timeIterator = null
@@ -40,7 +38,6 @@ export default function persistStore (store, config = {}, onComplete) {
 
   // store
   store.subscribe(() => {
-    if (timeIterator !== null) clearInterval(timeIterator)
 
     let state = store.getState()
     forEach(state, (subState, key) => {
@@ -51,17 +48,19 @@ export default function persistStore (store, config = {}, onComplete) {
     })
 
     // time iterator (read: debounce)
-    timeIterator = setInterval(() => {
-      if (storesToProcess.length === 0) {
-        clearInterval(timeIterator)
-        return
-      }
+    if (timeIterator === null) {
+      timeIterator = setInterval(() => {
+        if (storesToProcess.length === 0) {
+          clearInterval(timeIterator)
+          return
+        }
 
-      let key = createStorageKey(storesToProcess[0])
-      let endState = transforms.reduce((subState, transformer) => transformer.in(subState), state[storesToProcess[0]])
-      if (typeof endState !== 'undefined') storage.setItem(key, serialize(endState), warnIfSetError(key))
-      storesToProcess.shift()
-    }, debounce)
+        let key = createStorageKey(storesToProcess[0])
+        let endState = transforms.reduce((subState, transformer) => transformer.in(subState), state[storesToProcess[0]])
+        if (typeof endState !== 'undefined') storage.setItem(key, serialize(endState), warnIfSetError(key))
+        storesToProcess.shift()
+      }, debounce)
+    }
 
     lastState = state
   })
