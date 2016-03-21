@@ -27,8 +27,9 @@
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {
-    "lodash.foreach": "^4.1.1",
-    "lodash.isplainobject": "^4.0.3"
+    "json-stringify-safe": "^5.0.1",
+    "lodash.foreach": "^3.0.3",
+    "lodash.isplainobject": "^3.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",

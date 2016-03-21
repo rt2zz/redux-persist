@@ -2,6 +2,7 @@ import forEach from 'lodash.foreach'
 import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import getStoredState from './getStoredState'
+import stringify from 'json-stringify-safe'
 
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 
@@ -134,7 +135,16 @@ function rehydrateAction (data) {
 }
 
 function defaultSerialize (data) {
-  return JSON.stringify(data)
+  return stringify(data, null, null, (k, v) => {
+    process.env.NODE_ENV !== 'production'
+      ? return null
+      : throw new Error(`
+          redux-persist: cannot process cyclical state.
+          Consider changing your state structure to have no cycles.
+          Alternatively blacklist the corresponding reducer key.
+          Cycle encounted at key "${k}" with value "${v}".
+        `)
+  })
 }
 
 function defaultDeserialize (serial) {
