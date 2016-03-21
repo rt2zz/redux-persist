@@ -94,7 +94,7 @@ const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, s
 ```
 
 ## Storage Backends
-**localStorage** (default), react-native **AsyncStorage**, or a conforming **custom** storage api. Custom storage API should be an object with the following methods: `setItem` `getItem` `removeItem` `getAllKeys` each with the function signature as found in [react-native AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
+**localStorage** (default), react-native **AsyncStorage**, Mozilla's **[localForage](https://github.com/mozilla/localForage)** library or a conforming **custom** storage api. Custom storage API should be an object with the following methods: `setItem` `getItem` `removeItem` `getAllKeys` each with the function signature as found in [react-native AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
 
 ```js
 import {AsyncStorage} from 'react-native'

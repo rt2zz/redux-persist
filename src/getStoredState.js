@@ -8,6 +8,11 @@ export default function getStoredState (config, onComplete) {
   const transforms = config.transforms || []
   const purgeMode = config.purgeMode || false
 
+  // Add compatability with Mozilla's LocalForage library
+  if ('keys' in storage) {
+    storage.getAllKeys = (cb) => storage.keys(cb)
+  }
+
   let restoredState = {}
   let completionCount = 0
 
