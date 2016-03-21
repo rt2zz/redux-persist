@@ -16,6 +16,11 @@ export default function persistStore (store, config = {}, onComplete) {
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
 
+  // Add compatability with Mozilla's LocalForage library
+  if ('keys' in storage) {
+    storage.getAllKeys = (cb) => storage.keys(cb)
+  }
+
   // initialize values
   let timeIterator = null
   let lastState = store.getState()
