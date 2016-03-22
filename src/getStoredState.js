@@ -3,7 +3,7 @@ import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
-  const storage = config.storage || createAsyncLocalStorage('local')
+  let storage = config.storage || createAsyncLocalStorage('local')
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
   const purgeMode = config.purgeMode || false

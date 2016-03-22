@@ -13,7 +13,7 @@ export default function persistStore (store, config = {}, onComplete) {
   const serialize = config.serialize || defaultSerialize
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
-  const storage = config.storage || createAsyncLocalStorage('local')
+  let storage = config.storage || createAsyncLocalStorage('local')
   const debounce = config.debounce || false
   const shouldRestore = !config.skipRestore
 
@@ -39,7 +39,6 @@ export default function persistStore (store, config = {}, onComplete) {
 
   // store
   store.subscribe(() => {
-
     let state = store.getState()
     forEach(state, (subState, key) => {
       if (whitelistBlacklistCheck(key)) return
@@ -136,14 +135,13 @@ function rehydrateAction (data) {
 
 function defaultSerialize (data) {
   return stringify(data, null, null, (k, v) => {
-    process.env.NODE_ENV !== 'production'
-      ? return null
-      : throw new Error(`
-          redux-persist: cannot process cyclical state.
-          Consider changing your state structure to have no cycles.
-          Alternatively blacklist the corresponding reducer key.
-          Cycle encounted at key "${k}" with value "${v}".
-        `)
+    if (process.env.NODE_ENV !== 'production') return null
+    throw new Error(`
+      redux-persist: cannot process cyclical state.
+      Consider changing your state structure to have no cycles.
+      Alternatively blacklist the corresponding reducer key.
+      Cycle encounted at key "${k}" with value "${v}".
+    `)
   })
 }
 
