@@ -1,4 +1,3 @@
-module.exports = {
-  keyPrefix: 'reduxPersist:',
-  REHYDRATE: 'persist/REHYDRATE'
-}
+export const keyPrefix = 'reduxPersist:'
+export const REHYDRATE = 'persist/REHYDRATE'
+

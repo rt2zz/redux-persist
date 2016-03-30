@@ -2,7 +2,7 @@ import isPlainObject from 'lodash.isplainobject'
 import bufferActions from './bufferActions'
 import { REHYDRATE } from './constants'
 
-module.exports = function autoRehydrate (config = {}) {
+export default function autoRehydrate (config = {}) {
   return (next) => (reducer, initialState, enhancer) => {
     const rehydrationReducer = createRehydrationReducer(reducer)
 
