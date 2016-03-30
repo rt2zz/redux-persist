@@ -28,8 +28,8 @@
   "license": "MIT",
   "dependencies": {
     "json-stringify-safe": "^5.0.1",
-    "lodash.foreach": "^3.0.3",
-    "lodash.isplainobject": "^3.2.0"
+    "lodash.foreach": "^4.1.1",
+    "lodash.isplainobject": "^4.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
