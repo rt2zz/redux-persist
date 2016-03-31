@@ -5,7 +5,7 @@ import assert from 'assert'
 import { isEqual } from 'lodash'
 import Immutable from 'immutable'
 
-import { REHYDRATE } from '../constants'
+import { REHYDRATE } from '../src/constants'
 import { autoRehydrate } from '../src'
 
 const someString = 'someString'

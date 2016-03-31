@@ -1,10 +1,10 @@
-var constants = require('./constants')
+import * as constants from './constants'
 
-module.exports = function bufferActions (cb) {
+export default function bufferActions (cb) {
   let active = true
   let queue = []
 
-  return next => action => {
+  return (next) => (action) => {
     if (!active) return next(action)
     if (action.type === constants.REHYDRATE) {
       active = false

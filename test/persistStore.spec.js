@@ -1,15 +1,15 @@
 /* global it, describe */
 
 import { persistStore, getStoredState } from '../src'
-import constants from '../src/constants'
+import * as constants from '../src/constants'
 import createMemoryStorage from './mock/createMemoryStorage'
 import assert from 'assert'
 import { isEqual } from 'lodash'
 
 function createMockStore (opts) {
   return {
-    subscribe: opts.subscribe || () => {},
-    dispatch: opts.dispatch || () => {},
+    subscribe: opts.subscribe || function () {},
+    dispatch: opts.dispatch || function () {},
     getState: () => {
       return opts.mockState ? {...opts.mockState} : {}
     }

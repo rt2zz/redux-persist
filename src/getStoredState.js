@@ -1,5 +1,5 @@
 import forEach from 'lodash.foreach'
-import constants from './constants'
+import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
@@ -18,9 +18,9 @@ export default function getStoredState (config, onComplete) {
 
   storage.getAllKeys((err, allKeys) => {
     if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
-    let persistKeys = allKeys.filter(key => key.indexOf(constants.keyPrefix) === 0).map(key => key.slice(constants.keyPrefix.length))
+    let persistKeys = allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length))
     let keysToRestore = Array.isArray(purgeMode)
-      ? persistKeys.filter(key => purgeMode.indexOf(key) === -1)
+      ? persistKeys.filter((key) => purgeMode.indexOf(key) === -1)
       : purgeMode === '*' ? [] : persistKeys
 
     let restoreCount = keysToRestore.length
