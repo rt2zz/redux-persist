@@ -65,19 +65,19 @@ export default function someReducer(state = initialState, action) {
     return {...state, initialized: true}
 
   case REHYDRATE:
-    // *important* to make sure the rehydration key matches the reducer key.
-    if(action.key === 'someReducer'){
+    if(action.payload.someReducer){
+      var newState = action.payload.someReducer
 
       //delete transient data
-      delete action.payload.someTransientData
+      delete newState.someTransientData
 
       //increment a counter
-      var rehydrationCount = action.payload.rehydrationCount + 1
+      var rehydrationCount = newState.rehydrationCount + 1
 
       //invalidate a cache
-      var someCachedData = Date.now()-10000 > action.payload.someCachedData.time ? null : action.payload.someCachedData
+      var someCachedData = Date.now()-10000 > newState.someCachedData.time ? null : newState.someCachedData
 
-      return {...state, rehydrationCount, someCachedData}
+      return {...state, ...newState, rehydrationCount, someCachedData}
     }
     return state
 
@@ -100,23 +100,4 @@ const store = compose(autoRehydrate())(createStore)(reducer)
 persistStore(store, {storage: AsyncStorage}, () => {
   console.log('restored')
 })
-```
-
-##Custom Action Creator
-Custom action creators are one way to take action during rehydration, such as validating access tokens.
-```js
-import { REHYDRATE } from 'redux-persist/constants'
-
-const rehydrateAction = (key, data) => {
-  if(key === 'auth'){
-    validateToken(data.token)
-  }
-  return {
-    type: REHYDRATE,
-    key: key,
-    payload: data
-  }
-}
-
-persistStore(store, {rehydrateAction: rehydrateAction})
 ```
