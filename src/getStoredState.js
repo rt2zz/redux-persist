@@ -51,6 +51,15 @@ export default function getStoredState (config, onComplete) {
   function complete (err, restoredState) {
     onComplete(err, restoredState)
   }
+
+  if (typeof onComplete !== 'function' && !!Promise) {
+    return new Promise((resolve, reject) => {
+      onComplete = (err, restoredState) => {
+        if (err) reject(err)
+        else resolve(restoredState)
+      }
+    })
+  }
 }
 
 function defaultDeserialize (serial) {
