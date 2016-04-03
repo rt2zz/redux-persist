@@ -66,31 +66,28 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
 ## Alternate Usage
-#### initialState rehydration
+#### getStoredState / createPersistor
 ```js
-import {getStoredState, autoRehydrate, persistStore} from 'redux-persist'
+import {getStoredState, autoRehydrate, createPersistor} from 'redux-persist'
 
-//... set up everything per normal: finalCreateStore, reducer etc.
+// ...
 
-const persistConfig = {
-  skipRestore: true
-}
+const persistConfig = { /* ... */ }
 
-getStoredState(persistConfig, (err, initialState) => {
-  const store = finalCreateStore(reducer, initialState)
-  persistStore(store, persistConfig)
-  render(
-    <Root store={store} />,
-       document.getElementById('root')
-    </Root>
-  )
+getStoredState(persistConfig, (err, restoredState) => {
+  const store = createStore(reducer, restoredState)
+  const persistor = createPersistor(store, persistConfig)
 })
 ```
+**Notes:**  
+* under the hood, `persistStore` simply implements both `getStoredState` and `createPersistor`
+* getStoredState supports promises as well
 
 #### Secondary Persistor
 ```js
-const persistor = persistStore(store)
-const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, skipRestore: false})
+import {persistStore, createPersistor} from 'redux-persist'
+const persistor = persistStore(store) // persistStore restores and persists
+const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage}) // createPersistor only persists
 ```
 
 ## Storage Backends
@@ -116,8 +113,6 @@ Because persisting state is inherently stateful, `persistStore` lives outside of
 autoRehydrate is a store enhancer that automatically rehydrates state.
 
 While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like data transforms and cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
-
-With autoRehydrate, actions dispatched before rehydration is complete are buffered and released immediately after rehydration is complete.
 
 Auto rehydrate is provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient. In this case, simply omit autoRehydrate. Rehydration actions will still be fired by `persistStore`, and can then be handled individually by reducers or using a custom rehydration handler.
 
