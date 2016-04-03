@@ -91,8 +91,8 @@ const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage
 ## Storage Backends
 - **localStorage** (default) web
 - **[localForage](https://github.com/mozilla/localForage)** (recommended) web, see usage below
-- **AsyncStorage** for react-native
-- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. e.g. [AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
+- **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
+- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. [[example](http://facebook.github.io/react-native/docs/asyncstorage.html#content)]
 
 ```js
 // react-native
