@@ -39,6 +39,7 @@ export default function createPersistor (store, config) {
       timeIterator = setInterval(() => {
         if (storesToProcess.length === 0) {
           clearInterval(timeIterator)
+          timeIterator = null
           return
         }
 
