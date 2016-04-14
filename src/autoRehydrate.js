@@ -51,6 +51,7 @@ export default function autoRehydrate (config = {}) {
 
 function checkIfPlain (a, b) {
   // isPlainObject + duck type not immutable
+  if (!a || !b) return false
   if (typeof a !== 'object' || typeof b !== 'object') return false
   if (typeof a.mergeDeep === 'function' || typeof b.mergeDeep === 'function') return false
   if (!isPlainObject(a) || !isPlainObject(b)) return false
