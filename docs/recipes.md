@@ -2,7 +2,7 @@
 
 ### Simplest Usage
 ```js
-import { createStore, combineReducers } from 'redux'
+import { createStore, compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import reducer from '../reducers'
 
@@ -13,7 +13,7 @@ Stored state will be read out of localStorage and dispatched (asynchronously), a
 
 ### Delay Render Until Rehydration Complete
 ```js
-import { createStore, combineReducers } from 'redux'
+import { createStore, compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import reducer from '../reducers'
 
@@ -43,7 +43,7 @@ export default class AppProvider extends Component {
 ### Blacklist & Custom Rehydration
 ```js
 // ## app.js
-import { createStore, combineReducers } from 'redux'
+import { createStore, compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import * as reducers from '../reducers'
 
@@ -91,7 +91,7 @@ export default function someReducer(state = initialState, action) {
 simply plug in AsyncStorage:
 ```js
 var { AsyncStorage } = require('react-native')
-import { createStore, combineReducers } from 'redux'
+import { createStore, compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import reducer from '../reducers'
 
