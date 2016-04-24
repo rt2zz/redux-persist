@@ -59,19 +59,23 @@ export default function createPersistor (store, config) {
     return false
   }
 
-  function adhocRehydrate (serialized, cb) {
-    let state = null
-    try {
-      let data = deserialize(serialized)
-      state = transforms.reduceRight((interState, transformer) => {
-        return transformer.out(interState)
-      }, data)
-    } catch (err) {
-      if (process.env.NODE_ENV !== 'production') console.warn('Error rehydrating data:', serialized, err)
-    }
+  function adhocRehydrate (incoming, options = {}) {
+    let state = {}
+    if (options.serial) {
+      forEach(incoming, (subState, key) => {
+        try {
+          let data = deserialize(subState)
+          state[key] = transforms.reduceRight((interState, transformer) => {
+            return transformer.out(interState)
+          }, data)
+        } catch (err) {
+          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+        }
+      })
+    } else state = incoming
 
     store.dispatch(rehydrateAction(state))
-    cb && cb(null, state)
+    return state
   }
 
   function purge (keys) {

@@ -17,21 +17,6 @@ function createMockStore (opts) {
 }
 
 describe('persistStore scenarios', function () {
-  it('Does not restore when skipRestore:true', function (done) {
-    let store = createMockStore({
-      mockState: {foo: 1, bar: 2},
-      dispatch: (action) => {
-        if (action.type === constants.REHYDRATE) {
-          throw new Error('unexpected REHYDRATE')
-        }
-      }
-    })
-
-    persistStore(store, { storage: createMemoryStorage({foo: 1, bar: 2}), skipRestore: true }, () => {
-      done()
-    })
-  })
-
   it('Returns state to persistStore callback', function (done) {
     let store = createMockStore({
       mockState: {foo: 1, bar: 2},
@@ -59,12 +44,12 @@ describe('getStoredState', function () {
 })
 
 describe('adhoc rehydrate', function () {
-  it('processes adhoc rehydrate', function (done) {
+  it('processes adhoc rehydrate with serial: true', function (done) {
     let store = createMockStore({
       mockState: { foo: 3, bar: [1] },
       dispatch: (action) => {
         if (action.type === constants.REHYDRATE) {
-          if (isEqual(action.payload, {bar: 'adhocPayload'})) {
+          if (isEqual(action.payload, {bar: {a: 'b'}})) {
             done()
           }
         }
@@ -73,24 +58,24 @@ describe('adhoc rehydrate', function () {
     let seedState = {foo: 3, bar: 4}
     const persistor = persistStore(store, { storage: createMemoryStorage(seedState) }, (err, state) => {
       if (err) throw new Error()
-      persistor.rehydrate(JSON.stringify({bar: 'adhocPayload'}))
+      persistor.rehydrate({bar: JSON.stringify({a: 'b'})}, {serial: true})
     })
   })
-  it('processes adhoc rehydrate when skipRestore: true', function (done) {
+  it('processes adhoc rehydrate with serial: false', function (done) {
     let store = createMockStore({
       mockState: { foo: 3, bar: [1] },
       dispatch: (action) => {
         if (action.type === constants.REHYDRATE) {
-          if (isEqual(action.payload, {bar: 'adhocPayload'})) {
+          if (isEqual(action.payload, {bar: {a: 'b'}})) {
             done()
           }
         }
       }
     })
     let seedState = {foo: 3, bar: 4}
-    const persistor = persistStore(store, { storage: createMemoryStorage(seedState), skipRestore: true }, (err, state) => {
+    const persistor = persistStore(store, { storage: createMemoryStorage(seedState) }, (err, state) => {
       if (err) throw new Error()
-      persistor.rehydrate(JSON.stringify({bar: 'adhocPayload'}))
+      persistor.rehydrate({bar: {a: 'b'}})
     })
   })
 })

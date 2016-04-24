@@ -7,6 +7,7 @@ const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImme
 export default function persistStore (store, config = {}, onComplete) {
   // defaults
   const shouldRestore = !config.skipRestore
+  if (process.env.NODE_ENV !== 'production' && config.skipRestore) console.warn('redux-persist: config.skipRestore has been deprecated. If you want to skip restoration use `createPersistor` instead')
 
   // create and pause persistor
   const persistor = createPersistor(store, config)
