@@ -1,10 +1,9 @@
 # Redux Persist
-These docs are for redux-persist v2.x. If you are still on 1.x check the [old docs](https://github.com/rt2zz/redux-persist/tree/v1.5.3). [Read more about 2.x changes.](https://github.com/rt2zz/redux-persist/issues/59)
-
 Persist and rehydrate a redux store.
 
 Redux Persist is [performant](#performance), easy to [implement](#basic-usage), and easy to [extend](#extend-and-customize).
 
+**[V3 changelog](https://github.com/rt2zz/redux-persist/issues/72)**
 `npm i --save redux-persist`
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
@@ -48,7 +47,6 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
       - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-backends) storage engine.
       - **transforms** *array* transforms to be applied during storage and during rehydration.
       - **debounce** *integer* debounce interval applied to storage calls.
-      - **skipRestore** *boolean* true -> do not restore state.
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
 
@@ -66,39 +64,44 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
   - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
 ## Alternate Usage
-#### initialState rehydration
+#### getStoredState / createPersistor
 ```js
-import {getStoredState, autoRehydrate, persistStore} from 'redux-persist'
+import {getStoredState, autoRehydrate, createPersistor} from 'redux-persist'
 
-//... set up everything per normal: finalCreateStore, reducer etc.
+// ...
 
-const persistConfig = {
-  skipRestore: true
-}
+const persistConfig = { /* ... */ }
 
-getStoredState(persistConfig, (err, initialState) => {
-  const store = finalCreateStore(reducer, initialState)
-  persistStore(store, persistConfig)
-  render(
-    <Root store={store} />,
-       document.getElementById('root')
-    </Root>
-  )
+getStoredState(persistConfig, (err, restoredState) => {
+  const store = createStore(reducer, restoredState)
+  const persistor = createPersistor(store, persistConfig)
 })
 ```
+**Notes:**  
+* under the hood, `persistStore` simply implements both `getStoredState` and `createPersistor`
+* getStoredState supports promises as well
 
 #### Secondary Persistor
 ```js
-const persistor = persistStore(store)
-const secondaryPersistor = persistStore(store, {storage: specialBackupStorage, skipRestore: false})
+import {persistStore, createPersistor} from 'redux-persist'
+const persistor = persistStore(store) // persistStore restores and persists
+const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage}) // createPersistor only persists
 ```
 
 ## Storage Backends
-**localStorage** (default), react-native **AsyncStorage**, Mozilla's **[localForage](https://github.com/mozilla/localForage)** library or a conforming **custom** storage api. Custom storage API should be an object with the following methods: `setItem` `getItem` `removeItem` `getAllKeys` each with the function signature as found in [react-native AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content).
+- **localStorage** (default) web
+- **[localForage](https://github.com/mozilla/localForage)** (recommended) web, see usage below
+- **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
+- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. [[example](https://github.com/facebook/react-native/blob/master/Libraries/Storage/AsyncStorage.js)]
 
 ```js
+// react-native
 import {AsyncStorage} from 'react-native'
 persistStore(store, {storage: AsyncStorage})
+
+// web with recommended localForage
+import localForage from 'localForage'
+persistStore(store, {storage: localForage})
 ```
 ## Rationale
 
@@ -117,13 +120,4 @@ autoRehydrate is a store enhancer that automatically rehydrates state.
 
 While auto rehydration works out of the box, individual reducers can opt in to handling their own rehydration, allowing for more complex operations like data transforms and cache invalidation. Simply define a handler for the rehydrate action in your reducer, and if the state is mutated, auto rehydrate will skip that key.
 
-With autoRehydrate, actions dispatched before rehydration is complete are buffered and released immediately after rehydration is complete.
-
 Auto rehydrate is provided as a convenience. In a large application, or one with atypical reducer composition, auto rehydration may not be convenient. In this case, simply omit autoRehydrate. Rehydration actions will still be fired by `persistStore`, and can then be handled individually by reducers or using a custom rehydration handler.
-
-## Performance
-JSON serialization and localStorage (which is sync!) can both hurt performance. To work around this redux-persist implements a few performance tricks:
-* **During Rehydration** getItem calls are invoked once per key using setImmediate.  
-* **During Storage** setItem calls are invoked only on keys whose state has changed. If performance is impacted, set `config.debounce = 33` to stagger (debounce) the calls by 33ms intervals (i.e. 30fps).  
-
-Additionally redux persist operates on a per reducer basis, which is a great lever for maximizing performance. If a piece of state is changing often (10+ times per second), isolate that state into it's own reducer, which will make the serialization and storage operations much faster.

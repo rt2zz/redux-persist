@@ -3,15 +3,13 @@ import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
-  const storage = config.storage || createAsyncLocalStorage('local')
+  let storage = config.storage || createAsyncLocalStorage('local')
   const deserialize = config.deserialize || defaultDeserialize
   const transforms = config.transforms || []
   const purgeMode = config.purgeMode || false
 
-  // Add compatability with Mozilla's LocalForage library
-  if ('keys' in storage) {
-    storage.getAllKeys = (cb) => storage.keys(cb)
-  }
+  // fallback getAllKeys to `keys` if present (LocalForage compatability)
+  if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   let restoredState = {}
   let completionCount = 0
@@ -52,6 +50,15 @@ export default function getStoredState (config, onComplete) {
 
   function complete (err, restoredState) {
     onComplete(err, restoredState)
+  }
+
+  if (typeof onComplete !== 'function' && !!Promise) {
+    return new Promise((resolve, reject) => {
+      onComplete = (err, restoredState) => {
+        if (err) reject(err)
+        else resolve(restoredState)
+      }
+    })
   }
 }
 

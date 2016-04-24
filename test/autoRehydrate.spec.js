@@ -32,21 +32,6 @@ describe('rehydrate actions', function () {
     let state = store.getState()
     assert(isEqual(state.stringSpace, someString))
   })
-  it('buffers actions correctly', function (done) {
-    var actionHistory = []
-
-    let store = finalCreateStore(createReducer(actionCallback))
-    store.dispatch({type: 'TEST1'})
-    store.dispatch(rehydrate({arraySpace: [1, 2]}))
-
-    function actionCallback (action) {
-      if (action.type.indexOf('@@redux') !== 0) actionHistory.push(action.type)
-      if (action.type === 'TEST1') {
-        assert(actionHistory.indexOf(action.type) === 1)
-        done()
-      }
-    }
-  })
 })
 
 const rehydrate = (payload) => ({type: REHYDRATE, payload})

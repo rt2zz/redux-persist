@@ -1,30 +1,22 @@
 import isPlainObject from 'lodash.isplainobject'
-import bufferActions from './bufferActions'
 import { REHYDRATE } from './constants'
 
 export default function autoRehydrate (config = {}) {
   return (next) => (reducer, initialState, enhancer) => {
-    const rehydrationReducer = createRehydrationReducer(reducer)
-
-    // buffer actions
-    const store = next(rehydrationReducer, initialState, enhancer)
-    const dispatch = bufferActions(onBufferEnd)(store.dispatch)
-
-    return {
-      ...store,
-      dispatch
-    }
-  }
-
-  function onBufferEnd (err, queue) {
-    if (err) console.error(err)
-    if (config.log) console.log('redux-persist/autoRehydrate action buffer released', queue)
+    return next(createRehydrationReducer(reducer), initialState, enhancer)
   }
 
   function createRehydrationReducer (reducer) {
+    let rehydrated = false
+    let preRehydrateActions = []
     return (state, action) => {
-      if (action.type !== REHYDRATE) return reducer(state, action)
-      else {
+      if (action.type !== REHYDRATE) {
+        if (config.log && !rehydrated) preRehydrateActions.push(action) // store pre-rehydrate actions for debugging
+        return reducer(state, action)
+      } else {
+        if (config.log && !rehydrated) logPreRehydrate(preRehydrateActions)
+        rehydrated = true
+
         let inboundState = action.payload
         let reducedState = reducer(state, action)
         let newState = {...reducedState}
@@ -32,7 +24,7 @@ export default function autoRehydrate (config = {}) {
         Object.keys(inboundState).forEach((key) => {
           // if reducer modifies substate, skip auto rehydration
           if (state[key] !== reducedState[key]) {
-            if (config.log) console.log('redux-persist/autoRehydrate sub state for key "%s" modified, skipping autoRehydrate', key)
+            if (config.log) console.log('redux-persist/autoRehydrate: sub state for key `%s` modified, skipping autoRehydrate.', key)
             newState[key] = reducedState[key]
             return
           }
@@ -41,7 +33,7 @@ export default function autoRehydrate (config = {}) {
           if (checkIfPlain(inboundState[key], reducedState[key])) newState[key] = {...state[key], ...inboundState[key]} // shallow merge
           else newState[key] = inboundState[key] // hard set
 
-          if (config.log) console.log('redux-persist/autoRehydrate key: %s, rehydrated to:', key, newState[key])
+          if (config.log) console.log('redux-persist/autoRehydrate: key `%s`, rehydrated to ', key, newState[key])
         })
         return newState
       }
@@ -56,4 +48,14 @@ function checkIfPlain (a, b) {
   if (typeof a.mergeDeep === 'function' || typeof b.mergeDeep === 'function') return false
   if (!isPlainObject(a) || !isPlainObject(b)) return false
   return true
+}
+
+function logPreRehydrate (preRehydrateActions) {
+  if (preRehydrateActions.length > 0) {
+    console.log(`
+      redux-persist/autoRehydrate: %d actions were fired before rehydration completed. This can be a symptom of a race
+      condition where the rehydrate action may overwrite the previously affected state. Consider running these actions
+      after rehydration:
+    `, preRehydrateActions)
+  }
 }
