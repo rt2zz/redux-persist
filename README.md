@@ -4,7 +4,8 @@ Persist and rehydrate a redux store.
 Redux Persist is [performant](#performance), easy to [implement](#basic-usage), and easy to [extend](#extend-and-customize).
 
 **[V3 changelog](https://github.com/rt2zz/redux-persist/issues/72)**
-`npm i --save redux-persist`
+These docs are for redux-persist v3 which is installable via the next tag. This version removes the automatic action buffer, if you relied on this functionality you can now [implement it explicitly](#action-buffer).
+`npm i --save redux-persist@next`
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
 [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
@@ -103,15 +104,18 @@ persistStore(store, {storage: AsyncStorage})
 import localForage from 'localForage'
 persistStore(store, {storage: localForage})
 ```
-## Rationale
+
+## Action Buffer
+A common mistake is to fire actions that modify state before rehydration is complete which then will be overwritten by the rehydrate action. You can either defer firing of those actions until rehydration is complete, or you can use an [action buffer](https://github.com/rt2zz/redux-action-buffer/blob/master/README.md#redux-persist-example).
+
+Earlier versions of redux persist included the action buffer by default, but it was removed in v3.
+
+
+## Why Redux Persist?
 
 * Performant out of the box (uses a time iterator and operates on state partials)
 * Keeps custom rehydration logic in the reducers (where it intuitively belongs)
 * Supports localStorage, react-native AsyncStorage, or any conforming storage api
-
-The core idea behind redux-persist is to provide performant persistence and rehydration methods. At the same time redux-persist is designed to minimize complexity by knowing as little about your application as possible.
-
-Conceptually redux-persist encourages you to think on a per-reducer basis. This greatly simplifies the mental model (no filters or selectors!) and means that if you change your reducer schema, you will not need to mirror those changes in your persistence configuration.
 
 Because persisting state is inherently stateful, `persistStore` lives outside of the redux store. Importantly this keeps the store 'pure' and makes testing and extending the persistor much easier.
 
