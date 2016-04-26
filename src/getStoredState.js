@@ -39,7 +39,7 @@ export default function getStoredState (config, onComplete) {
     try {
       let data = deserialize(serialized)
       state = transforms.reduceRight((subState, transformer) => {
-        return transformer.out(subState)
+        return transformer.out(subState, key)
       }, data)
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') console.warn('Error restoring data for key:', key, err)

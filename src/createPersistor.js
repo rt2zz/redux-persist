@@ -44,7 +44,7 @@ export default function createPersistor (store, config) {
         }
 
         let key = createStorageKey(storesToProcess[0])
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState), state[storesToProcess[0]])
+        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), state[storesToProcess[0]])
         if (typeof endState !== 'undefined') storage.setItem(key, serialize(endState), warnIfSetError(key))
         storesToProcess.shift()
       }, debounce)
@@ -66,7 +66,7 @@ export default function createPersistor (store, config) {
         try {
           let data = deserialize(subState)
           state[key] = transforms.reduceRight((interState, transformer) => {
-            return transformer.out(interState)
+            return transformer.out(interState, key)
           }, data)
         } catch (err) {
           if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
