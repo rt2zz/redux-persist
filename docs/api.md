@@ -9,9 +9,9 @@
 - [createTransform(in, out, config)](#createtransformin-out-config) -> transform  
   
 **objects**
-- [config](#config)
-- [persistor](#persistor)
-- [transform](#transform)
+- [config](#config-)
+- [persistor](#persistor-)
+- [transform](#transform-)
 
 #### persistStore(store, config, callback)
 Get stored state, fire a rehydrate action, and begin persisting redux state.
