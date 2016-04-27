@@ -1,12 +1,12 @@
 ## Redux Persist API
 **core**
-- [persistStore(store, config, callback)](#persiststore) -> persistor
+- [persistStore(store, config, callback)](#persiststorestore-config-callback) -> persistor
 - [autoRehydrate()](#autorehydrate) -> redux store enhancer  
   
 **advanced**
-- [getStoredState(config, callback)](#getstoredstate) -> Promise -> state
-- [createPersistor(store, config)](#createpersistor) -> persistor
-- [createTransform(in, out, config)](#createtransform) -> transform  
+- [getStoredState(config, callback)](#getstoredstateconfig-callback) -> Promise -> state
+- [createPersistor(store, config)](#createpersistorstore-config) -> persistor
+- [createTransform(in, out, config)](#createtransformin-out-config) -> transform  
   
 **objects**
 - [config](#config)
