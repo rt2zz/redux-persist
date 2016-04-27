@@ -1,7 +1,7 @@
 # Redux Persist
 Persist and rehydrate a redux store.
 
-Redux Persist is [performant](#performance), easy to [implement](#basic-usage), and easy to [extend](#extend-and-customize).
+Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-usage), and easy to [extend](#transforms).
 
 **[V3 changelog](https://github.com/rt2zz/redux-persist/issues/72)**
 These docs are for redux-persist v3 which is installable via the next tag. This version removes the automatic action buffer, if you relied on this functionality you can now [implement it explicitly](#action-buffer).
@@ -105,13 +105,30 @@ import localForage from 'localForage'
 persistStore(store, {storage: localForage})
 ```
 
+## Transforms
+Transforms allow for arbitrary state trasnforms before saving and during rehydration.
+- [immutable](https://github.com/rt2zz/redux-persist-transform-immutable): support immutable reducers
+- [compress](https://github.com/rt2zz/redux-persist-transform-compress): compress your serialized state with lz-string
+- custom transforms:
+```
+import { createTransform, persistStore } from 'redux-persist'
+
+let myTransform = createTransform(
+  (inboundState) => specialSerialize(inboundState),
+  (outboundState) => specialDeserialize(outboundState),
+  {whitelist: ['specialReducer']}
+)
+
+persistStore(store, {transforms: [myTransform]})
+```
+
 ## Action Buffer
 A common mistake is to fire actions that modify state before rehydration is complete which then will be overwritten by the rehydrate action. You can either defer firing of those actions until rehydration is complete, or you can use an [action buffer](https://github.com/rt2zz/redux-action-buffer/blob/master/README.md#redux-persist-example).
 
 Earlier versions of redux persist included the action buffer by default, but it was removed in v3.
 
 
-## Why Redux Persist?
+## Why Redux Persist
 
 * Performant out of the box (uses a time iterator and operates on state partials)
 * Keeps custom rehydration logic in the reducers (where it intuitively belongs)
