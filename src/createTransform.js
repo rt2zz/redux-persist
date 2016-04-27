@@ -1,12 +1,10 @@
-import curry from 'lodash/curry'
-
-function createTransform (inbound, outbound, config) {
+function createTransform (inbound, outbound, config = {}) {
   let whitelist = config.whitelist || null
   let blacklist = config.blacklist || null
 
   function whitelistBlacklistCheck (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return true
-    if (blacklist.indexOf(key) !== -1) return true
+    if (blacklist && blacklist.indexOf(key) !== -1) return true
     return false
   }
 
@@ -16,4 +14,4 @@ function createTransform (inbound, outbound, config) {
   }
 }
 
-export default curry(createTransform, 3)
+export default createTransform
