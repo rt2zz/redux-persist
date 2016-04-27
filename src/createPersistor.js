@@ -1,6 +1,6 @@
 import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-import forEach from 'lodash.foreach'
+import forEach from 'lodash/foreach'
 import stringify from 'json-stringify-safe'
 
 export default function createPersistor (store, config) {
