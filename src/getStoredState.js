@@ -1,4 +1,4 @@
-import forEach from 'lodash/foreach'
+import { forEach } from 'lodash'
 import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 

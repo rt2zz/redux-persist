@@ -1,4 +1,4 @@
-import isPlainObject from 'lodash/isplainobject'
+import { isPlainObject } from 'lodash'
 import { REHYDRATE } from './constants'
 
 export default function autoRehydrate (config = {}) {
