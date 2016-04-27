@@ -15,8 +15,8 @@ export default function getStoredState (config, onComplete) {
   let restoredState = {}
   let completionCount = 0
 
-  // @TODO skip promises is no preloaders
-  Promise.all(preloaders.map(p => p(config))).then(() => {
+  // @TODO skip promises if no preloaders, potentially make getAllKeys a default preloader for parallelism
+  Promise.all(preloaders.map((p) => p(config))).then(() => {
     storage.getAllKeys((err, allKeys) => {
       if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
       let persistKeys = allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length))
