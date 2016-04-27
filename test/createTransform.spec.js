@@ -46,5 +46,5 @@ test.cb('createTransform inbound', (t) => {
       t.pass()
       t.end()
     }, 20)
-  }, 20)
+  }, 50)
 })
