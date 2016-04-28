@@ -5,6 +5,10 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 
 **[V3 changelog](https://github.com/rt2zz/redux-persist/issues/72)**
 These docs are for redux-persist v3 which is installable via the next tag. This version removes the automatic action buffer, if you relied on this functionality you can now [implement it explicitly](#action-buffer).
+
+**[Migrations](https://github.com/wildlifela/redux-persist-migrate)**
+Migrations are a alpha feature that leverage some new functionality in redux-persist@3. Try it out now, feedback welcome!
+
 `npm i --save redux-persist@next`
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
