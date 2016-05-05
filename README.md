@@ -19,7 +19,7 @@ are hot off the presses, feedback welcome!
 Basic usage requires adding three lines to a traditional redux application:
 ```js
 import {persistStore, autoRehydrate} from 'redux-persist'
-const store = createStore(reducer, null, autoRehydrate())
+const store = createStore(reducer, undefined, autoRehydrate())
 persistStore(store)
 ```
 For per reducer rehydration logic, you can opt-in by adding a handler to your reducer:
