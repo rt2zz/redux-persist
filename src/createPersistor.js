@@ -17,7 +17,7 @@ export default function createPersistor (store, config) {
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   // initialize stateful values
-  let lastState = store.getState()
+  let lastState = {}
   let paused = false
   let purgeMode = false
   let storesToProcess = []
