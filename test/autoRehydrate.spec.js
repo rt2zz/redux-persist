@@ -9,7 +9,7 @@ import { autoRehydrate } from '../src'
 const someString = 'someString'
 
 const createReducer = (actionCallback) => {
-  return (state = {arraySpace: ['someInitialValue']}, action) => {
+  return (state = {arraySpace: ['someInitialValue'], stringSpace: null, immutableSpace: null}, action) => {
     actionCallback && actionCallback(action)
     return state
   }
@@ -21,7 +21,7 @@ test('rehydrate: with array payload should overwrite substate', (t) => {
   let store = finalCreateStore(createReducer())
   store.dispatch(rehydrate({arraySpace: [1, 2]}))
   let state = store.getState()
-  t.deepEqual(state, {arraySpace: [1, 2]})
+  t.deepEqual(state.arraySpace, [1, 2])
 })
 
 test('rehydrate: rehydrates string state', (t) => {
@@ -39,4 +39,12 @@ test('can rehydrating immutable state', (t) => {
   store.dispatch(rehydrate({immutableSpace: immutableData}))
   let state = store.getState()
   t.truthy(state.immutableSpace.equals(immutableData))
+})
+
+test('does not rehydrate unknown state keys', (t) => {
+  let store = finalCreateStore(createReducer())
+  let someData = 1
+  store.dispatch(rehydrate({someData}))
+  let state = store.getState()
+  t.truthy(state.someData === undefined)
 })
