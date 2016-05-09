@@ -17,15 +17,9 @@ export default function persistStore (store, config = {}, onComplete) {
   if (shouldRestore) {
     genericSetImmediate(() => {
       getStoredState({...config, purgeMode: persistor._getPurgeMode()}, (err, restoredState) => {
-        // filter any keys not in initialState
-        let initialStateKeys = Object.keys(store.getState())
-        let filteredRestoredState = {}
-        initialStateKeys.forEach((key) => {
-          if (restoredState.hasOwnProperty(key)) filteredRestoredState[key] = restoredState[key]
-        })
-        if (restoredState) store.dispatch(rehydrateAction(filteredRestoredState))
+        if (restoredState) store.dispatch(rehydrateAction(restoredState))
         if (err) store.dispatch(rehydrateErrorAction(err))
-        complete(err, filteredRestoredState)
+        complete(err, restoredState)
       })
     })
   } else genericSetImmediate(complete)
