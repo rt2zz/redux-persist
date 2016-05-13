@@ -21,6 +21,10 @@ const store = compose(autoRehydrate())(createStore)(reducer)
 
 export default class AppProvider extends Component {
 
+  constructor() {
+    this.state = { rehydrated: false }
+  }
+
   componentWillMount(){
     persistStore(store, {}, () => {
       this.setState({ rehydrated: true })
