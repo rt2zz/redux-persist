@@ -110,9 +110,10 @@ persistStore(store, {storage: localForage})
 ```
 
 ## Transforms
-Transforms allow for arbitrary state trasnforms before saving and during rehydration.
+Transforms allow for arbitrary state transforms before saving and during rehydration.
 - [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
 - [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
+- [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
 - custom transforms:
 ```js
 import { createTransform, persistStore } from 'redux-persist'
