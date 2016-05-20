@@ -61,11 +61,10 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
       - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
     - `.purgeAll()`
       - Purges all keys. (this method is available on the return value of persistStore)
-    - `.rehydrate(serialized, cb)`
-      - **serialized** *string* Serialized data to be rehydrated into the store.
-      - **cb** *function* will be called after rehydration is finished with (null, transformedState).
-      - Manually rehydrates the store with the passed data, passing it through the transforms defined in the persistor
-      and dispatching the rehydrate action.
+    - `.rehydrate(incoming, options)`
+      - **incoming** *object* Data to be rehydrated into the store.
+      - **options** *object* If `serial:true`, incoming should be a *string*, that will be deserialized and passed through the transforms defined in the persistor.
+      - Manually rehydrates the store with the passed data, dispatching the rehydrate action.
 
 #### `autoRehydrate()`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
