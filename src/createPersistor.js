@@ -32,7 +32,6 @@ export default function createPersistor (store, config) {
       if (!isStatePlainEnough(state)) console.warn('redux-persist: State is not plain enough to persist. Can only persist plain objects.')
     }
 
-
     forEach(state, (subState, key) => {
       if (whitelistBlacklistCheck(key)) return
       if (lastState[key] === state[key]) return
