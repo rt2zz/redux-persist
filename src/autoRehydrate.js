@@ -33,7 +33,7 @@ export default function autoRehydrate (config = {}) {
           }
 
           // otherwise take the inboundState
-          if (isStatePlainEnough(inboundState[key]) && isStatePlainEnough(reducedState[key])) newState[key] = {...state[key], ...inboundState[key]} // shallow merge
+          if (isStatePlainEnough(inboundState[key]) && isStatePlainEnough(state[key])) newState[key] = {...state[key], ...inboundState[key]} // shallow merge
           else newState[key] = inboundState[key] // hard set
 
           if (config.log) console.log('redux-persist/autoRehydrate: key `%s`, rehydrated to ', key, newState[key])
