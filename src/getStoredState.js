@@ -5,6 +5,8 @@ import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 export default function getStoredState (config, onComplete) {
   let storage = config.storage || createAsyncLocalStorage('local')
   const deserialize = config.deserialize || defaultDeserialize
+  const blacklist = config.blacklist || []
+  const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const purgeMode = config.purgeMode || false
 
@@ -17,6 +19,7 @@ export default function getStoredState (config, onComplete) {
   storage.getAllKeys((err, allKeys) => {
     if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
     let persistKeys = allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length))
+    let filteredPersistKeys = persistKeys.filter(passWhitelistBlacklist)
     let keysToRestore = Array.isArray(purgeMode)
       ? persistKeys.filter((key) => purgeMode.indexOf(key) === -1)
       : purgeMode === '*' ? [] : persistKeys
@@ -50,6 +53,12 @@ export default function getStoredState (config, onComplete) {
 
   function complete (err, restoredState) {
     onComplete(err, restoredState)
+  }
+
+  function passWhitelistBlacklist (key) {
+    if (whitelist && whitelist.indexOf(key) !== -1) return false
+    if (blacklist.indexOf(key) === -1) return false
+    return true
   }
 
   if (typeof onComplete !== 'function' && !!Promise) {

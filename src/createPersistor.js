@@ -33,7 +33,7 @@ export default function createPersistor (store, config) {
     }
 
     forEach(state, (subState, key) => {
-      if (whitelistBlacklistCheck(key)) return
+      if (!passWhitelistBlacklist(key)) return
       if (lastState[key] === state[key]) return
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
@@ -59,10 +59,10 @@ export default function createPersistor (store, config) {
     lastState = state
   })
 
-  function whitelistBlacklistCheck (key) {
-    if (whitelist && whitelist.indexOf(key) === -1) return true
-    if (blacklist.indexOf(key) !== -1) return true
-    return false
+  function passWhitelistBlacklist (key) {
+    if (whitelist && whitelist.indexOf(key) !== -1) return false
+    if (blacklist.indexOf(key) === -1) return false
+    return true
   }
 
   function adhocRehydrate (incoming, options = {}) {
