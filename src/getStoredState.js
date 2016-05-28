@@ -21,8 +21,8 @@ export default function getStoredState (config, onComplete) {
     let persistKeys = allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length))
     let filteredPersistKeys = persistKeys.filter(passWhitelistBlacklist)
     let keysToRestore = Array.isArray(purgeMode)
-      ? persistKeys.filter((key) => purgeMode.indexOf(key) === -1)
-      : purgeMode === '*' ? [] : persistKeys
+      ? filteredPersistKeys.filter((key) => purgeMode.indexOf(key) === -1)
+      : purgeMode === '*' ? [] : filteredPersistKeys
 
     let restoreCount = keysToRestore.length
     if (restoreCount === 0) complete(null, restoredState)
@@ -56,8 +56,8 @@ export default function getStoredState (config, onComplete) {
   }
 
   function passWhitelistBlacklist (key) {
-    if (whitelist && whitelist.indexOf(key) !== -1) return false
-    if (blacklist.indexOf(key) === -1) return false
+    if (whitelist && whitelist.indexOf(key) === -1) return false
+    if (blacklist.indexOf(key) !== -1) return false
     return true
   }
 

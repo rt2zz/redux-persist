@@ -60,8 +60,8 @@ export default function createPersistor (store, config) {
   })
 
   function passWhitelistBlacklist (key) {
-    if (whitelist && whitelist.indexOf(key) !== -1) return false
-    if (blacklist.indexOf(key) === -1) return false
+    if (whitelist && whitelist.indexOf(key) === -1) return false
+    if (blacklist.indexOf(key) !== -1) return false
     return true
   }
 
