@@ -1,7 +1,8 @@
 import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-import { forEach } from 'lodash'
+import isStatePlainEnough from './utils/isStatePlainEnough'
 import stringify from 'json-stringify-safe'
+import { forEach } from 'lodash'
 
 export default function createPersistor (store, config) {
   // defaults
@@ -27,8 +28,12 @@ export default function createPersistor (store, config) {
     if (paused) return
 
     let state = store.getState()
+    if (process.env.NODE_ENV !== 'production') {
+      if (!isStatePlainEnough(state)) console.warn('redux-persist: State is not plain enough to persist. Can only persist plain objects.')
+    }
+
     forEach(state, (subState, key) => {
-      if (whitelistBlacklistCheck(key)) return
+      if (!passWhitelistBlacklist(key)) return
       if (lastState[key] === state[key]) return
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
@@ -54,10 +59,10 @@ export default function createPersistor (store, config) {
     lastState = state
   })
 
-  function whitelistBlacklistCheck (key) {
-    if (whitelist && whitelist.indexOf(key) === -1) return true
-    if (blacklist.indexOf(key) !== -1) return true
-    return false
+  function passWhitelistBlacklist (key) {
+    if (whitelist && whitelist.indexOf(key) === -1) return false
+    if (blacklist.indexOf(key) !== -1) return false
+    return true
   }
 
   function adhocRehydrate (incoming, options = {}) {
@@ -80,10 +85,14 @@ export default function createPersistor (store, config) {
   }
 
   function purge (keys) {
-    purgeMode = keys
-    forEach(keys, (key) => {
-      storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
-    })
+    if (typeof keys === 'undefined') {
+      purgeAll()
+    } else {
+      purgeMode = keys
+      forEach(keys, (key) => {
+        storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
+      })
+    }
   }
 
   function purgeAll () {

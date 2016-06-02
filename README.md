@@ -58,9 +58,7 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
 #### `persistor object`
   - the persistor object is returned by persistStore with the following methods:
     - `.purge(keys)`
-      - **keys** *array* An array of keys to be purged from local storage. (this method is available on the return value of persistStore)
-    - `.purgeAll()`
-      - Purges all keys. (this method is available on the return value of persistStore)
+      - **keys** *array* An array of keys to be purged from storage. If not provided all keys will be purged.
     - `.rehydrate(incoming, options)`
       - **incoming** *object* Data to be rehydrated into the store.
       - **options** *object* If `serial:true`, incoming should be a *string*, that will be deserialized and passed through the transforms defined in the persistor.
