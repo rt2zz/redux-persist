@@ -6,6 +6,10 @@ import { forEach } from 'lodash'
 
 export default function createPersistor (store, config) {
   // defaults
+  const lastStateInit = config.lastStateInit || {}
+  const stateIterator = config.stateIterator || defaultStateIterator
+  const stateGetter = config.stateGetter || defaultStateGetter
+  const stateSetter = config.stateSetter || defaultStateSetter
   const serialize = config.serialize || defaultSerialize
   const deserialize = config.deserialize || defaultDeserialize
   const blacklist = config.blacklist || []
@@ -18,7 +22,7 @@ export default function createPersistor (store, config) {
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   // initialize stateful values
-  let lastState = {}
+  let lastState = lastStateInit
   let paused = false
   let purgeMode = false
   let storesToProcess = []
@@ -28,13 +32,10 @@ export default function createPersistor (store, config) {
     if (paused) return
 
     let state = store.getState()
-    if (process.env.NODE_ENV !== 'production') {
-      if (!isStatePlainEnough(state)) console.warn('redux-persist: State is not plain enough to persist. Can only persist plain objects.')
-    }
 
-    forEach(state, (subState, key) => {
+    stateIterator(state, (subState, key) => {
       if (!passWhitelistBlacklist(key)) return
-      if (lastState[key] === state[key]) return
+      if (stateGetter(lastState, key) === stateGetter(state, key)) return
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
@@ -50,7 +51,7 @@ export default function createPersistor (store, config) {
 
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), store.getState()[storesToProcess[0]])
+        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
         if (typeof endState !== 'undefined') storage.setItem(storageKey, serialize(endState), warnIfSetError(key))
         storesToProcess.shift()
       }, debounce)
@@ -71,9 +72,10 @@ export default function createPersistor (store, config) {
       forEach(incoming, (subState, key) => {
         try {
           let data = deserialize(subState)
-          state[key] = transforms.reduceRight((interState, transformer) => {
+          let value = transforms.reduceRight((interState, transformer) => {
             return transformer.out(interState, key)
           }, data)
+          state = defaultStateSetter(state, key, value)
         } catch (err) {
           if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
         }
@@ -151,4 +153,17 @@ function rehydrateAction (data) {
     type: constants.REHYDRATE,
     payload: data
   }
+}
+
+function defaultStateIterator (collection, callback) {
+  return forEach(collection, callback)
+}
+
+function defaultStateGetter (state, key) {
+  return state[key]
+}
+
+function defaultStateSetter(state, key, value) {
+  state[key] = value
+  return state
 }
