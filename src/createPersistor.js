@@ -1,6 +1,5 @@
 import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-import isStatePlainEnough from './utils/isStatePlainEnough'
 import stringify from 'json-stringify-safe'
 import { forEach } from 'lodash'
 
@@ -75,7 +74,7 @@ export default function createPersistor (store, config) {
           let value = transforms.reduceRight((interState, transformer) => {
             return transformer.out(interState, key)
           }, data)
-          state = defaultStateSetter(state, key, value)
+          state = stateSetter(state, key, value)
         } catch (err) {
           if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
         }
@@ -163,7 +162,7 @@ function defaultStateGetter (state, key) {
   return state[key]
 }
 
-function defaultStateSetter(state, key, value) {
+function defaultStateSetter (state, key, value) {
   state[key] = value
   return state
 }
