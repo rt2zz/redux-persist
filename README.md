@@ -1,3 +1,6 @@
+# What about redux-persist?
+This is a fork of redux-persist published as `redux-persist-2` until the PR https://github.com/rt2zz/redux-persist/pull/113 gets merged.
+
 # Redux Persist
 Persist and rehydrate a redux store.
 
