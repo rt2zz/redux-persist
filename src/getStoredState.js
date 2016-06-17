@@ -17,7 +17,10 @@ export default function getStoredState (config, onComplete) {
   let completionCount = 0
 
   storage.getAllKeys((err, allKeys) => {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
+    if (err && process.env.NODE_ENV !== 'production') { 
+      console.warn('Error in storage.getAllKeys');
+      return false
+    }
     let persistKeys = allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length))
     let filteredPersistKeys = persistKeys.filter(passWhitelistBlacklist)
     let keysToRestore = Array.isArray(purgeMode)
