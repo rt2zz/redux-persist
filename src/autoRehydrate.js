@@ -27,7 +27,7 @@ export default function autoRehydrate (config = {}) {
 
           // if initial state is an object but inbound state is null/undefined, skip
           if (typeof state[key] === 'object' && !inboundState[key]) {
-            if (config.log) console.log('redux-persist/autoRehydrate: sub state for key `%s` is falsy but initial state is an object, skipping autoRehydrate.', key);
+            if (config.log) console.log('redux-persist/autoRehydrate: sub state for key `%s` is falsy but initial state is an object, skipping autoRehydrate.', key)
             return
           }
 
