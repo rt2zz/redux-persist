@@ -97,11 +97,16 @@ const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage
 
 ## Storage Backends
 - **localStorage** (default) web
+- **sessionStorage** 
 - **[localForage](https://github.com/mozilla/localForage)** (recommended) web, see usage below
 - **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. [[example](https://github.com/facebook/react-native/blob/master/Libraries/Storage/AsyncStorage.js)]
 
 ```js
+// sessionStorage
+import { persistStore, storages } from 'redux-persist'
+persistStore(store, {storage: storages.asyncSessionStorage})
+
 // react-native
 import {AsyncStorage} from 'react-native'
 persistStore(store, {storage: AsyncStorage})
@@ -109,6 +114,7 @@ persistStore(store, {storage: AsyncStorage})
 // web with recommended localForage
 import localForage from 'localForage'
 persistStore(store, {storage: localForage})
+
 ```
 
 ## Transforms
