@@ -4,6 +4,7 @@ import { persistStore, getStoredState } from '../src'
 import * as constants from '../src/constants'
 import isEqual from 'lodash/isEqual'
 import createMemoryStorage from './helpers/createMemoryStorage'
+import { createStore } from 'redux'
 
 function createMockStore (opts) {
   return {
@@ -82,6 +83,38 @@ test.cb('processes adhoc rehydrate with serial: false', (t) => {
     if (err) throw new Error()
     persistor.rehydrate({bar: {a: 'b'}})
   })
+
+  setTimeout(() => {
+    throw new Error('timeout')
+  }, 10000)
+})
+
+const ACTION_MUTATE_ALL = 'ACTION_MUTATE_ALL'
+
+test.cb('announces persist operations if configured', (t) => {
+  const createReducer = (actionCallback) => {
+    return (state = {a: 1}, action) => {
+      actionCallback && actionCallback(action)
+      if (action.type === ACTION_MUTATE_ALL) {
+        return {a: 2}
+      }
+      if (action.type === constants.PERSISTED) {
+        if (isEqual(action.payload, {a: 2})) {
+          t.pass()
+        } else {
+          t.fail()
+        }
+        t.end()
+      }
+      return state
+    }
+  }
+  const store = createStore(createReducer())
+  const memoryStorage = createMemoryStorage()
+  persistStore(store, {storage: memoryStorage, announcePersist: true})
+  setTimeout(() => {
+    store.dispatch({type: ACTION_MUTATE_ALL})
+  }, 50)
 
   setTimeout(() => {
     throw new Error('timeout')

@@ -2,7 +2,7 @@ import * as constants from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import isStatePlainEnough from './utils/isStatePlainEnough'
 import stringify from 'json-stringify-safe'
-import { forEach } from 'lodash'
+import { forEach, isEmpty } from 'lodash'
 
 export default function createPersistor (store, config) {
   // defaults
@@ -12,13 +12,19 @@ export default function createPersistor (store, config) {
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const debounce = config.debounce || false
+  const announcePersist = config.announcePersist || false
   let storage = config.storage || createAsyncLocalStorage('local')
+
+  if (announcePersist) {
+    blacklist.push(constants.PERSISTED)
+  }
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   // initialize stateful values
   let lastState = {}
+  let lastPersistedKeys = announcePersist ? {} : undefined
   let paused = false
   let purgeMode = false
   let storesToProcess = []
@@ -42,17 +48,24 @@ export default function createPersistor (store, config) {
     // time iterator (read: debounce)
     if (timeIterator === null) {
       timeIterator = setInterval(() => {
-        if (storesToProcess.length === 0) {
-          clearInterval(timeIterator)
-          timeIterator = null
-          return
+        while (storesToProcess.length !== 0) {
+          let key = storesToProcess[0]
+          let storageKey = createStorageKey(key)
+          let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), store.getState()[storesToProcess[0]])
+          if (typeof endState !== 'undefined') {
+            if (announcePersist) {
+              lastPersistedKeys[key] = endState
+            }
+            storage.setItem(storageKey, serialize(endState), warnIfSetError(key))
+          }
+          storesToProcess.shift()
         }
-
-        let key = storesToProcess[0]
-        let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), store.getState()[storesToProcess[0]])
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serialize(endState), warnIfSetError(key))
-        storesToProcess.shift()
+        if (announcePersist && !isEmpty(lastPersistedKeys)) {
+          store.dispatch(persistAction(lastPersistedKeys))
+          lastPersistedKeys = {}
+        }
+        clearInterval(timeIterator)
+        timeIterator = null
       }, debounce)
     }
 
@@ -149,6 +162,13 @@ function defaultDeserialize (serial) {
 function rehydrateAction (data) {
   return {
     type: constants.REHYDRATE,
+    payload: data
+  }
+}
+
+function persistAction (data) {
+  return {
+    type: constants.PERSISTED,
     payload: data
   }
 }
