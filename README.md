@@ -52,6 +52,7 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
       - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-backends) storage engine.
       - **transforms** *array* transforms to be applied during storage and during rehydration.
       - **debounce** *integer* debounce interval applied to storage calls.
+      - **announcePersist** *boolean* announce persist operations by dispatching actions (default false).
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
 
