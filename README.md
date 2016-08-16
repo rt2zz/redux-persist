@@ -127,8 +127,8 @@ Transforms allow for arbitrary state transforms before saving and during rehydra
 import { createTransform, persistStore } from 'redux-persist'
 
 let myTransform = createTransform(
-  (inboundState, action) => specialSerialize(inboundState, action),
-  (outboundState, action) => specialDeserialize(outboundState, action),
+  (inboundState, key) => specialSerialize(inboundState, key),
+  (outboundState, key) => specialDeserialize(outboundState, key),
   {whitelist: ['specialReducer']}
 )
 
