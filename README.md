@@ -68,7 +68,7 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
 
 #### `constants`
-  - `import constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
+  - `import * as constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
 
 ## Alternate Usage
 #### getStoredState / createPersistor
@@ -127,8 +127,8 @@ Transforms allow for arbitrary state transforms before saving and during rehydra
 import { createTransform, persistStore } from 'redux-persist'
 
 let myTransform = createTransform(
-  (inboundState) => specialSerialize(inboundState),
-  (outboundState) => specialDeserialize(outboundState),
+  (inboundState, action) => specialSerialize(inboundState, action),
+  (outboundState, action) => specialDeserialize(outboundState, action),
   {whitelist: ['specialReducer']}
 )
 
