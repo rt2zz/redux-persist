@@ -2,7 +2,8 @@ import * as constants from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
 
-const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
+// try to source setImmediate as follows: setImmediate (global) -> global.setImmediate -> setTimeout(fn, 0)
+const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate || function (fn) { return setTimeout(fn, 0) } : setImmediate
 
 export default function persistStore (store, config = {}, onComplete) {
   // defaults
