@@ -10,7 +10,7 @@ const noStorage = process && process.env && process.env.NODE_ENV === 'production
 
 function hasLocalStorage () {
   try {
-    return typeof window === 'object' && typeof window.localStorage !== 'undefined'
+    return typeof window === 'object' && typeof window.localStorage !== 'undefined' && window.localStorage !== null
   } catch (e) { return false }
 }
 
