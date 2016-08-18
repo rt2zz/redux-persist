@@ -1,4 +1,4 @@
-import * as constants from './constants'
+import { REHYDRATE, REHYDRATE_ERROR } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
 
@@ -35,14 +35,14 @@ export default function persistStore (store, config = {}, onComplete) {
 
 function rehydrateAction (data) {
   return {
-    type: constants.REHYDRATE,
+    type: REHYDRATE,
     payload: data
   }
 }
 
 function rehydrateErrorAction (err) {
   return {
-    type: constants.REHYDRATE_ERROR,
+    type: REHYDRATE_ERROR,
     payload: err
   }
 }

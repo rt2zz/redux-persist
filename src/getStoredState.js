@@ -1,5 +1,5 @@
 import { forEach } from 'lodash'
-import * as constants from './constants'
+import { KEY_PREFIX } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
@@ -9,6 +9,7 @@ export default function getStoredState (config, onComplete) {
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const purgeMode = config.purgeMode || false
+  const keyPrefix = config.keyPrefix || KEY_PREFIX
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
@@ -22,7 +23,7 @@ export default function getStoredState (config, onComplete) {
       return
     }
 
-    let persistKeys = allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length))
+    let persistKeys = allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length))
     let filteredPersistKeys = persistKeys.filter(passWhitelistBlacklist)
     let keysToRestore = Array.isArray(purgeMode)
       ? filteredPersistKeys.filter((key) => purgeMode.indexOf(key) === -1)
@@ -65,6 +66,10 @@ export default function getStoredState (config, onComplete) {
     return true
   }
 
+  function createStorageKey (key) {
+    return `${keyPrefix}${key}`
+  }
+
   if (typeof onComplete !== 'function' && !!Promise) {
     return new Promise((resolve, reject) => {
       onComplete = (err, restoredState) => {
@@ -77,8 +82,4 @@ export default function getStoredState (config, onComplete) {
 
 function defaultDeserialize (serial) {
   return JSON.parse(serial)
-}
-
-function createStorageKey (key) {
-  return constants.keyPrefix + key
 }
