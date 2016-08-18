@@ -86,20 +86,22 @@ export default function createPersistor (store, config) {
 
   function purge (keys) {
     if (typeof keys === 'undefined') {
-      purgeAll()
+      return purgeAll()
     } else {
       purgeMode = keys
+      let resolutions = []
       forEach(keys, (key) => {
-        storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
+        resolutions.push(storage.removeItem(createStorageKey(key), warnIfRemoveError(key)))
       })
+      return Promise.all(resolutions)
     }
   }
 
   function purgeAll () {
     purgeMode = '*'
-    storage.getAllKeys((err, allKeys) => {
+    return storage.getAllKeys((err, allKeys) => {
       if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
-      purge(allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length)))
+      return purge(allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length)))
     })
   }
 
