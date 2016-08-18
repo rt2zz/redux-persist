@@ -1,8 +1,8 @@
-import * as constants from '../../constants'
+import { KEY_PREFIX } from '../../constants'
 import { mapKeys, mapValues } from 'lodash'
 
 export default function createMemoryStorage (initialState) {
-  let state = mapValues(mapKeys(initialState, (value, key) => constants.keyPrefix + key), (value) => JSON.stringify(value))
+  let state = mapValues(mapKeys(initialState, (value, key) => `${KEY_PREFIX}${key}`), (value) => JSON.stringify(value))
   return {
     getItem: function (key, cb) {
       setImmediate(() => {

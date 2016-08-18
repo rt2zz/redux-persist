@@ -1,4 +1,4 @@
-import * as constants from './constants'
+import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import isStatePlainEnough from './utils/isStatePlainEnough'
 import stringify from 'json-stringify-safe'
@@ -12,6 +12,7 @@ export default function createPersistor (store, config) {
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const debounce = config.debounce || false
+  const keyPrefix = config.keyPrefix || KEY_PREFIX
   let storage = config.storage || createAsyncLocalStorage('local')
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
@@ -99,8 +100,12 @@ export default function createPersistor (store, config) {
     purgeMode = '*'
     storage.getAllKeys((err, allKeys) => {
       if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
-      purge(allKeys.filter((key) => key.indexOf(constants.keyPrefix) === 0).map((key) => key.slice(constants.keyPrefix.length)))
+      purge(allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length)))
     })
+  }
+
+  function createStorageKey (key) {
+    return `${keyPrefix}${key}`
   }
 
   // return `persistor`
@@ -126,10 +131,6 @@ function warnIfSetError (key) {
   }
 }
 
-function createStorageKey (key) {
-  return constants.keyPrefix + key
-}
-
 function defaultSerialize (data) {
   return stringify(data, null, null, (k, v) => {
     if (process.env.NODE_ENV !== 'production') return null
@@ -148,7 +149,7 @@ function defaultDeserialize (serial) {
 
 function rehydrateAction (data) {
   return {
-    type: constants.REHYDRATE,
+    type: REHYDRATE,
     payload: data
   }
 }
