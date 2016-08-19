@@ -13,6 +13,7 @@ export default function createPersistor (store, config) {
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix || KEY_PREFIX
+  const linkedReducers = config.linkedReducers || {}
   let storage = config.storage || createAsyncLocalStorage('local')
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
@@ -35,7 +36,14 @@ export default function createPersistor (store, config) {
 
     forEach(state, (subState, key) => {
       if (!passWhitelistBlacklist(key)) return
-      if (lastState[key] === state[key]) return
+      if (!linkedReducers[key] && lastState[key] === state[key]) return
+      if (linkedReducers[key]) {
+        let updated = lastState[key] !== state[key]
+        forEach(linkedReducers[key], (reducer) => {
+          if (lastState[reducer] !== state[reducer]) updated = true
+        })
+        if (!updated) return
+      }
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
