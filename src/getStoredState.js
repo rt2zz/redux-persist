@@ -8,7 +8,6 @@ export default function getStoredState (config, onComplete) {
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
-  const purgeMode = config.purgeMode || false
   const keyPrefix = config.keyPrefix || KEY_PREFIX
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
@@ -24,10 +23,7 @@ export default function getStoredState (config, onComplete) {
     }
 
     let persistKeys = allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length))
-    let filteredPersistKeys = persistKeys.filter(passWhitelistBlacklist)
-    let keysToRestore = Array.isArray(purgeMode)
-      ? filteredPersistKeys.filter((key) => purgeMode.indexOf(key) === -1)
-      : purgeMode === '*' ? [] : filteredPersistKeys
+    let keysToRestore = persistKeys.filter(passWhitelistBlacklist)
 
     let restoreCount = keysToRestore.length
     if (restoreCount === 0) complete(null, restoredState)

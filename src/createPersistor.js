@@ -21,7 +21,6 @@ export default function createPersistor (store, config) {
   // initialize stateful values
   let lastState = {}
   let paused = false
-  let purgeMode = false
   let storesToProcess = []
   let timeIterator = null
 
@@ -89,7 +88,6 @@ export default function createPersistor (store, config) {
     if (typeof keys === 'undefined') {
       purgeAll()
     } else {
-      purgeMode = keys
       forEach(keys, (key) => {
         storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
       })
@@ -97,7 +95,7 @@ export default function createPersistor (store, config) {
   }
 
   function purgeAll () {
-    purgeMode = '*'
+    // @TODO deprecate
     storage.getAllKeys((err, allKeys) => {
       if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
       purge(allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length)))
@@ -114,8 +112,7 @@ export default function createPersistor (store, config) {
     pause: () => { paused = true },
     resume: () => { paused = false },
     purge,
-    purgeAll,
-    _getPurgeMode: () => purgeMode
+    purgeAll
   }
 }
 
