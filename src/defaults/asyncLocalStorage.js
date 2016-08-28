@@ -32,9 +32,30 @@ function getStorage (type) {
       : { getItem: noStorage, setItem: noStorage, removeItem: noStorage, getAllKeys: noStorage }
   }
 }
-export default function (type) {
+export default function (type, config) {
+  const deprecated = config && config.deprecated
   let storage = getStorage(type)
   return {
+    getAllKeys: function (cb) {
+      // warn if deprecated
+      if (deprecated) console.warn('redux-persist: ', deprecated)
+
+      return new Promise((resolve, reject) => {
+        try {
+          var keys = []
+          for (var i = 0; i < storage.length; i++) {
+            keys.push(storage.key(i))
+          }
+          nextTick(() => {
+            cb && cb(null, keys)
+            resolve(keys)
+          })
+        } catch (e) {
+          cb && cb(e)
+          reject(e)
+        }
+      })
+    },
     getItem (key, cb) {
       return new Promise((resolve, reject) => {
         try {
@@ -70,23 +91,6 @@ export default function (type) {
           nextTick(() => {
             cb && cb(null)
             resolve()
-          })
-        } catch (e) {
-          cb && cb(e)
-          reject(e)
-        }
-      })
-    },
-    getAllKeys: function (cb) {
-      return new Promise((resolve, reject) => {
-        try {
-          var keys = []
-          for (var i = 0; i < storage.length; i++) {
-            keys.push(storage.key(i))
-          }
-          nextTick(() => {
-            cb && cb(null, keys)
-            resolve(keys)
           })
         } catch (e) {
           cb && cb(e)

@@ -1,15 +1,16 @@
 import test from 'ava'
 
-import { purgeStoredState, storages } from '../src'
+import { purgeStoredState } from '../src'
+import { asyncLocalStorage } from '../src/defaultStorages'
 
 test('purgeStoredState (all) returns a promise', t => {
-  let purgeResult = purgeStoredState({ storage: storages.asyncLocalStorage })
+  let purgeResult = purgeStoredState({ storage: asyncLocalStorage })
   t.true(isPromise(purgeResult))
   return purgeResult
 })
 
 test('purgeStoredState (whitelist) returns a promise', t => {
-  let purgeResult = purgeStoredState({ storage: storages.asyncLocalStorage }, ['foo'])
+  let purgeResult = purgeStoredState({ storage: asyncLocalStorage }, ['foo'])
   t.true(isPromise(purgeResult))
   return purgeResult
 })
