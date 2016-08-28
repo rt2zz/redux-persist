@@ -1,10 +1,14 @@
 declare module 'redux-persist' {
+  // redux dependent typing
   declare type Action = Object
   declare type Dispatch = (a: Action) => any
   declare type Store = {
     dispatch: Dispatch,
     subscribe: (listener: () => void) => () => void,
   }
+  declare type StoreEnhancer = (next: Function) => Function
+
+  // redux-persist exported typing
   declare type Storage = {
     setItem: Function,
     getItem: Function,
@@ -27,16 +31,20 @@ declare module 'redux-persist' {
     resume: () => void,
   }
   declare type OnComplete = (err?: any, result?: Object) => void
-  declare type PersistStore = (store: Store, config: Config, onComplete: OnComplete)  => Persistor
-  declare type GetStoredState = (config: Config, onComplete: OnComplete) => void
-  declare type CreatePersistor = (store: Store, config: Config) => Persistor
-  declare type StoreEnhancer = (next: Function) => Function
+  
   declare type AutoRehydrate = Function
+  declare type CreatePersistor = (store: Store, config: Config) => Persistor
+  declare type CreateTransform = (in: TransformIn, out: TransformOut, config: TransformConfig) => Transform
+  declare type GetStoredState = (config: Config, onComplete: OnComplete) => void
+  declare type PersistStore = (store: Store, config: Config, onComplete: OnComplete)  => Persistor
+  declare type PurgeStoredState = (config: Config, keys?: Array<string>) => Promise<void>
   declare class ReduxPersist {
-    persistStore: PersistStore,
     autoRehydrate: AutoRehydrate,
-    getStoredState: GetStoredState,
     createPersistor: CreatePersistor,
+    createTransform: CreateTransform,
+    getStoredState: GetStoredState,
+    persistStore: PersistStore,
+    purgeStoredState: PurgeStoredState,
   }
-  declare var exports: ReduxPersist;
+  declare var exports: ReduxPersist
 }
