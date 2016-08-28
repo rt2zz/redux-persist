@@ -5,10 +5,6 @@ import { forEach } from 'lodash'
 
 export default function createPersistor (store, config) {
   // defaults
-  const lastStateInit = config.lastStateInit || {}
-  const stateIterator = config.stateIterator || defaultStateIterator
-  const stateGetter = config.stateGetter || defaultStateGetter
-  const stateSetter = config.stateSetter || defaultStateSetter
   const serialize = config.serialize || defaultSerialize
   const deserialize = config.deserialize || defaultDeserialize
   const blacklist = config.blacklist || []
@@ -16,13 +12,19 @@ export default function createPersistor (store, config) {
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix || KEY_PREFIX
-  let storage = config.storage || createAsyncLocalStorage('local')
 
-  // fallback getAllKeys to `keys` if present (LocalForage compatability)
+  // pluggable state shape (e.g. immutablejs)
+  const stateInit = config._stateInit || {}
+  const stateIterator = config._stateIterator || defaultStateIterator
+  const stateGetter = config._stateGetter || defaultStateGetter
+  const stateSetter = config._stateSetter || defaultStateSetter
+
+  // storage with keys -> getAllKeys for localForage support
+  let storage = config.storage || createAsyncLocalStorage('local')
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   // initialize stateful values
-  let lastState = lastStateInit
+  let lastState = stateInit
   let paused = false
   let storesToProcess = []
   let timeIterator = null
