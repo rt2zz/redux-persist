@@ -1,13 +1,7 @@
 # Redux Persist
 Persist and rehydrate a redux store.
 
-Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-usage), and easy to [extend](#transforms).
-
-**[V3 changelog](https://github.com/rt2zz/redux-persist/releases/tag/v3.0.0)**
-These docs are for redux-persist v3. This version removes the automatic action buffer, if you relied on this functionality you can now [implement it explicitly](#action-buffer).
-
-**[Migrations](https://github.com/wildlifela/redux-persist-migrate)**
-are hot off the presses, feedback welcome!
+Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-usage), and easy to [extend](./docs/ecosystem.md).
 
 `npm i --save redux-persist`
 
@@ -39,10 +33,11 @@ persistStore(store, {blacklist: ['someTransientReducer']}, () => {
 ```
 And if things get out of wack, just purge the storage
 ```js
-persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
+persistStore(store, config, callback).purge()
 ```
 
 ## API
+[Full API]('./docs/api.md')
 #### `persistStore(store, [config, callback])`
   - arguments
     - **store** *redux store* The store to be persisted.
@@ -68,14 +63,14 @@ persistStore(store, config, callback).purge(['someReducer']) //or .purgeAll()
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
 
 #### `constants`
-  - `import * as constants from 'redux-persist/constants'`. This includes rehydration action types, and other relevant constants.
+  - `import * as constants from 'redux-persist/constants'`. This includes `REHYDRATE` and `KEY_PREFIX`.
 
 ## Alternate Usage
 #### getStoredState / createPersistor
+If you need more control over persistence flow, you can implement `getStoredState` and `createPersistor`. For example you can skip autoRehydrate and directly pass restoredState into your store as initialState:
+
 ```js
 import {getStoredState, autoRehydrate, createPersistor} from 'redux-persist'
-
-// ...
 
 const persistConfig = { /* ... */ }
 
@@ -84,9 +79,6 @@ getStoredState(persistConfig, (err, restoredState) => {
   const persistor = createPersistor(store, persistConfig)
 })
 ```
-**Notes:**  
-* under the hood, `persistStore` simply implements both `getStoredState` and `createPersistor`
-* getStoredState supports promises as well
 
 #### Secondary Persistor
 ```js
@@ -95,9 +87,9 @@ const persistor = persistStore(store) // persistStore restores and persists
 const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage}) // createPersistor only persists
 ```
 
-## Storage Backends
+## Storage Engines
 - **localStorage** (default) web
-- **sessionStorage** 
+- **sessionStorage**
 - **[localForage](https://github.com/mozilla/localForage)** (recommended) web, see usage below
 - **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
 - **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
@@ -137,11 +129,11 @@ let myTransform = createTransform(
 persistStore(store, {transforms: [myTransform]})
 ```
 
+## Migrations
+One challenge developers encounter when persisting state for the first time is what happens when the shape of the application state changes between deployments? Solution: [redux-persist-migrate](https://github.com/wildlifela/redux-persist-migrate)
+
 ## Action Buffer
 A common mistake is to fire actions that modify state before rehydration is complete which then will be overwritten by the rehydrate action. You can either defer firing of those actions until rehydration is complete, or you can use an [action buffer](https://github.com/rt2zz/redux-action-buffer/blob/master/README.md#redux-persist-example).
-
-Earlier versions of redux persist included the action buffer by default, but it was removed in v3.
-
 
 ## Why Redux Persist
 

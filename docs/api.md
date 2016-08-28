@@ -2,12 +2,13 @@
 **core**
 - [persistStore(store, config, callback)](#persiststorestore-config-callback) -> persistor
 - [autoRehydrate()](#autorehydrate) -> redux store enhancer  
-  
+
 **advanced**
-- [getStoredState(config, callback)](#getstoredstateconfig-callback) -> Promise -> state
-- [createPersistor(store, config)](#createpersistorstore-config) -> persistor
-- [createTransform(in, out, config)](#createtransformin-out-config) -> transform  
-  
+- [getStoredState(config, callback)](#getstoredstateconfig-callback) -> Promise -> State
+- [createPersistor(store, config)](#createpersistorstore-config) -> Persistor
+- [createTransform(in, out, config)](#createtransformin-out-config) -> Transform
+- [purgeStoredState(config, keys)](#purgestoredstate-config-keys) -> Promise -> void  
+
 **objects**
 - [config](#config-)
 - [persistor](#persistor-)
@@ -18,6 +19,7 @@ Get stored state, fire a rehydrate action, and begin persisting redux state.
 ```js
 let persistor = persistStore(store, {}, (err, state) => {})
 ```
+
 #### autoRehydrate()
 Handle the rehydrate action. By default will shallow merge rehydrate state into initial state. If a reducer handles the rehydrate action, autoRehydrate will skip that reducer.
 ```js
@@ -52,6 +54,17 @@ let counterTransform = createTransform(
 persistStore(store, { transforms: counterTransform })
 ```
 
+#### purgeStoredState(config, keys)
+Purge stored state. Config should specify the storage engine to purge against, and if necessary the keyPrefix used. If keys is falsy, will purge all persist keys, if keys is an array, it will be treated as a whitelist of keys to purge.
+```js
+purgeStoredState({storage: AsyncStorage}, ['someReducer']).then(() => {
+  console.log('purge of someReducer completed')
+}).catch(() => {
+  console.log('purge of someReducer failed')
+})
+```
+
+## Object Types
 #### config {}
 ```js
 {
