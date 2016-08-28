@@ -105,12 +105,6 @@ export default function createPersistor (store, config) {
   }
 }
 
-function warnIfRemoveError (key) {
-  return function removeError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
-  }
-}
-
 function warnIfSetError (key) {
   return function setError (err) {
     if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
