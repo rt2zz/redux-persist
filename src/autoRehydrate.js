@@ -2,7 +2,7 @@ import { REHYDRATE } from './constants'
 import isStatePlainEnough from './utils/isStatePlainEnough'
 
 export default function autoRehydrate (config = {}) {
-  const stateReconciler = config._stateReconciler || defaultStateReconciler
+  const stateReconciler = config.stateReconciler || defaultStateReconciler
 
   return (next) => (reducer, initialState, enhancer) => {
     return next(createRehydrationReducer(reducer), initialState, enhancer)

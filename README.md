@@ -59,8 +59,11 @@ persistStore(store, config, callback).purge()
       - **options** *object* If `serial:true`, incoming should be a *string*, that will be deserialized and passed through the transforms defined in the persistor.
       - Manually rehydrates the store with the passed data, dispatching the rehydrate action.
 
-#### `autoRehydrate()`
+#### `autoRehydrate(config)`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
+  - arguments
+    - **config** *object*
+      - **stateReconciler** *function* override the default shallow merge state reconciliation.
 
 #### `constants`
   - `import * as constants from 'redux-persist/constants'`. This includes `REHYDRATE` and `KEY_PREFIX`.
