@@ -100,7 +100,7 @@ export default function createPersistor (store, config) {
     purge: (keys) => purgeStoredState({storage, keyPrefix}, keys),
     purgeAll: () => {
       console.warn('redux-persist: purgeAll is deprecated. use `persistor.purge()` instead')
-      purgeStoredState({storage, keyPrefix})
+      return purgeStoredState({storage, keyPrefix})
     }
   }
 }
