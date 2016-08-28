@@ -35,48 +35,64 @@ function getStorage (type) {
 export default function (type) {
   let storage = getStorage(type)
   return {
-    getItem: function (key, cb) {
-      try {
-        var s = storage.getItem(key)
-        nextTick(() => {
-          cb(null, s)
-        })
-      } catch (e) {
-        cb(e)
-      }
+    getItem (key, cb) {
+      return new Promise((resolve, reject) => {
+        try {
+          var s = storage.getItem(key)
+          nextTick(() => {
+            cb && cb(null, s)
+            resolve(s)
+          })
+        } catch (e) {
+          cb && cb(e)
+          reject(e)
+        }
+      })
     },
-    setItem: function (key, string, cb) {
-      try {
-        storage.setItem(key, string)
-        nextTick(() => {
-          cb(null)
-        })
-      } catch (e) {
-        cb(e)
-      }
+    setItem (key, string, cb) {
+      return new Promise((resolve, reject) => {
+        try {
+          storage.setItem(key, string)
+          nextTick(() => {
+            cb && cb(null)
+            resolve()
+          })
+        } catch (e) {
+          cb && cb(e)
+          reject(e)
+        }
+      })
     },
-    removeItem: function (key, cb) {
-      try {
-        storage.removeItem(key)
-        nextTick(() => {
-          cb(null)
-        })
-      } catch (e) {
-        cb(e)
-      }
+    removeItem (key, cb) {
+      return new Promise((resolve, reject) => {
+        try {
+          storage.removeItem(key)
+          nextTick(() => {
+            cb && cb(null)
+            resolve()
+          })
+        } catch (e) {
+          cb && cb(e)
+          reject(e)
+        }
+      })
     },
     getAllKeys: function (cb) {
-      try {
-        var keys = []
-        for (var i = 0; i < storage.length; i++) {
-          keys.push(storage.key(i))
+      return new Promise((resolve, reject) => {
+        try {
+          var keys = []
+          for (var i = 0; i < storage.length; i++) {
+            keys.push(storage.key(i))
+          }
+          nextTick(() => {
+            cb && cb(null, keys)
+            resolve(keys)
+          })
+        } catch (e) {
+          cb && cb(e)
+          reject(e)
         }
-        nextTick(() => {
-          cb(null, keys)
-        })
-      } catch (e) {
-        cb(e)
-      }
+      })
     }
   }
 }

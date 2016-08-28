@@ -1,6 +1,6 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-import isStatePlainEnough from './utils/isStatePlainEnough'
+import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
 import { forEach } from 'lodash'
 
@@ -13,13 +13,19 @@ export default function createPersistor (store, config) {
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix || KEY_PREFIX
-  let storage = config.storage || createAsyncLocalStorage('local')
 
-  // fallback getAllKeys to `keys` if present (LocalForage compatability)
+  // pluggable state shape (e.g. immutablejs)
+  const stateInit = config._stateInit || {}
+  const stateIterator = config._stateIterator || defaultStateIterator
+  const stateGetter = config._stateGetter || defaultStateGetter
+  const stateSetter = config._stateSetter || defaultStateSetter
+
+  // storage with keys -> getAllKeys for localForage support
+  let storage = config.storage || createAsyncLocalStorage('local')
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   // initialize stateful values
-  let lastState = {}
+  let lastState = stateInit
   let paused = false
   let storesToProcess = []
   let timeIterator = null
@@ -28,13 +34,10 @@ export default function createPersistor (store, config) {
     if (paused) return
 
     let state = store.getState()
-    if (process.env.NODE_ENV !== 'production') {
-      if (!isStatePlainEnough(state)) console.warn('redux-persist: State is not plain enough to persist. Can only persist plain objects.')
-    }
 
-    forEach(state, (subState, key) => {
+    stateIterator(state, (subState, key) => {
       if (!passWhitelistBlacklist(key)) return
-      if (lastState[key] === state[key]) return
+      if (stateGetter(lastState, key) === stateGetter(state, key)) return
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
@@ -50,7 +53,7 @@ export default function createPersistor (store, config) {
 
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), store.getState()[storesToProcess[0]])
+        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
         if (typeof endState !== 'undefined') storage.setItem(storageKey, serialize(endState), warnIfSetError(key))
         storesToProcess.shift()
       }, debounce)
@@ -71,9 +74,10 @@ export default function createPersistor (store, config) {
       forEach(incoming, (subState, key) => {
         try {
           let data = deserialize(subState)
-          state[key] = transforms.reduceRight((interState, transformer) => {
+          let value = transforms.reduceRight((interState, transformer) => {
             return transformer.out(interState, key)
           }, data)
+          state = stateSetter(state, key, value)
         } catch (err) {
           if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
         }
@@ -82,24 +86,6 @@ export default function createPersistor (store, config) {
 
     store.dispatch(rehydrateAction(state))
     return state
-  }
-
-  function purge (keys) {
-    if (typeof keys === 'undefined') {
-      purgeAll()
-    } else {
-      forEach(keys, (key) => {
-        storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
-      })
-    }
-  }
-
-  function purgeAll () {
-    // @TODO deprecate
-    storage.getAllKeys((err, allKeys) => {
-      if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
-      purge(allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length)))
-    })
   }
 
   function createStorageKey (key) {
@@ -111,14 +97,11 @@ export default function createPersistor (store, config) {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
-    purge,
-    purgeAll
-  }
-}
-
-function warnIfRemoveError (key) {
-  return function removeError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
+    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys),
+    purgeAll: () => {
+      console.warn('redux-persist: purgeAll is deprecated. use `persistor.purge()` instead')
+      return purgeStoredState({storage, keyPrefix})
+    }
   }
 }
 
@@ -149,4 +132,17 @@ function rehydrateAction (data) {
     type: REHYDRATE,
     payload: data
   }
+}
+
+function defaultStateIterator (collection, callback) {
+  return forEach(collection, callback)
+}
+
+function defaultStateGetter (state, key) {
+  return state[key]
+}
+
+function defaultStateSetter (state, key, value) {
+  state[key] = value
+  return state
 }
