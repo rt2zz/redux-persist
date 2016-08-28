@@ -1,13 +1,12 @@
-import autoRehydrate from './autoRehydrate'
-import createPersistor from './createPersistor'
-import createTransform from './createTransform'
-import getStoredState from './getStoredState'
-import persistStore from './persistStore'
-
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-const storages = {
+
+export autoRehydrate from './autoRehydrate'
+export createPersistor from './createPersistor'
+export createTransform from './createTransform'
+export getStoredState from './getStoredState'
+export persistStore from './persistStore'
+export purgeState from './purgeState'
+export const storages = {
   asyncLocalStorage: createAsyncLocalStorage('local'),
   asyncSessionStorage: createAsyncLocalStorage('session')
 }
-
-export { autoRehydrate, createPersistor, createTransform, getStoredState, persistStore, storages }

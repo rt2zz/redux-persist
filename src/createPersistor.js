@@ -1,5 +1,6 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
+import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
 import { forEach } from 'lodash'
 
@@ -87,24 +88,6 @@ export default function createPersistor (store, config) {
     return state
   }
 
-  function purge (keys) {
-    if (typeof keys === 'undefined') {
-      purgeAll()
-    } else {
-      forEach(keys, (key) => {
-        storage.removeItem(createStorageKey(key), warnIfRemoveError(key))
-      })
-    }
-  }
-
-  function purgeAll () {
-    // @TODO deprecate
-    storage.getAllKeys((err, allKeys) => {
-      if (err && process.env.NODE_ENV !== 'production') { console.warn('Error in storage.getAllKeys') }
-      purge(allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length)))
-    })
-  }
-
   function createStorageKey (key) {
     return `${keyPrefix}${key}`
   }
@@ -114,8 +97,11 @@ export default function createPersistor (store, config) {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
-    purge,
-    purgeAll
+    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys),
+    purgeAll: () => {
+      console.warn('redux-persist: purgeAll is deprecated. use `persistor.purge()` instead')
+      purgeStoredState({storage, keyPrefix})
+    }
   }
 }
 
