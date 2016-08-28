@@ -51,7 +51,9 @@
   "files": [
     "lib",
     "src",
-    "constants.js"
+    "constants.js",
+    "storages.js",
+    "redux-persist.js.flow"
   ],
   "standard": {
     "parser": "babel-eslint"
