@@ -1,4 +1,4 @@
-import { REHYDRATE, REHYDRATE_ERROR } from './constants'
+import { REHYDRATE } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
 import { omit } from 'lodash'
@@ -27,8 +27,7 @@ export default function persistStore (store, config = {}, onComplete) {
           ? purgeKeys === '*' ? {} : omit(restoredState, purgeKeys)
           : restoredState
 
-        if (restoredState) store.dispatch(rehydrateAction(restoredState))
-        if (err) store.dispatch(rehydrateErrorAction(err))
+        store.dispatch(rehydrateAction(restoredState, err))
         complete(err, restoredState)
       })
     })
@@ -48,16 +47,10 @@ export default function persistStore (store, config = {}, onComplete) {
   }
 }
 
-function rehydrateAction (data) {
+function rehydrateAction (payload, error = null) {
   return {
     type: REHYDRATE,
-    payload: data
-  }
-}
-
-function rehydrateErrorAction (err) {
-  return {
-    type: REHYDRATE_ERROR,
-    payload: err
+    payload,
+    error
   }
 }
