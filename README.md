@@ -37,7 +37,7 @@ persistStore(store, config, callback).purge()
 ```
 
 ## API
-[Full API]('./docs/api.md')
+[Full API](./docs/api.md)
 #### `persistStore(store, [config, callback])`
   - arguments
     - **store** *redux store* The store to be persisted.
