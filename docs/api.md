@@ -73,6 +73,7 @@ purgeStoredState({storage: AsyncStorage}, ['someReducer']).then(() => {
   transforms: [transformA],
   storage: AsyncStorage,
   debounce: 33,
+  keyPrefix: 'myAppStorage:'
 }
 ```
 
