@@ -2,7 +2,7 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
-import { forEach } from 'lodash'
+import forEach from 'lodash/forEach'
 
 export default function createPersistor (store, config) {
   // defaults
