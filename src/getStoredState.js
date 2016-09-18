@@ -8,7 +8,7 @@ export default function getStoredState (config, onComplete) {
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
-  const keyPrefix = config.keyPrefix || KEY_PREFIX
+  const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}

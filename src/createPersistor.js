@@ -12,7 +12,7 @@ export default function createPersistor (store, config) {
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const debounce = config.debounce || false
-  const keyPrefix = config.keyPrefix || KEY_PREFIX
+  const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
 
   // pluggable state shape (e.g. immutablejs)
   const stateInit = config._stateInit || {}

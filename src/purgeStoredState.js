@@ -2,7 +2,7 @@ import { KEY_PREFIX } from './constants'
 
 export default function purgeStoredState (config, keys) {
   const storage = config.storage
-  const keyPrefix = config.keyPrefix || KEY_PREFIX
+  const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
 
   // basic validation
   if (Array.isArray(config)) throw new Error('redux-persist: purgeStoredState requires config as a first argument (found array). An array of keys is the optional second argument.')
