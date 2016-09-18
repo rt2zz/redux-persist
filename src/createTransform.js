@@ -1,8 +1,6 @@
 function createTransform (inbound, outbound, config = {}) {
   let whitelist = config.whitelist || null
   let blacklist = config.blacklist || null
-  inbound = inbound || (state) => state
-  outbound = outbound || (state) => state
 
   function whitelistBlacklistCheck (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return true
@@ -11,8 +9,8 @@ function createTransform (inbound, outbound, config = {}) {
   }
 
   return {
-    in: (state, key) => !whitelistBlacklistCheck(key) ? inbound(state, key) : state,
-    out: (state, key) => !whitelistBlacklistCheck(key) ? outbound(state, key) : state
+    in: (state, key) => !whitelistBlacklistCheck(key) && inbound ? inbound(state, key) : state,
+    out: (state, key) => !whitelistBlacklistCheck(key) && outbound ? outbound(state, key) : state
   }
 }
 

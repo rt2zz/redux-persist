@@ -5,10 +5,16 @@ export default function autoRehydrate (config = {}) {
   const stateReconciler = config.stateReconciler || defaultStateReconciler
 
   return (next) => (reducer, initialState, enhancer) => {
-    return next(createRehydrationReducer(reducer), initialState, enhancer)
+    let store = next(liftReducer(reducer), initialState, enhancer)
+    return {
+      ...store,
+      replaceReducer: (reducer) => {
+        return store.replaceReducer(liftReducer(reducer))
+      }
+    }
   }
 
-  function createRehydrationReducer (reducer) {
+  function liftReducer (reducer) {
     let rehydrated = false
     let preRehydrateActions = []
     return (state, action) => {
