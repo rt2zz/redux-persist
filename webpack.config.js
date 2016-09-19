@@ -1,8 +1,10 @@
 const webpack = require('webpack')
+var LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 const env = process.env.NODE_ENV
 const isProd = env === 'production'
 
 let plugins = [
+  new LodashModuleReplacementPlugin(),
   new webpack.optimize.OccurrenceOrderPlugin(),
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(env)
