@@ -3,11 +3,17 @@
   "version": "4.0.0-alpha4",
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
+  "module": "es/index.js",
+  "jsnext:main": "es/index.js",
   "scripts": {
-    "test": "standard && ava",
+    "test": "standard 'src/**/*.js' 'test/**/*.js' storages.js constants.js && BABEL_ENV=commonjs ava",
     "test:watch": "npm test -- --watch",
     "clean": "rimraf lib dist",
-    "build": "babel src --out-dir lib",
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
+    "build:umd": "cross-env BABEL_ENV=commonjs webpack",
+    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack",
     "build:watch": "npm run build ./src -- -watch",
     "prepublish": "npm run clean && npm run build"
   },
@@ -34,20 +40,28 @@
   "license": "MIT",
   "dependencies": {
     "json-stringify-safe": "^5.0.1",
-    "lodash": "^4.11.1"
+    "lodash": "^4.11.1",
+    "lodash-es": "^4.16.0"
   },
   "devDependencies": {
     "ava": "^0.16.0",
     "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
     "babel-eslint": "^6.0.0",
+    "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-2": "^6.5.0",
+    "cross-env": "^2.0.1",
     "immutable": "^3.7.6",
+    "lodash-webpack-plugin": "^0.10.1",
     "redux": "^3.5.2",
     "rimraf": "~2.5.2",
-    "standard": "^8.0.0"
+    "standard": "^8.0.0",
+    "webpack": "^1.13.2"
   },
   "files": [
+    "es",
+    "dist",
     "lib",
     "src",
     "constants.js",
