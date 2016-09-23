@@ -22,7 +22,9 @@ export default function createPersistor (store, config) {
 
   // storage with keys -> getAllKeys for localForage support
   let storage = config.storage || createAsyncLocalStorage('local')
-  if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
+  if (storage.keys && !storage.getAllKeys) {
+    storage.getAllKeys = storage.keys
+  }
 
   // initialize stateful values
   let lastState = stateInit
