@@ -101,26 +101,26 @@ export default function createPersistor (store, config) {
     return `${keyPrefix}${key}`
   }
 
-  function finishStop() {
-    storage = null;
+  function finishStop () {
+    storage = null
     if (stopCB !== null) {
-      stopCB();
-      stopCB = null;
+      stopCB()
+      stopCB = null
     }
   }
 
-  function stop(cb) {
-    stopped = true;
+  function stop (cb) {
+    stopped = true
     if (unsubscribe !== null) {
-      unsubscribe();
+      unsubscribe()
       // who knows what redux will do if we'd call it again?
-      unsubscribe = null;
+      unsubscribe = null
     }
     if (cb !== undefined) {
-      stopCB = cb;
+      stopCB = cb
     }
     if (timeIterator === null) {
-      finishStop();
+      finishStop()
     }
   }
 
