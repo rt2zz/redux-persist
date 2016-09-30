@@ -29,11 +29,14 @@ export default function createPersistor (store, config) {
   // initialize stateful values
   let lastState = stateInit
   let paused = false
+  let stopped = false
+  let stopCB = null
   let storesToProcess = []
   let timeIterator = null
-
-  store.subscribe(() => {
-    if (paused) return
+  let unsubscribe = store.subscribe(() => {
+    // redux seems to sometimes call the callback once more after
+    // the unsubscribe was called so return here for safety
+    if (paused || stopped) return
 
     let state = store.getState()
 
@@ -50,12 +53,16 @@ export default function createPersistor (store, config) {
         if (storesToProcess.length === 0) {
           clearInterval(timeIterator)
           timeIterator = null
+          if (stopped) {
+            finishStop()
+          }
           return
         }
 
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
+
         if (typeof endState !== 'undefined') storage.setItem(storageKey, serialize(endState), warnIfSetError(key))
         storesToProcess.shift()
       }, debounce)
@@ -94,11 +101,35 @@ export default function createPersistor (store, config) {
     return `${keyPrefix}${key}`
   }
 
+  function finishStop() {
+    storage = null;
+    if (stopCB !== null) {
+      stopCB();
+      stopCB = null;
+    }
+  }
+
+  function stop(cb) {
+    stopped = true;
+    if (unsubscribe !== null) {
+      unsubscribe();
+      // who knows what redux will do if we'd call it again?
+      unsubscribe = null;
+    }
+    if (cb !== undefined) {
+      stopCB = cb;
+    }
+    if (timeIterator === null) {
+      finishStop();
+    }
+  }
+
   // return `persistor`
   return {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
+    stop,
     purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
   }
 }
