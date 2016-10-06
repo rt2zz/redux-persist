@@ -48,7 +48,7 @@ export default class AppProvider extends Component {
 ##React-Native
 simply plug in AsyncStorage:
 ```js
-var { AsyncStorage } = require('react-native')
+import { AsyncStorage } from 'react-native'
 import { createStore, compose } from 'redux'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import reducer from '../reducers'
