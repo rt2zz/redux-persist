@@ -46,7 +46,7 @@ persistStore(store, config, callback).purge()
       - **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
       - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-engines) storage engine.
       - **transforms** *array* transforms to be applied during storage and during rehydration.
-      - **debounce** *integer* debounce interval applied to storage calls.
+      - **debounce** *integer* debounce interval applied to storage calls (in miliseconds).
       - **keyPrefix** *string* change localstorage default key (default: **reduxPersist:**) [Discussion on why we need this feature ?](https://github.com/rt2zz/redux-persist/issues/137)
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
