@@ -2,7 +2,6 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
-import forEach from 'lodash/forEach'
 
 export default function createPersistor (store, config) {
   // defaults
@@ -73,7 +72,7 @@ export default function createPersistor (store, config) {
   function adhocRehydrate (incoming, options = {}) {
     let state = {}
     if (options.serial) {
-      forEach(incoming, (subState, key) => {
+      stateIterator(incoming, (subState, key) => {
         try {
           let data = deserialize(subState)
           let value = transforms.reduceRight((interState, transformer) => {
@@ -133,7 +132,7 @@ function rehydrateAction (data) {
 }
 
 function defaultStateIterator (collection, callback) {
-  return forEach(collection, callback)
+  return Object.keys(collection).forEach((key) => callback(collection[key], key))
 }
 
 function defaultStateGetter (state, key) {
