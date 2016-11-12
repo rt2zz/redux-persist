@@ -9,9 +9,17 @@ const noStorage = process && process.env && process.env.NODE_ENV === 'production
   }
 
 function hasLocalStorage () {
+  let storageExists
   try {
-    return typeof window === 'object' && !!window.localStorage
+    storageExists = (typeof window === 'object' && !!window.localStorage)
+    if (storageExists) {
+      const testKey = 'redux-persist localStorage test'
+      window.localStorage.setItem(testKey, true)
+      window.localStorage.getItem(testKey)
+      window.localStorage.removeItem(testKey)
+    }
   } catch (e) { return false }
+  return storageExists
 }
 
 function hasSessionStorage () {
