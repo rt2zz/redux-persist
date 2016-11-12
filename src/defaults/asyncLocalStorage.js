@@ -14,11 +14,13 @@ function hasLocalStorage () {
     storageExists = (typeof window === 'object' && !!window.localStorage)
     if (storageExists) {
       const testKey = 'redux-persist localStorage test'
-      window.localStorage.setItem(testKey, true)
+      // @TODO should we also test set and remove?
       window.localStorage.getItem(testKey)
-      window.localStorage.removeItem(testKey)
     }
-  } catch (e) { return false }
+  } catch (e) {
+    if (process && process.env && process.env.NODE_ENV === 'production') console.warn('redux-persist localStorage getItem test failed, persistence will be disabled.')
+    return false
+  }
   return storageExists
 }
 
