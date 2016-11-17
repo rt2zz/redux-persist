@@ -1,7 +1,7 @@
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 const nextTick = process && process.nextTick ? process.nextTick : genericSetImmediate
 
-const noStorage = process && process.env && process.env.NODE_ENV === 'production'
+const noStorage = process.env.NODE_ENV === 'production'
   ? () => { /* noop */ return null }
   : () => {
     console.error('redux-persist asyncLocalStorage requires a global localStorage object. Either use a different storage backend or if this is a universal redux application you probably should conditionally persist like so: https://gist.github.com/rt2zz/ac9eb396793f95ff3c3b')
@@ -18,7 +18,7 @@ function hasLocalStorage () {
       window.localStorage.getItem(testKey)
     }
   } catch (e) {
-    if (process && process.env && process.env.NODE_ENV === 'production') console.warn('redux-persist localStorage getItem test failed, persistence will be disabled.')
+    if (process.env.NODE_ENV !== 'production') console.warn('redux-persist localStorage getItem test failed, persistence will be disabled.')
     return false
   }
   return storageExists
