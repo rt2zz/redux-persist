@@ -127,7 +127,7 @@ Transforms allow for arbitrary state transforms before saving and during rehydra
 import { createTransform, persistStore } from 'redux-persist'
 
 let myTransform = createTransform(
-  // transform state coming form redux on its way to being serialized and stored
+  // transform state coming from redux on its way to being serialized and stored
   (inboundState, key) => specialSerialize(inboundState, key),
   // transform state coming from storage, on its way to be rehydrated into redux
   (outboundState, key) => specialDeserialize(outboundState, key),
