@@ -64,6 +64,7 @@ persistStore(store, config, callback).purge()
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
   - arguments
     - **config** *object*
+      - **log** *boolean* Turn on debug mode. Default: *false*.
       - **stateReconciler** *function* override the default shallow merge state reconciliation.
 
 #### `constants`
