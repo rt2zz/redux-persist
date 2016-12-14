@@ -3,6 +3,7 @@
   "version": "4.0.0-beta1",
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
+  "typings": "index.d.ts",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "scripts": {
@@ -39,6 +40,7 @@
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/redux": "^3.6.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.11.1",
     "lodash-es": "^4.16.0"
