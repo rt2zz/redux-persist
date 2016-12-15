@@ -68,7 +68,8 @@
     "src",
     "constants.js",
     "storages.js",
-    "redux-persist.js.flow"
+    "index.js.flow",
+    "index.d.ts"
   ],
   "standard": {
     "parser": "babel-eslint"
