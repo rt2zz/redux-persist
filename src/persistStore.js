@@ -1,7 +1,6 @@
 import { REHYDRATE } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
-import omit from 'lodash/omit'
 
 // try to source setImmediate as follows: setImmediate (global) -> global.setImmediate -> setTimeout(fn, 0)
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate || function (fn) { return setTimeout(fn, 0) } : setImmediate
@@ -23,9 +22,10 @@ export default function persistStore (store, config = {}, onComplete) {
     genericSetImmediate(() => {
       getStoredState(config, (err, restoredState) => {
         // do not persist state for purgeKeys
-        restoredState = purgeKeys
-          ? purgeKeys === '*' ? {} : omit(restoredState, purgeKeys)
-          : restoredState
+        if (purgeKeys) {
+          if (purgeKeys === '*') restoredState = {}
+          else purgeKeys.forEach((key) => Reflect.deleteProperty(restoredState, key))
+        }
 
         store.dispatch(rehydrateAction(restoredState, err))
         complete(err, restoredState)
