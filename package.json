@@ -11,7 +11,7 @@
     "test:watch": "npm test -- --watch",
     "copy-types": "cp -r type-definitions/ lib/",
     "clean": "rimraf lib dist es",
-    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min && npm copy-types",
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min && npm run copy-types",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "build:umd": "cross-env BABEL_ENV=commonjs webpack",
