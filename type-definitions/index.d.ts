@@ -60,7 +60,7 @@ declare module "redux-persist/lib/autoRehydrate" {
     AutoRehydrateConfig,
   } from "redux-persist/lib/interfaces";
 
-  function autoRehydrate<State>(autoRehydrateConfig: AutoRehydrateConfig): StoreEnhancer<State>;
+  function autoRehydrate<State>(autoRehydrateConfig?: AutoRehydrateConfig): StoreEnhancer<State>;
 
   export default autoRehydrate;
 }
@@ -89,7 +89,7 @@ declare module "redux-persist/lib/createTransform" {
     blacklist?: string[];
   }
 
-  function createTransform<State, Raw>(transformIn: TransformIn<State, Raw>, transformOut: TransformOut<Raw, State>, config: TransformConfig): Transform<State, Raw>;
+  function createTransform<State, Raw>(transformIn: TransformIn<State, Raw>, transformOut: TransformOut<Raw, State>, config?: TransformConfig): Transform<State, Raw>;
 
   export default createTransform;
 }
@@ -100,7 +100,7 @@ declare module "redux-persist/lib/getStoredState" {
     PersistorConfig,
   } from "redux-persist/lib/interfaces";
 
-  function getStoredState(persistorConfig: PersistorConfig, onComplete: OnComplete): void;
+  function getStoredState(persistorConfig?: PersistorConfig, onComplete?: OnComplete): void;
 
   export default getStoredState;
 }
@@ -113,7 +113,7 @@ declare module "redux-persist/lib/persistStore" {
     Persistor,
   } from "redux-persist/lib/interfaces";
 
-  function persistStore<State>(store: Store<State>, persistorConfig: PersistorConfig, onComplete: OnComplete): Persistor;
+  function persistStore<State>(store: Store<State>, persistorConfig?: PersistorConfig, onComplete?: OnComplete): Persistor;
 
   export default persistStore;
 }
@@ -123,7 +123,7 @@ declare module "redux-persist/lib/purgeStoredState" {
     PersistorConfig,
   } from "redux-persist/lib/interfaces";
 
-  function purgeStoredState(persistorConfig: PersistorConfig, keys: string[]): Promise<void>;
+  function purgeStoredState(persistorConfig?: PersistorConfig, keys?: string[]): Promise<void>;
 
   export default purgeStoredState;
 }
