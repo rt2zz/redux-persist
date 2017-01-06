@@ -122,6 +122,7 @@ Transforms allow for arbitrary state transforms before saving and during rehydra
 - [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
 - [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
 - [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
+- [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
 - [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
 - custom transforms:
 ```js
