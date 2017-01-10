@@ -1,5 +1,6 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
+import makeAdapter from './promiseAdapter'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
 
@@ -30,6 +31,7 @@ export default function createPersistor (store, config) {
   let paused = false
   let stopped = false
   let stopCB = null
+  let errorCB = config.errorCB || defaultErrorCB
   let storesToProcess = []
   let timeIterator = null
   let unsubscribe = store.subscribe(() => {
@@ -61,7 +63,16 @@ export default function createPersistor (store, config) {
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+
+        if (typeof endState !== 'undefined') {
+          let { callback, promise } = makeAdapter()
+          let res = storage.setItem(storageKey, serializer(endState), callback)
+          if ((res !== undefined) && (typeof(res.then) === 'function')) {
+            res.catch((err) => errorCB('Error storing data for key: ' + key, err))
+          } else {
+            promise.catch((err) => errorCB('Error storing data for key: ' + key, err))
+          }
+        }
         storesToProcess.shift()
       }, debounce)
     }
@@ -79,15 +90,11 @@ export default function createPersistor (store, config) {
     let state = {}
     if (options.serial) {
       stateIterator(incoming, (subState, key) => {
-        try {
-          let data = deserializer(subState)
-          let value = transforms.reduceRight((interState, transformer) => {
-            return transformer.out(interState, key)
-          }, data)
-          state = stateSetter(state, key, value)
-        } catch (err) {
-          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
-        }
+        let data = deserializer(subState)
+        let value = transforms.reduceRight((interState, transformer) => {
+          return transformer.out(interState, key)
+        }, data)
+        state = stateSetter(state, key, value)
       })
     } else state = incoming
 
@@ -132,12 +139,6 @@ export default function createPersistor (store, config) {
   }
 }
 
-function warnIfSetError (key) {
-  return function setError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
-  }
-}
-
 function defaultSerializer (data) {
   return stringify(data, null, null, (k, v) => {
     if (process.env.NODE_ENV !== 'production') return null
@@ -172,4 +173,9 @@ function defaultStateGetter (state, key) {
 function defaultStateSetter (state, key, value) {
   state[key] = value
   return state
+}
+
+function defaultErrorCB (description, err) {
+  if (process.env.NODE_ENV !== 'production')
+    console.warn(description, err)
 }

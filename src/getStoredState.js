@@ -26,12 +26,23 @@ export default function getStoredState (config, onComplete) {
 
     let restoreCount = keysToRestore.length
     if (restoreCount === 0) complete(null, restoredState)
+    let lastErr = null
     keysToRestore.forEach((key) => {
       storage.getItem(createStorageKey(key), (err, serialized) => {
-        if (err && process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
-        else restoredState[key] = rehydrate(key, serialized)
+        if (err) {
+          lastErr = err
+          if (process.env.NODE_ENV !== 'production')
+            console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
+        }
+        else {
+          try {
+            restoredState[key] = rehydrate(key, serialized)
+          } catch (err) {
+            lastErr = new Error(`Failed to parse store key '${key}': ${err.message}`);
+          }
+        }
         completionCount += 1
-        if (completionCount === restoreCount) complete(null, restoredState)
+        if (completionCount === restoreCount) complete(lastErr, restoredState)
       })
     })
   })
@@ -39,14 +50,10 @@ export default function getStoredState (config, onComplete) {
   function rehydrate (key, serialized) {
     let state = null
 
-    try {
-      let data = deserialize(serialized)
-      state = transforms.reduceRight((subState, transformer) => {
-        return transformer.out(subState, key)
-      }, data)
-    } catch (err) {
-      if (process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
-    }
+    let data = deserialize(serialized)
+    state = transforms.reduceRight((subState, transformer) => {
+      return transformer.out(subState, key)
+    }, data)
 
     return state
   }

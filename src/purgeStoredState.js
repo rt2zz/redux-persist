@@ -1,4 +1,5 @@
 import { KEY_PREFIX } from './constants'
+import makeAdapter from './promiseAdapter';
 
 export default function purgeStoredState (config, keys) {
   const storage = config.storage
@@ -9,25 +10,26 @@ export default function purgeStoredState (config, keys) {
   if (!storage) throw new Error('redux-persist: config.storage required in purgeStoredState')
 
   if (typeof keys === 'undefined') { // if keys is not defined, purge all keys
-    return new Promise((resolve, reject) => {
-      storage.getAllKeys((err, allKeys) => {
-        if (err && process.env.NODE_ENV !== 'production') {
-          console.warn('redux-persist: error during purgeStoredState in storage.getAllKeys')
-          reject(err)
-        } else {
-          resolve(purgeStoredState(config, allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length))))
-        }
-      })
+    let { callback, promise } = makeAdapter()
+    let res = storage.getAllKeys(callback);
+
+    if ((res !== undefined) && (typeof(res.then) === 'function')) {
+      promise = res;
+    }
+
+    return promise
+    .then((allKeys) => {
+      return purgeStoredState(config, allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length)))
     })
   } else { // otherwise purge specified keys
     return Promise.all(keys.map((key) => {
-      return storage.removeItem(`${keyPrefix}${key}`, warnIfRemoveError(key))
+      let { callback, promise } = makeAdapter()
+      let res = storage.removeItem(`${keyPrefix}${key}`, callback)
+      if ((res !== undefined) && (typeof(res.then) === 'function')) {
+        return res
+      } else {
+        return callback
+      }
     }))
-  }
-}
-
-function warnIfRemoveError (key) {
-  return function removeError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
