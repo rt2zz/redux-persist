@@ -1,5 +1,4 @@
 node_modules
-lib/
 dist/
 es/
 .DS_Store
