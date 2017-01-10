@@ -44,9 +44,9 @@ persistStore(store, config, callback).purge()
     - **config** *object*
       - **blacklist** *array* keys (read: reducers) to ignore
       - **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
-      - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-backends) storage engine.
+      - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-engines) storage engine.
       - **transforms** *array* transforms to be applied during storage and during rehydration.
-      - **debounce** *integer* debounce interval applied to storage calls.
+      - **debounce** *integer* debounce interval applied to storage calls (in miliseconds).
       - **keyPrefix** *string* change localstorage default key (default: **reduxPersist:**) [Discussion on why we need this feature ?](https://github.com/rt2zz/redux-persist/issues/137)
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
@@ -64,6 +64,7 @@ persistStore(store, config, callback).purge()
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
   - arguments
     - **config** *object*
+      - **log** *boolean* Turn on debug mode. Default: *false*.
       - **stateReconciler** *function* override the default shallow merge state reconciliation.
 
 #### `constants`
@@ -101,8 +102,9 @@ const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage
 
 ```js
 // sessionStorage
-import { persistStore, storages } from 'redux-persist'
-persistStore(store, {storage: storages.asyncSessionStorage})
+import { persistStore } from 'redux-persist'
+import { asyncSessionStorage } from 'redux-persist/storages'
+persistStore(store, {storage: asyncSessionStorage})
 
 // react-native
 import {AsyncStorage} from 'react-native'
@@ -120,14 +122,18 @@ Transforms allow for arbitrary state transforms before saving and during rehydra
 - [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
 - [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
 - [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
+- [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
 - [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
 - custom transforms:
 ```js
 import { createTransform, persistStore } from 'redux-persist'
 
 let myTransform = createTransform(
+  // transform state coming from redux on its way to being serialized and stored
   (inboundState, key) => specialSerialize(inboundState, key),
+  // transform state coming from storage, on its way to be rehydrated into redux
   (outboundState, key) => specialDeserialize(outboundState, key),
+  // configuration options
   {whitelist: ['specialReducer']}
 )
 

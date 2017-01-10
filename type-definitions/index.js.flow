@@ -21,6 +21,7 @@ declare module 'redux-persist' {
     storage?: Storage,
     transforms?: Array<Object>,
     debounce?: number,
+    serialize?: boolean,
   }
   declare type Purge = (keys: Array<string>) => void
   declare type Rehydrate = (incoming: Object, options: { serial: boolean }) => void
@@ -31,7 +32,7 @@ declare module 'redux-persist' {
     resume: () => void,
   }
   declare type OnComplete = (err?: any, result?: Object) => void
-  
+
   declare type AutoRehydrate = Function
   declare type CreatePersistor = (store: Store, config: Config) => Persistor
   declare type CreateTransform = (in: TransformIn, out: TransformOut, config: TransformConfig) => Transform

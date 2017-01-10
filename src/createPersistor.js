@@ -2,12 +2,11 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
-import forEach from 'lodash/forEach'
 
 export default function createPersistor (store, config) {
   // defaults
-  const serialize = config.serialize || defaultSerialize
-  const deserialize = config.deserialize || defaultDeserialize
+  const serializer = config.serialize === false ? (data) => data : defaultSerializer
+  const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
@@ -62,8 +61,7 @@ export default function createPersistor (store, config) {
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serialize(endState), warnIfSetError(key))
+        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
         storesToProcess.shift()
       }, debounce)
     }
@@ -80,9 +78,9 @@ export default function createPersistor (store, config) {
   function adhocRehydrate (incoming, options = {}) {
     let state = {}
     if (options.serial) {
-      forEach(incoming, (subState, key) => {
+      stateIterator(incoming, (subState, key) => {
         try {
-          let data = deserialize(subState)
+          let data = deserializer(subState)
           let value = transforms.reduceRight((interState, transformer) => {
             return transformer.out(interState, key)
           }, data)
@@ -140,7 +138,7 @@ function warnIfSetError (key) {
   }
 }
 
-function defaultSerialize (data) {
+function defaultSerializer (data) {
   return stringify(data, null, null, (k, v) => {
     if (process.env.NODE_ENV !== 'production') return null
     throw new Error(`
@@ -152,7 +150,7 @@ function defaultSerialize (data) {
   })
 }
 
-function defaultDeserialize (serial) {
+function defaultDeserializer (serial) {
   return JSON.parse(serial)
 }
 
@@ -164,7 +162,7 @@ function rehydrateAction (data) {
 }
 
 function defaultStateIterator (collection, callback) {
-  return forEach(collection, callback)
+  return Object.keys(collection).forEach((key) => callback(collection[key], key))
 }
 
 function defaultStateGetter (state, key) {

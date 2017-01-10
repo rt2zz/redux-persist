@@ -51,7 +51,7 @@ let counterTransform = createTransform(
   { whitelist: 'reducerA'}
 )
 
-persistStore(store, { transforms: counterTransform })
+persistStore(store, { transforms: [counterTransform] })
 ```
 
 #### purgeStoredState(config, keys)
