@@ -38,7 +38,7 @@ declare module "redux-persist/lib/interfaces" {
   }
 
   export  interface Persistor {
-    purge: (keys: string[]) => void;
+    purge: (keys?: string[]) => void;
     rehydrate: (incoming: Object, options: { serial: boolean }) => void;
     pause: () => void;
     resume: () => void;
