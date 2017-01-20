@@ -9,8 +9,8 @@
   "scripts": {
     "test": "standard 'src/**/*.js' 'test/**/*.js' storages.js constants.js && BABEL_ENV=commonjs ava",
     "test:watch": "npm test -- --watch",
-    "copy-types": "cp -r type-definitions/ lib/",
-    "clean": "rimraf lib dist es",
+    "copy-types": "rsync -av --exclude=constants.d.ts --exclude=storages.d.ts type-definitions/ lib/ && cp type-definitions/constants.d.ts type-definitions/storages.d.ts ./",
+    "clean": "rimraf lib dist es && rm -f constants.d.ts storages.d.ts",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min && npm run copy-types",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
@@ -46,7 +46,6 @@
     "lodash-es": "^4.16.0"
   },
   "devDependencies": {
-    "@types/redux": "^3.6.0",
     "ava": "^0.16.0",
     "babel-cli": "^6.14.0",
     "babel-core": "^6.14.0",
@@ -57,7 +56,7 @@
     "cross-env": "^2.0.1",
     "immutable": "^3.7.6",
     "lodash-webpack-plugin": "^0.10.1",
-    "redux": "^3.5.2",
+    "redux": "^3.6.0",
     "rimraf": "~2.5.2",
     "standard": "^8.0.0",
     "webpack": "^1.13.2"
