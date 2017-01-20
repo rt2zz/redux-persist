@@ -42,7 +42,7 @@ export default function persistStore (store, config = {}, onComplete) {
     ...persistor,
     purge: (keys) => {
       purgeKeys = keys || '*'
-      persistor.purge(keys)
+      return persistor.purge(keys)
     }
   }
 }
