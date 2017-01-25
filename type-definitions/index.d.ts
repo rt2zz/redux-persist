@@ -128,6 +128,11 @@ declare module "redux-persist/lib/purgeStoredState" {
   export default purgeStoredState;
 }
 
+declare module "redux-persist/constants" {
+  export const KEY_PREFIX = "reduxPersist:"
+  export const REHYDRATE = "persist/REHYDRATE"
+}
+
 declare module "redux-persist" {
   export { Storage } from "redux-persist/lib/interfaces";
 
