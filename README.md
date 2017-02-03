@@ -10,10 +10,22 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 
 ## Basic Usage
-Basic usage requires adding three lines to a traditional redux application:
+Basic usage requires adding a few lines to a traditional redux application:
 ```js
+import {compose, applyMiddleware} from 'redux'
 import {persistStore, autoRehydrate} from 'redux-persist'
-const store = createStore(reducer, undefined, autoRehydrate())
+
+// add `autoRehydrate` as an enhancer to your store (note: `autoRehydrate` is not a middleware)
+const store = createStore(
+  reducer,
+  undefined,
+  compose(
+    applyMiddlware(...),
+    autoRehydrate()
+  )
+)
+
+// begin periodically persisting the store
 persistStore(store)
 ```
 For per reducer rehydration logic, you can opt-in by adding a handler to your reducer:
