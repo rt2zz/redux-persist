@@ -20,7 +20,7 @@ const store = createStore(
   reducer,
   undefined,
   compose(
-    applyMiddlware(...),
+    applyMiddleware(...),
     autoRehydrate()
   )
 )
