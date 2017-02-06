@@ -3,7 +3,7 @@ import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
   let storage = config.storage || createAsyncLocalStorage('local')
-  const deserialize = config.deserialize || defaultDeserialize
+  const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
@@ -40,7 +40,7 @@ export default function getStoredState (config, onComplete) {
     let state = null
 
     try {
-      let data = deserialize(serialized)
+      let data = deserializer(serialized)
       state = transforms.reduceRight((subState, transformer) => {
         return transformer.out(subState, key)
       }, data)
@@ -75,6 +75,6 @@ export default function getStoredState (config, onComplete) {
   }
 }
 
-function defaultDeserialize (serial) {
+function defaultDeserializer (serial) {
   return JSON.parse(serial)
 }
