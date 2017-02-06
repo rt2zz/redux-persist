@@ -35,12 +35,13 @@ export default function autoRehydrate (config = {}) {
 }
 
 function logPreRehydrate (preRehydrateActions) {
-  if (preRehydrateActions.length > 0) {
+  const concernedActions = preRehydrateActions.slice(1)
+  if (concernedActions.length > 0) {
     console.log(`
       redux-persist/autoRehydrate: %d actions were fired before rehydration completed. This can be a symptom of a race
       condition where the rehydrate action may overwrite the previously affected state. Consider running these actions
       after rehydration:
-    `, preRehydrateActions.length)
+    `, concernedActions.length, concernedActions)
   }
 }
 
