@@ -1,5 +1,6 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
+import makeAdapter from './promiseAdapter'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
 
@@ -28,11 +29,15 @@ export default function createPersistor (store, config) {
   // initialize stateful values
   let lastState = stateInit
   let paused = false
+  let stopped = false
+  let stopCB = null
+  let errorCB = config.errorCB || defaultErrorCB
   let storesToProcess = []
   let timeIterator = null
-
-  store.subscribe(() => {
-    if (paused) return
+  let unsubscribe = store.subscribe(() => {
+    // redux seems to sometimes call the callback once more after
+    // the unsubscribe was called so return here for safety
+    if (paused || stopped) return
 
     let state = store.getState()
 
@@ -49,13 +54,25 @@ export default function createPersistor (store, config) {
         if (storesToProcess.length === 0) {
           clearInterval(timeIterator)
           timeIterator = null
+          if (stopped) {
+            finishStop()
+          }
           return
         }
 
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+
+        if (typeof endState !== 'undefined') {
+          let { callback, promise } = makeAdapter()
+          let res = storage.setItem(storageKey, serializer(endState), callback)
+          if ((res !== undefined) && (typeof(res.then) === 'function')) {
+            res.catch((err) => errorCB('Error storing data for key: ' + key, err))
+          } else {
+            promise.catch((err) => errorCB('Error storing data for key: ' + key, err))
+          }
+        }
         storesToProcess.shift()
       }, debounce)
     }
@@ -73,15 +90,11 @@ export default function createPersistor (store, config) {
     let state = {}
     if (options.serial) {
       stateIterator(incoming, (subState, key) => {
-        try {
-          let data = deserializer(subState)
-          let value = transforms.reduceRight((interState, transformer) => {
-            return transformer.out(interState, key)
-          }, data)
-          state = stateSetter(state, key, value)
-        } catch (err) {
-          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
-        }
+        let data = deserializer(subState)
+        let value = transforms.reduceRight((interState, transformer) => {
+          return transformer.out(interState, key)
+        }, data)
+        state = stateSetter(state, key, value)
       })
     } else state = incoming
 
@@ -93,18 +106,36 @@ export default function createPersistor (store, config) {
     return `${keyPrefix}${key}`
   }
 
+  function finishStop () {
+    storage = null
+    if (stopCB !== null) {
+      stopCB()
+      stopCB = null
+    }
+  }
+
+  function stop (cb) {
+    stopped = true
+    if (unsubscribe !== null) {
+      unsubscribe()
+      // who knows what redux will do if we'd call it again?
+      unsubscribe = null
+    }
+    if (cb !== undefined) {
+      stopCB = cb
+    }
+    if (timeIterator === null) {
+      finishStop()
+    }
+  }
+
   // return `persistor`
   return {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
+    stop,
     purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
-  }
-}
-
-function warnIfSetError (key) {
-  return function setError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
 
@@ -142,4 +173,9 @@ function defaultStateGetter (state, key) {
 function defaultStateSetter (state, key, value) {
   state[key] = value
   return state
+}
+
+function defaultErrorCB (description, err) {
+  if (process.env.NODE_ENV !== 'production')
+    console.warn(description, err)
 }
