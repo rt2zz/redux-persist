@@ -43,12 +43,9 @@ function getStorage (type) {
   }
 }
 export default function (type, config) {
-  const deprecated = config && config.deprecated
   let storage = getStorage(type)
   return {
     getAllKeys: function (cb) {
-      // warn if deprecated
-      if (deprecated) console.warn('redux-persist: ', deprecated)
 
       return new Promise((resolve, reject) => {
         try {
