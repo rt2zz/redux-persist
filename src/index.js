@@ -1,5 +1,3 @@
-import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-
 import autoRehydrate from './autoRehydrate'
 import createPersistor from './createPersistor'
 import createTransform from './createTransform'
@@ -17,7 +15,7 @@ const deprecated = (cb, cb2, cb3) => {
 const deprecatedStorage = { getAllKeys: deprecated, getItem: deprecated, setItem: deprecated, removeItem: deprecated }
 const storages = {
   asyncLocalStorage: deprecatedStorage,
-  asyncSessionStorage: deprecatedStorage,
+  asyncSessionStorage: deprecatedStorage
 }
 
 export { autoRehydrate, createPersistor, createTransform, getStoredState, persistStore, purgeStoredState, storages }

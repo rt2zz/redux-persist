@@ -42,11 +42,11 @@ function getStorage (type) {
       : { getItem: noStorage, setItem: noStorage, removeItem: noStorage, getAllKeys: noStorage }
   }
 }
+
 export default function (type, config) {
   let storage = getStorage(type)
   return {
     getAllKeys: function (cb) {
-
       return new Promise((resolve, reject) => {
         try {
           var keys = []
