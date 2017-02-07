@@ -8,26 +8,30 @@ const noStorage = process.env.NODE_ENV === 'production'
     return null
   }
 
-function hasLocalStorage () {
-  let storageExists
-  try {
-    storageExists = (typeof window === 'object' && !!window.localStorage)
-    if (storageExists) {
-      const testKey = 'redux-persist localStorage test'
-      // @TODO should we also test set and remove?
-      window.localStorage.getItem(testKey)
-    }
-  } catch (e) {
-    if (process.env.NODE_ENV !== 'production') console.warn('redux-persist localStorage getItem test failed, persistence will be disabled.')
+function _hasStorage (storageType) {
+  if (typeof window !== 'object' || !(storageType in window)) {
     return false
   }
-  return storageExists
+
+  try {
+    let storage = window[storageType]
+    const testKey = `redux-persist ${storageType} test`
+    storage.setItem(testKey, 'test')
+    storage.getItem(testKey)
+    storage.removeItem(testKey)
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') console.warn(`redux-persist ${storageType} test failed, persistence will be disabled.`)
+    return false
+  }
+  return true
+}
+
+function hasLocalStorage () {
+  return _hasStorage('localStorage')
 }
 
 function hasSessionStorage () {
-  try {
-    return typeof window === 'object' && typeof window.sessionStorage !== 'undefined'
-  } catch (e) { return false }
+  return _hasStorage('sessionStorage')
 }
 
 function getStorage (type) {
