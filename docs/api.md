@@ -80,7 +80,7 @@ purgeStoredState({storage: AsyncStorage}, ['someReducer']).then(() => {
 #### persistor {}
 ```js
 persistor.rehydrate(incomingState, {serial: true})
-persistor.purgeAll()
+persistor.purge()
 persistor.pause()
 persistor.resume()
 ```
