@@ -71,6 +71,10 @@ persistStore(store, config, callback).purge()
       - **incoming** *object* Data to be rehydrated into the store.
       - **options** *object* If `serial:true`, incoming should be a *string*, that will be deserialized and passed through the transforms defined in the persistor.
       - Manually rehydrates the store with the passed data, dispatching the rehydrate action.
+    - `pause()`
+      - pauses persistence
+    - `resume()`
+      - resumes persistence
 
 #### `autoRehydrate(config)`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
