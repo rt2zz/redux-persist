@@ -1,4 +1,4 @@
-import { NODE_ENV } from "../env"
+import { NODE_ENV } from '../env'
 
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 const nextTick = process && process.nextTick ? process.nextTick : genericSetImmediate

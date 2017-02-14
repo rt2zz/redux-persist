@@ -1,5 +1,5 @@
 import { KEY_PREFIX } from './constants'
-import { NODE_ENV } from "./env"
+import { NODE_ENV } from './env'
 
 export default function purgeStoredState (config, keys) {
   const storage = config.storage

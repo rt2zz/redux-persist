@@ -1,7 +1,7 @@
 import { REHYDRATE } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
-import { NODE_ENV } from "./env"
+import { NODE_ENV } from './env'
 
 // try to source setImmediate as follows: setImmediate (global) -> global.setImmediate -> setTimeout(fn, 0)
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate || function (fn) { return setTimeout(fn, 0) } : setImmediate
