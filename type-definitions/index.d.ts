@@ -1,8 +1,6 @@
 declare module "redux-persist" {
   import { Store, StoreEnhancer } from "redux";
 
-  type Noop = (...args: any[]) => any;
-
   export interface Storage {
     setItem(key: string, value: any, onComplete?: OnComplete<void>): Promise<void>;
     getItem<Result>(key: string, onComplete?: OnComplete<Result>): Promise<Result>;
