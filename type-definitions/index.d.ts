@@ -8,11 +8,6 @@ declare module "redux-persist" {
     getItem<Result>(key: string, onComplete?: OnComplete<Result>): Promise<Result>;
     removeItem(key: string, onComplete?: OnComplete<void>): Promise<void>;
     getAllKeys<Result>(onComplete?: OnComplete<Result>): Promise<Result>;
-
-    setItem: Noop;
-    getItem: Noop;
-    removeItem: Noop;
-    getAllKeys?: Noop;
     keys?: Noop;
     [key: string]: any; // In case Storage object has some other (private?) methods and properties.
   }
