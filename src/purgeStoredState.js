@@ -1,4 +1,5 @@
 import { KEY_PREFIX } from './constants'
+import { NODE_ENV } from './env'
 
 export default function purgeStoredState (config, keys) {
   const storage = config.storage
@@ -11,7 +12,7 @@ export default function purgeStoredState (config, keys) {
   if (typeof keys === 'undefined') { // if keys is not defined, purge all keys
     return new Promise((resolve, reject) => {
       storage.getAllKeys((err, allKeys) => {
-        if (err && process.env.NODE_ENV !== 'production') {
+        if (err && NODE_ENV !== 'production') {
           console.warn('redux-persist: error during purgeStoredState in storage.getAllKeys')
           reject(err)
         } else {
@@ -28,6 +29,6 @@ export default function purgeStoredState (config, keys) {
 
 function warnIfRemoveError (key) {
   return function removeError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
+    if (err && NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
