@@ -9,7 +9,7 @@
   "scripts": {
     "test": "standard 'src/**/*.js' 'test/**/*.js' storages.js constants.js && BABEL_ENV=commonjs ava --esnext",
     "test:watch": "npm test -- --watch",
-    "copy-types": "cp -r type-definitions/ lib/",
+    "copy-types": "cp -r type-definitions/ lib/ && cp -r type-definitions/ es/",
     "clean": "rimraf lib dist es",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min && npm run copy-types",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
