@@ -25,7 +25,7 @@ export default function persistStore (store, config = {}, onComplete) {
         // do not persist state for purgeKeys
         if (purgeKeys) {
           if (purgeKeys === '*') restoredState = {}
-          else purgeKeys.forEach((key) => Reflect.deleteProperty(restoredState, key))
+          else purgeKeys.forEach((key) => delete restoredState[key])
         }
 
         store.dispatch(rehydrateAction(restoredState, err))
