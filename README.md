@@ -12,7 +12,7 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 ## Basic Usage
 Basic usage requires adding a few lines to a traditional redux application:
 ```js
-import {compose, applyMiddleware} from 'redux'
+import {compose, applyMiddleware, createStore} from 'redux'
 import {persistStore, autoRehydrate} from 'redux-persist'
 
 // add `autoRehydrate` as an enhancer to your store (note: `autoRehydrate` is not a middleware)
