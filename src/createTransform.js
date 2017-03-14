@@ -9,8 +9,8 @@ function createTransform (inbound, outbound, config = {}) {
   }
 
   return {
-    in: (state, key) => !whitelistBlacklistCheck(key) && inbound ? inbound(state, key) : state,
-    out: (state, key) => !whitelistBlacklistCheck(key) && outbound ? outbound(state, key) : state
+    in: (state, key) => !whitelistBlacklistCheck(key) && typeof inbound === 'function' ? inbound(state, key) : state,
+    out: (state, key) => !whitelistBlacklistCheck(key) && typeof outbound === 'function' ? outbound(state, key) : state
   }
 }
 
