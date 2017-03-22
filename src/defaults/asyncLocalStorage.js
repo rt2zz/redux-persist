@@ -1,7 +1,7 @@
 import { NODE_ENV } from '../env'
 
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
-const nextTick = process && process.nextTick ? process.nextTick : genericSetImmediate
+const nextTick = typeof process !== 'undefined' && process.nextTick ? process.nextTick : genericSetImmediate
 
 const noStorage = NODE_ENV === 'production'
   ? () => { /* noop */ return null }
