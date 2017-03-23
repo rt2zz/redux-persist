@@ -2,6 +2,7 @@ const webpack = require('webpack')
 var LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 const env = process.env.NODE_ENV
 const isProd = env === 'production'
+const path = require('path')
 
 let plugins = [
   new LodashModuleReplacementPlugin(),
@@ -18,7 +19,7 @@ if (isProd) {
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: 'dist/',
+    path: path.join(__dirname, '/dist/'),
     filename: isProd ? 'redux-persist.min.js' : 'redux-persist.js',
     library: 'redux-persist',
     libraryTarget: 'umd'
