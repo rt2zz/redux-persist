@@ -31,6 +31,7 @@ export default function createPersistor (store, config) {
   let paused = false
   let storesToProcess = []
   let timeIterator = null
+  let isTransforming = false
 
   store.subscribe(() => {
     if (paused) return
@@ -47,6 +48,10 @@ export default function createPersistor (store, config) {
     // time iterator (read: debounce)
     if (timeIterator === null) {
       timeIterator = setInterval(() => {
+        if (isTransforming) {
+          return
+        }
+
         if (storesToProcess.length === 0) {
           clearInterval(timeIterator)
           timeIterator = null
@@ -55,9 +60,26 @@ export default function createPersistor (store, config) {
 
         let key = storesToProcess[0]
         let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
-        storesToProcess.shift()
+
+        let endState = stateGetter(store.getState(), key)
+        function executeTransformsAsync (transforms) {
+          return transforms.reduce((promise, transformer) => {
+            return promise
+              .then(() => Promise.resolve(transformer.in(endState)).then((subState) => {
+                endState = subState
+                return endState
+              }))
+              .catch(console.error)
+          }, Promise.resolve())
+        }
+
+        isTransforming = true
+        executeTransformsAsync(transforms).then((result) => {
+          if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(result), warnIfSetError(key))
+          storesToProcess.shift()
+
+          isTransforming = false
+        })
       }, debounce)
     }
 
