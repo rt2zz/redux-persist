@@ -71,8 +71,8 @@ declare module "redux-persist" {
 }
 
 declare module "redux-persist/constants" {
-  export const KEY_PREFIX: string;
-  export const REHYDRATE: string;
+  export const KEY_PREFIX = 'reduxPersist:';
+  export const REHYDRATE = 'persist/REHYDRATE';
 }
 
 declare module "redux-persist/storages" {
