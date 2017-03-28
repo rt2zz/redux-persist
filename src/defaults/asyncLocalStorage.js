@@ -1,5 +1,4 @@
-const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
-const nextTick = typeof process !== 'undefined' && process.nextTick ? process.nextTick : genericSetImmediate
+const localSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 
 let noStorage = () => { /* noop */ return null }
 if (process.env.NODE_ENV !== 'production') {
@@ -58,7 +57,9 @@ export default function (type, config) {
           for (var i = 0; i < storage.length; i++) {
             keys.push(storage.key(i))
           }
-          nextTick(() => {
+          
+          
+          (() => {
             cb && cb(null, keys)
             resolve(keys)
           })
@@ -72,7 +73,7 @@ export default function (type, config) {
       return new Promise((resolve, reject) => {
         try {
           var s = storage.getItem(key)
-          nextTick(() => {
+          localSetImmediate(() => {
             cb && cb(null, s)
             resolve(s)
           })
@@ -86,7 +87,7 @@ export default function (type, config) {
       return new Promise((resolve, reject) => {
         try {
           storage.setItem(key, string)
-          nextTick(() => {
+          localSetImmediate(() => {
             cb && cb(null)
             resolve()
           })
@@ -100,7 +101,7 @@ export default function (type, config) {
       return new Promise((resolve, reject) => {
         try {
           storage.removeItem(key)
-          nextTick(() => {
+          localSetImmediate(() => {
             cb && cb(null)
             resolve()
           })
