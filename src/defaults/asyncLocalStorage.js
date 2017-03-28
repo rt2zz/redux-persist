@@ -1,5 +1,3 @@
-import { NODE_ENV } from '../env'
-
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 const nextTick = typeof process !== 'undefined' && process.nextTick ? process.nextTick : genericSetImmediate
 
@@ -22,7 +20,7 @@ function _hasStorage (storageType) {
     storage.getItem(testKey)
     storage.removeItem(testKey)
   } catch (e) {
-    if (NODE_ENV !== 'production') console.warn(`redux-persist ${storageType} test failed, persistence will be disabled.`)
+    if (process.env.NODE_ENV !== 'production') console.warn(`redux-persist ${storageType} test failed, persistence will be disabled.`)
     return false
   }
   return true
