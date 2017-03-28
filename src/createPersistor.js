@@ -2,7 +2,6 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
-import { NODE_ENV } from './env'
 
 export default function createPersistor (store, config) {
   // defaults
@@ -81,7 +80,7 @@ export default function createPersistor (store, config) {
           }, data)
           state = stateSetter(state, key, value)
         } catch (err) {
-          if (NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
         }
       })
     } else state = incoming
@@ -105,13 +104,13 @@ export default function createPersistor (store, config) {
 
 function warnIfSetError (key) {
   return function setError (err) {
-    if (err && NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
+    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
 
 function defaultSerializer (data) {
   return stringify(data, null, null, (k, v) => {
-    if (NODE_ENV !== 'production') return null
+    if (process.env.NODE_ENV !== 'production') return null
     throw new Error(`
       redux-persist: cannot process cyclical state.
       Consider changing your state structure to have no cycles.
