@@ -1,13 +1,12 @@
-import { NODE_ENV } from '../env'
-
 const localSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
 
-const noStorage = NODE_ENV === 'production'
-  ? () => { /* noop */ return null }
-  : () => {
+let noStorage = () => { /* noop */ return null }
+if (process.env.NODE_ENV !== 'production') {
+  noStorage = () => {
     console.error('redux-persist asyncLocalStorage requires a global localStorage object. Either use a different storage backend or if this is a universal redux application you probably should conditionally persist like so: https://gist.github.com/rt2zz/ac9eb396793f95ff3c3b')
     return null
   }
+}
 
 function _hasStorage (storageType) {
   if (typeof window !== 'object' || !(storageType in window)) {
@@ -21,7 +20,7 @@ function _hasStorage (storageType) {
     storage.getItem(testKey)
     storage.removeItem(testKey)
   } catch (e) {
-    if (NODE_ENV !== 'production') console.warn(`redux-persist ${storageType} test failed, persistence will be disabled.`)
+    if (process.env.NODE_ENV !== 'production') console.warn(`redux-persist ${storageType} test failed, persistence will be disabled.`)
     return false
   }
   return true
@@ -58,7 +57,9 @@ export default function (type, config) {
           for (var i = 0; i < storage.length; i++) {
             keys.push(storage.key(i))
           }
-          localSetImmediate(() => {
+          
+          
+          (() => {
             cb && cb(null, keys)
             resolve(keys)
           })

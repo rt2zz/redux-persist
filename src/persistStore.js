@@ -1,7 +1,6 @@
 import { REHYDRATE } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
-import { NODE_ENV } from './env'
 
 // try to source setImmediate as follows: setImmediate (global) -> global.setImmediate -> setTimeout(fn, 0)
 const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate || function (fn) { return setTimeout(fn, 0) } : setImmediate
@@ -10,7 +9,7 @@ export default function persistStore (store, config = {}, onComplete) {
   // defaults
   // @TODO remove shouldRestore
   const shouldRestore = !config.skipRestore
-  if (NODE_ENV !== 'production' && config.skipRestore) console.warn('redux-persist: config.skipRestore has been deprecated. If you want to skip restoration use `createPersistor` instead')
+  if (process.env.NODE_ENV !== 'production' && config.skipRestore) console.warn('redux-persist: config.skipRestore has been deprecated. If you want to skip restoration use `createPersistor` instead')
 
   let purgeKeys = null
 
