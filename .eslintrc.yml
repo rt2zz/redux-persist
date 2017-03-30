@@ -1,0 +1,17 @@
+---
+
+parser: babel-eslint
+
+globals:
+  it: true
+  expect: true
+  describe: true
+  test: true
+  jest: true
+
+extends:
+- plugin:eslint-plugin-import/warnings
+- plugin:eslint-plugin-import/errors
+
+rules:
+  semi: [2, "never"]
