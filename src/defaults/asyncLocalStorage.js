@@ -57,9 +57,7 @@ export default function (type, config) {
           for (var i = 0; i < storage.length; i++) {
             keys.push(storage.key(i))
           }
-          
-          
-          (() => {
+          localSetImmediate(() => {
             cb && cb(null, keys)
             resolve(keys)
           })
