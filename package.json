@@ -17,6 +17,7 @@
     "build:umd": "cross-env BABEL_ENV=commonjs webpack",
     "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack",
     "build:watch": "npm run build:commonjs -- -watch",
+    "precommit": "lint-staged",
     "prepublish": "npm run clean && npm run build"
   },
   "lint-staged": {
@@ -64,7 +65,9 @@
     "babel-preset-stage-2": "^6.22.0",
     "cross-env": "^3.1.4",
     "eslint-plugin-import": "^2.2.0",
+    "husky": "^0.13.3",
     "immutable": "^3.8.1",
+    "lint-staged": "^3.4.0",
     "lodash-webpack-plugin": "^0.11.0",
     "redux": "^3.6.0",
     "rimraf": "~2.5.4",
@@ -79,8 +82,5 @@
     "storages.js",
     "index.js.flow",
     "index.d.ts"
-  ],
-  "standard": {
-    "parser": "babel-eslint"
-  }
+  ]
 }
