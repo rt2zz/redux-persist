@@ -45,7 +45,7 @@ export default class AppProvider extends Component {
 }
 ```
 
-##React-Native
+## React-Native
 simply plug in AsyncStorage:
 ```js
 import { AsyncStorage } from 'react-native'
