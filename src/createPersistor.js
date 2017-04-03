@@ -34,7 +34,9 @@ export default function createPersistor (store, config) {
   store.subscribe(() => {
     if (paused) return
 
-    findStoresToProcess().forEach(key => {
+    let state = store.getState()
+
+    findStoresToProcess(state).forEach(key => {
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
@@ -48,7 +50,7 @@ export default function createPersistor (store, config) {
           return
         }
 
-        persistCurrentStateForKey(storesToProcess[0])
+        persistCurrentStateForKey(state, storesToProcess[0])
         storesToProcess.shift()
       }, debounce)
     }
@@ -56,9 +58,8 @@ export default function createPersistor (store, config) {
     lastState = state
   })
 
-  function findStoresToProcess () {
-    let keys = [];
-    let state = store.getState()
+  function findStoresToProcess (state) {
+    let keys = []
 
     stateIterator(state, (subState, key) => {
       if (!passWhitelistBlacklist(key)) return
@@ -66,18 +67,19 @@ export default function createPersistor (store, config) {
       keys.push(key)
     })
 
-    return keys;
+    return keys
   }
 
-  function persistCurrentStateForKey (key) {
+  function persistCurrentStateForKey (state, key) {
     let storageKey = createStorageKey(key)
-    let currentState = stateGetter(store.getState(), key)
+    let currentState = stateGetter(state, key)
     let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), currentState)
     if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
   }
 
   function persistCurrentState () {
-    findStoresToProcess().forEach(persistCurrentStateForKey)
+    let state = store.getState()
+    findStoresToProcess(state).forEach(key => persistCurrentStateForKey(state, key))
   }
 
   function passWhitelistBlacklist (key) {
