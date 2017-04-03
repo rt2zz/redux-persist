@@ -52,16 +52,20 @@ export default function createPersistor (store, config) {
           return
         }
 
-        let key = storesToProcess[0]
-        let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+        persistCurrentState(storesToProcess[0])
         storesToProcess.shift()
       }, debounce)
     }
 
     lastState = state
   })
+
+  function persistCurrentState(key) {
+    let storageKey = createStorageKey(key)
+    let currentState = stateGetter(store.getState(), key)
+    let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), currentState)
+    if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+  }
 
   function passWhitelistBlacklist (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return false
