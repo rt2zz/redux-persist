@@ -56,7 +56,7 @@ export default function createPersistor (store, config) {
     lastState = state
   })
 
-  function findStoresToProcess() {
+  function findStoresToProcess () {
     let keys = [];
     let state = store.getState()
 
@@ -69,11 +69,15 @@ export default function createPersistor (store, config) {
     return keys;
   }
 
-  function persistCurrentStateForKey(key) {
+  function persistCurrentStateForKey (key) {
     let storageKey = createStorageKey(key)
     let currentState = stateGetter(store.getState(), key)
     let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), currentState)
     if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+  }
+
+  function persistCurrentState () {
+    findStoresToProcess().forEach(persistCurrentStateForKey)
   }
 
   function passWhitelistBlacklist (key) {
@@ -111,7 +115,8 @@ export default function createPersistor (store, config) {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
-    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
+    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys),
+    flush: persistCurrentState
   }
 }
 
