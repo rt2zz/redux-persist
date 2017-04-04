@@ -74,12 +74,13 @@ export default function createPersistor (store, config) {
     let storageKey = createStorageKey(key)
     let currentState = stateGetter(state, key)
     let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), currentState)
-    if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+    if (typeof endState === 'undefined') return null
+    return storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
   }
 
   function persistCurrentState () {
     let state = store.getState()
-    findStoresToProcess(state).forEach(key => persistCurrentStateForKey(state, key))
+    return findStoresToProcess(state).map(key => persistCurrentStateForKey(state, key))
   }
 
   function passWhitelistBlacklist (key) {
