@@ -6,7 +6,6 @@ const path = require('path')
 
 let plugins = [
   new LodashModuleReplacementPlugin(),
-  new webpack.optimize.OccurrenceOrderPlugin(),
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(env)
   })
