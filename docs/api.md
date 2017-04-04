@@ -7,7 +7,7 @@
 - [getStoredState(config, callback)](#getstoredstateconfig-callback) -> Promise -> State
 - [createPersistor(store, config)](#createpersistorstore-config) -> Persistor
 - [createTransform(in, out, config)](#createtransformin-out-config) -> Transform
-- [purgeStoredState(config, keys)](#purgestoredstateconfig-keys) -> Promise -> void  
+- [purgeStoredState(config, keys)](#purgestoredstateconfig-keys) -> Promise -> void
 
 **objects**
 - [config](#config-)
@@ -83,6 +83,7 @@ persistor.rehydrate(incomingState, {serial: true})
 persistor.purge()
 persistor.pause()
 persistor.resume()
+persistor.flush()
 ```
 
 #### transform {}
