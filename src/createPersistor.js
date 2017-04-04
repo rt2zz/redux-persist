@@ -27,7 +27,6 @@ export default function createPersistor (store, config) {
 
   // initialize stateful values
   let lastState = stateInit
-  let lastWritten = {} // Last written value, per key
   let paused = false
   let storesToProcess = []
   let timeIterator = null
@@ -64,7 +63,6 @@ export default function createPersistor (store, config) {
     stateIterator(state, (subState, key) => {
       if (!passWhitelistBlacklist(key)) return
       let newState = stateGetter(state, key)
-      if (lastWritten[key] === newState) return
       if (stateGetter(lastState, key) === newState) return
       keys.push(key)
     })
@@ -75,20 +73,15 @@ export default function createPersistor (store, config) {
   function persistCurrentStateForKey (state, key) {
     let storageKey = createStorageKey(key)
     let currentState = stateGetter(state, key)
-    lastWritten[key] = currentState
     let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), currentState)
     if (typeof endState === 'undefined') return null
     return storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
   }
 
   function persistCurrentState () {
-    let promises = [];
     let state = store.getState()
-    stateIterator(state, (subState, key) => {
-      if (!passWhitelistBlacklist(key)) return
-      promises.push(persistCurrentStateForKey(state, key))
-    })
-
+    let promises = storesToProcess.map(k => persistCurrentStateForKey(state, k))
+    storesToProcess.splice(0)
     return promises
   }
 
