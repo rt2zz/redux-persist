@@ -7,7 +7,7 @@
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "scripts": {
-    "test": "standard 'src/**/*.js' 'test/**/*.js' storages.js constants.js && BABEL_ENV=commonjs ava --esnext",
+    "test": "BABEL_ENV=commonjs ava --esnext",
     "test:watch": "npm test -- --watch",
     "copy-types": "cp -r type-definitions/ lib/ && cp -r type-definitions/ es/",
     "clean": "rimraf lib dist es",
@@ -17,7 +17,15 @@
     "build:umd": "cross-env BABEL_ENV=commonjs webpack",
     "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack",
     "build:watch": "npm run build:commonjs -- -watch",
+    "precommit": "lint-staged",
     "prepublish": "npm run clean && npm run build"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "prettier --single-quote --trailing-comma --parser=flow --write",
+      "eslint --fix",
+      "git add"
+    ]
   },
   "ava": {
     "require": [
@@ -56,11 +64,13 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-2": "^6.22.0",
     "cross-env": "^3.1.4",
+    "eslint-plugin-import": "^2.2.0",
+    "husky": "^0.13.3",
     "immutable": "^3.8.1",
+    "lint-staged": "^3.4.0",
     "lodash-webpack-plugin": "^0.11.0",
     "redux": "^3.6.0",
     "rimraf": "~2.5.4",
-    "standard": "^8.6.0",
     "webpack": "^2.2.1"
   },
   "files": [
@@ -72,8 +82,5 @@
     "storages.js",
     "index.js.flow",
     "index.d.ts"
-  ],
-  "standard": {
-    "parser": "babel-eslint"
-  }
+  ]
 }

@@ -1,14 +1,20 @@
-const localSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
+const localSetImmediate = typeof setImmediate === 'undefined'
+  ? global.setImmediate
+  : setImmediate
 
-let noStorage = () => { /* noop */ return null }
+let noStorage = () => {
+  /* noop */ return null
+}
 if (process.env.NODE_ENV !== 'production') {
   noStorage = () => {
-    console.error('redux-persist asyncLocalStorage requires a global localStorage object. Either use a different storage backend or if this is a universal redux application you probably should conditionally persist like so: https://gist.github.com/rt2zz/ac9eb396793f95ff3c3b')
+    console.error(
+      'redux-persist asyncLocalStorage requires a global localStorage object. Either use a different storage backend or if this is a universal redux application you probably should conditionally persist like so: https://gist.github.com/rt2zz/ac9eb396793f95ff3c3b'
+    )
     return null
   }
 }
 
-function _hasStorage (storageType) {
+function _hasStorage(storageType) {
   if (typeof window !== 'object' || !(storageType in window)) {
     return false
   }
@@ -20,43 +26,57 @@ function _hasStorage (storageType) {
     storage.getItem(testKey)
     storage.removeItem(testKey)
   } catch (e) {
-    if (process.env.NODE_ENV !== 'production') console.warn(`redux-persist ${storageType} test failed, persistence will be disabled.`)
+    if (process.env.NODE_ENV !== 'production')
+      console.warn(
+        `redux-persist ${storageType} test failed, persistence will be disabled.`
+      )
     return false
   }
   return true
 }
 
-function hasLocalStorage () {
+function hasLocalStorage() {
   return _hasStorage('localStorage')
 }
 
-function hasSessionStorage () {
+function hasSessionStorage() {
   return _hasStorage('sessionStorage')
 }
 
-function getStorage (type) {
+function getStorage(type) {
   if (type === 'local') {
     return hasLocalStorage()
       ? window.localStorage
-      : { getItem: noStorage, setItem: noStorage, removeItem: noStorage, getAllKeys: noStorage }
+      : {
+          getItem: noStorage,
+          setItem: noStorage,
+          removeItem: noStorage,
+          getAllKeys: noStorage,
+        }
   }
   if (type === 'session') {
     return hasSessionStorage()
       ? window.sessionStorage
-      : { getItem: noStorage, setItem: noStorage, removeItem: noStorage, getAllKeys: noStorage }
+      : {
+          getItem: noStorage,
+          setItem: noStorage,
+          removeItem: noStorage,
+          getAllKeys: noStorage,
+        }
   }
 }
 
-export default function (type, config) {
+export default function(type, config) {
   let storage = getStorage(type)
   return {
-    getAllKeys: function (cb) {
+    getAllKeys: function(cb) {
       return new Promise((resolve, reject) => {
         try {
           var keys = []
           for (var i = 0; i < storage.length; i++) {
             keys.push(storage.key(i))
           }
+
           localSetImmediate(() => {
             cb && cb(null, keys)
             resolve(keys)
@@ -67,7 +87,7 @@ export default function (type, config) {
         }
       })
     },
-    getItem (key, cb) {
+    getItem(key, cb) {
       return new Promise((resolve, reject) => {
         try {
           var s = storage.getItem(key)
@@ -81,7 +101,7 @@ export default function (type, config) {
         }
       })
     },
-    setItem (key, string, cb) {
+    setItem(key, string, cb) {
       return new Promise((resolve, reject) => {
         try {
           storage.setItem(key, string)
@@ -95,7 +115,7 @@ export default function (type, config) {
         }
       })
     },
-    removeItem (key, cb) {
+    removeItem(key, cb) {
       return new Promise((resolve, reject) => {
         try {
           storage.removeItem(key)
@@ -108,6 +128,6 @@ export default function (type, config) {
           reject(e)
         }
       })
-    }
+    },
   }
 }
