@@ -34,34 +34,35 @@ export default function createPersistor (store, config) {
   store.subscribe(() => {
     if (paused) return
 
+    // time iterator (read: debounce)
+    if (timeIterator === null) {
+      timeIterator = setInterval(() => {
+        flush()
+        timeIterator = null
+      }, debounce)
+    }
+  })
+
+  function flush() {
     let state = store.getState()
 
     stateIterator(state, (subState, key) => {
       if (!passWhitelistBlacklist(key)) return
       if (stateGetter(lastState, key) === stateGetter(state, key)) return
-      if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
 
-    // time iterator (read: debounce)
-    if (timeIterator === null) {
-      timeIterator = setInterval(() => {
-        if (storesToProcess.length === 0) {
-          clearInterval(timeIterator)
-          timeIterator = null
-          return
-        }
-
-        let key = storesToProcess[0]
-        let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
-        storesToProcess.shift()
-      }, debounce)
+    let storagePromises = [];
+    for (let key in storesToProcess){
+      let key = storesToProcess[0]
+      let storageKey = createStorageKey(key)
+      let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
+      if (typeof endState !== 'undefined') storagePromises.push(storage.setItem(storageKey, serializer(endState), warnIfSetError(key)))
+      storesToProcess.shift()
     }
-
     lastState = state
-  })
+    return Promise.all(storagePromises)
+  }
 
   function passWhitelistBlacklist (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return false
@@ -98,7 +99,8 @@ export default function createPersistor (store, config) {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
-    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
+    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys),
+    flush: flush
   }
 }
 
