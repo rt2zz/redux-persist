@@ -1,9 +1,7 @@
 import { REHYDRATE } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
-
-// try to source setImmediate as follows: setImmediate (global) -> global.setImmediate -> setTimeout(fn, 0)
-const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate || function (fn) { return setTimeout(fn, 0) } : setImmediate
+import setImmediate from './utils/setImmediate'
 
 export default function persistStore (store, config = {}, onComplete) {
   // defaults
@@ -19,7 +17,7 @@ export default function persistStore (store, config = {}, onComplete) {
 
   // restore
   if (shouldRestore) {
-    genericSetImmediate(() => {
+    setImmediate(() => {
       getStoredState(config, (err, restoredState) => {
         // do not persist state for purgeKeys
         if (purgeKeys) {
@@ -31,7 +29,7 @@ export default function persistStore (store, config = {}, onComplete) {
         complete(err, restoredState)
       })
     })
-  } else genericSetImmediate(complete)
+  } else setImmediate(complete)
 
   function complete (err, restoredState) {
     persistor.resume()

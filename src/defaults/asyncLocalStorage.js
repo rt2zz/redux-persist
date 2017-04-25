@@ -1,4 +1,4 @@
-const localSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate : setImmediate
+import setImmediate from '../utils/setImmediate'
 
 let noStorage = () => { /* noop */ return null }
 if (process.env.NODE_ENV !== 'production') {
@@ -57,7 +57,7 @@ export default function (type, config) {
           for (var i = 0; i < storage.length; i++) {
             keys.push(storage.key(i))
           }
-          localSetImmediate(() => {
+          setImmediate(() => {
             cb && cb(null, keys)
             resolve(keys)
           })
@@ -71,7 +71,7 @@ export default function (type, config) {
       return new Promise((resolve, reject) => {
         try {
           var s = storage.getItem(key)
-          localSetImmediate(() => {
+          setImmediate(() => {
             cb && cb(null, s)
             resolve(s)
           })
@@ -85,7 +85,7 @@ export default function (type, config) {
       return new Promise((resolve, reject) => {
         try {
           storage.setItem(key, string)
-          localSetImmediate(() => {
+          setImmediate(() => {
             cb && cb(null)
             resolve()
           })
@@ -99,7 +99,7 @@ export default function (type, config) {
       return new Promise((resolve, reject) => {
         try {
           storage.removeItem(key)
-          localSetImmediate(() => {
+          setImmediate(() => {
             cb && cb(null)
             resolve()
           })
