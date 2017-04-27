@@ -7,7 +7,7 @@
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "scripts": {
-    "test": "standard 'src/**/*.js' 'test/**/*.js' storages.js constants.js && BABEL_ENV=commonjs ava --esnext",
+    "test": "standard 'src/**/*.js' 'test/**/*.js' && BABEL_ENV=commonjs ava --esnext",
     "test:watch": "npm test -- --watch",
     "copy-types": "cp -r type-definitions/ lib/ && cp -r type-definitions/ es/",
     "clean": "rimraf lib dist es",
