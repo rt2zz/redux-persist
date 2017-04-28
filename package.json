@@ -68,8 +68,8 @@
     "dist",
     "lib",
     "src",
-    "constants.js",
-    "storages.js",
+    "constants",
+    "storages",
     "index.js.flow",
     "index.d.ts"
   ],
