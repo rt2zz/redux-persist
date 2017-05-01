@@ -19,6 +19,10 @@ export default function persistStore (store, config = {}, onComplete) {
   if (shouldRestore) {
     setImmediate(() => {
       getStoredState(config, (err, restoredState) => {
+        if (err) {
+          complete(err)
+          return
+        }
         // do not persist state for purgeKeys
         if (purgeKeys) {
           if (purgeKeys === '*') restoredState = {}
