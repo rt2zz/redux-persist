@@ -6,6 +6,7 @@
   "typings": "lib/index.d.ts",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
+  "browser": "dist/redux-persist.min.js",
   "scripts": {
     "test": "standard 'src/**/*.js' 'test/**/*.js' && BABEL_ENV=commonjs ava --esnext",
     "test:watch": "npm test -- --watch",
