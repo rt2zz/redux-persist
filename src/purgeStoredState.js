@@ -11,8 +11,8 @@ export default function purgeStoredState (config, keys) {
   if (typeof keys === 'undefined') { // if keys is not defined, purge all keys
     return new Promise((resolve, reject) => {
       storage.getAllKeys((err, allKeys) => {
-        if (err && process.env.NODE_ENV !== 'production') {
-          console.warn('redux-persist: error during purgeStoredState in storage.getAllKeys')
+        if (err) {
+          if (process.env.NODE_ENV !== 'production') console.warn('redux-persist: error during purgeStoredState in storage.getAllKeys')
           reject(err)
         } else {
           resolve(purgeStoredState(config, allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length))))
