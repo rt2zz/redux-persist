@@ -5,7 +5,10 @@
       "presets": ["es2015"]
     },
     "es": {
-      "plugins": ["./tools/use-lodash-es"]
+      "plugins": [
+        "./tools/use-lodash-es",
+        "external-helpers"
+      ]
     }
   }
 }
