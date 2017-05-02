@@ -52,11 +52,10 @@ export default function createPersistor (store, config) {
           return
         }
 
-        let key = storesToProcess[0]
+        let key = storesToProcess.shift()
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
         if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
-        storesToProcess.shift()
       }, debounce)
     }
 
