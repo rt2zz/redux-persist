@@ -1,0 +1,7 @@
+{
+  "name": "redux-persist/constants",
+  "private": true,
+  "main": "../lib/constants.js",
+  "module": "../es/constants.js",
+  "jsnext:main": "../es/constants.js"
+}

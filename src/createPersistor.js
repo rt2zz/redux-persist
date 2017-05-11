@@ -50,8 +50,8 @@ export default function createPersistor (store, config) {
           return
         }
 
-        persistCurrentStateForKey(state, storesToProcess[0])
-        storesToProcess.shift()
+        let key = storesToProcess.shift()
+        persistCurrentStateForKey(state, key)
       }, debounce)
     }
 
