@@ -1,5 +1,5 @@
 import { KEY_PREFIX } from './constants'
-import createAsyncLocalStorage from './defaults/asyncLocalStorage'
+import createAsyncLocalStorage from './storages/asyncLocalStorage'
 
 export default function getStoredState (config, onComplete) {
   let storage = config.storage || createAsyncLocalStorage('local')
