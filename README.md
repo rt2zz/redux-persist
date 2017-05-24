@@ -118,9 +118,8 @@ const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage
 
 ```js
 // sessionStorage
-import { persistStore } from 'redux-persist'
-import { asyncSessionStorage } from 'redux-persist/storages'
-persistStore(store, {storage: asyncSessionStorage})
+import { persistStore, storages } from 'redux-persist'
+persistStore(store, {storage: storages.asyncSessionStorage})
 
 // react-native
 import {AsyncStorage} from 'react-native'
