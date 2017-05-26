@@ -17,7 +17,8 @@
     "build:umd": "cross-env BABEL_ENV=es NODE_ENV=development rollup -c -i src/index.js -o dist/redux-persist.js",
     "build:umd:min": "cross-env BABEL_ENV=es NODE_ENV=production rollup -c -i src/index.js -o dist/redux-persist.min.js",
     "build:watch": "npm run build:commonjs -- -watch",
-    "prepublish": "npm run clean && npm run build"
+    "prepare": "npm run build",
+    "prepublish": "npm run clean && npm run prepare"
   },
   "ava": {
     "require": [
