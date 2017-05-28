@@ -62,21 +62,15 @@ export default function createPersistor (store, config) {
         let storageKey = createStorageKey(key)
         let currentState = stateGetter(store.getState(), key)
 
+        isTransforming = true
+
         function assignKeyInStorage (endState) {
-          if (typeof endState !== 'undefined') {
-            storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
-          }
+          if (typeof endState === 'undefined') return
+          storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+          isTransforming = false
         }
 
-        if (asyncTransforms) {
-          isTransforming = true
-          applyTransformsAsync(transforms, currentState, key).then((result) => {
-            assignKeyInStorage(result)
-            isTransforming = false
-          })
-        } else {
-          assignKeyInStorage(applyTransforms(transforms, currentState, key))
-        }
+        applyInboundTransforms(transforms, currentState, key, asyncTransforms, assignKeyInStorage)
       }, debounce)
     }
 
@@ -92,6 +86,10 @@ export default function createPersistor (store, config) {
   function adhocRehydrate (incoming, options = {}) {
     let state = {}
     if (options.serial) {
+      if (asyncTransforms) {
+        throw new Error(`Async transforms not implemented with serial: true`)
+      }
+
       stateIterator(incoming, (subState, key) => {
         try {
           let data = deserializer(subState)
@@ -100,10 +98,14 @@ export default function createPersistor (store, config) {
           }, data)
           state = stateSetter(state, key, value)
         } catch (err) {
-          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+          }
         }
       })
-    } else state = incoming
+    } else {
+      state = incoming
+    }
 
     store.dispatch(rehydrateAction(state))
     return state
@@ -122,21 +124,25 @@ export default function createPersistor (store, config) {
   }
 }
 
-function applyTransforms (transforms, currentState, key) {
-  return transforms.reduce((subState, transformer) => {
-    return transformer.in(subState, key)
-  }, currentState)
-}
+function applyInboundTransforms (transforms, currentState, key, useAsync, assignKeyInStorage) {
+  if (useAsync) {
+    transforms.reduce((promise, transformer) => {
+      return promise
+        .then(() => Promise.resolve(transformer.in(currentState, key)).then((subState) => {
+          currentState = subState
+          return currentState
+        }))
+        .catch(console.error)
+    }, Promise.resolve()).then((result) => {
+      assignKeyInStorage(result)
+    })
+  } else {
+    let result = transforms.reduce((subState, transformer) => {
+      return transformer.in(subState, key)
+    }, currentState)
 
-function applyTransformsAsync (transforms, currentState, key) {
-  return transforms.reduce((promise, transformer) => {
-    return promise
-      .then(() => Promise.resolve(transformer.in(currentState, key)).then((subState) => {
-        currentState = subState
-        return currentState
-      }))
-      .catch(console.error)
-  }, Promise.resolve())
+    assignKeyInStorage(result)
+  }
 }
 
 function warnIfSetError (key) {
