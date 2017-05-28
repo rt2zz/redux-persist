@@ -70,12 +70,33 @@ export default function createPersistor (store, config) {
           isTransforming = false
         }
 
-        applyInboundTransforms(transforms, currentState, key, asyncTransforms, assignKeyInStorage)
+        applyInboundTransforms(currentState, key, assignKeyInStorage)
       }, debounce)
     }
 
     lastState = state
   })
+
+  function applyInboundTransforms (currentState, key, assignKeyInStorage) {
+    if (asyncTransforms) {
+      transforms.reduce((promise, transformer) => {
+        return promise
+          .then(() => Promise.resolve(transformer.in(currentState, key)).then((subState) => {
+            currentState = subState
+            return currentState
+          }))
+          .catch(console.error)
+      }, Promise.resolve()).then((result) => {
+        assignKeyInStorage(result)
+      })
+    } else {
+      let result = transforms.reduce((subState, transformer) => {
+        return transformer.in(subState, key)
+      }, currentState)
+
+      assignKeyInStorage(result)
+    }
+  }
 
   function passWhitelistBlacklist (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return false
@@ -121,27 +142,6 @@ export default function createPersistor (store, config) {
     pause: () => { paused = true },
     resume: () => { paused = false },
     purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
-  }
-}
-
-function applyInboundTransforms (transforms, currentState, key, useAsync, assignKeyInStorage) {
-  if (useAsync) {
-    transforms.reduce((promise, transformer) => {
-      return promise
-        .then(() => Promise.resolve(transformer.in(currentState, key)).then((subState) => {
-          currentState = subState
-          return currentState
-        }))
-        .catch(console.error)
-    }, Promise.resolve()).then((result) => {
-      assignKeyInStorage(result)
-    })
-  } else {
-    let result = transforms.reduce((subState, transformer) => {
-      return transformer.in(subState, key)
-    }, currentState)
-
-    assignKeyInStorage(result)
   }
 }
 
