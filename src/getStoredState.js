@@ -1,6 +1,5 @@
 import { KEY_PREFIX } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
-import { NODE_ENV } from './env'
 
 export default function getStoredState (config, onComplete) {
   let storage = config.storage || createAsyncLocalStorage('local')
@@ -18,7 +17,7 @@ export default function getStoredState (config, onComplete) {
 
   storage.getAllKeys((err, allKeys) => {
     if (err) {
-      if (NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error in storage.getAllKeys')
+      if (process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error in storage.getAllKeys')
       complete(err)
     }
 
@@ -29,7 +28,7 @@ export default function getStoredState (config, onComplete) {
     if (restoreCount === 0) complete(null, restoredState)
     keysToRestore.forEach((key) => {
       storage.getItem(createStorageKey(key), (err, serialized) => {
-        if (err && NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
+        if (err && process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
         else restoredState[key] = rehydrate(key, serialized)
         completionCount += 1
         if (completionCount === restoreCount) complete(null, restoredState)
@@ -46,7 +45,7 @@ export default function getStoredState (config, onComplete) {
         return transformer.out(subState, key)
       }, data)
     } catch (err) {
-      if (NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
+      if (process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
     }
 
     return state

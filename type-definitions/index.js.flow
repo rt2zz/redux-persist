@@ -1,51 +1,71 @@
-declare module 'redux-persist' {
-  // redux dependent typing
-  declare type Action = Object
-  declare type Dispatch = (a: Action) => any
-  declare type Store = {
-    dispatch: Dispatch,
-    subscribe: (listener: () => void) => () => void,
-  }
-  declare type StoreEnhancer = (next: Function) => Function
+// @flow
 
-  // redux-persist exported typing
-  declare type Storage = {
-    setItem: Function,
-    getItem: Function,
-    removeItem: Function,
-    getAllKeys: Function,
-  }
-  declare type Config = {
-    blacklist?: Array<string>,
-    whitelist?: Array<string>,
-    storage?: Storage,
-    transforms?: Array<Object>,
-    debounce?: number,
-    serialize?: boolean,
-  }
-  declare type Purge = (keys: Array<string>) => void
-  declare type Rehydrate = (incoming: Object, options: { serial: boolean }) => void
-  declare type Persistor = {
-    purge: Purge,
-    rehydrate: Rehydrate,
-    pause: () => void,
-    resume: () => void,
-  }
-  declare type OnComplete = (err?: any, result?: Object) => void
+// redux dependent typing
+declare type Action = Object
+declare type Dispatch = Function
+declare type Store = Object
+declare type StoreEnhancer = (next: Function) => Function
 
-  declare type AutoRehydrate = Function
-  declare type CreatePersistor = (store: Store, config: Config) => Persistor
-  declare type CreateTransform = (in: TransformIn, out: TransformOut, config: TransformConfig) => Transform
-  declare type GetStoredState = (config: Config, onComplete: OnComplete) => void
-  declare type PersistStore = (store: Store, config: Config, onComplete: OnComplete)  => Persistor
-  declare type PurgeStoredState = (config: Config, keys?: Array<string>) => Promise<void>
-  declare class ReduxPersist {
-    autoRehydrate: AutoRehydrate,
-    createPersistor: CreatePersistor,
-    createTransform: CreateTransform,
-    getStoredState: GetStoredState,
-    persistStore: PersistStore,
-    purgeStoredState: PurgeStoredState,
-  }
-  declare var exports: ReduxPersist
+// redux-persist typing
+type Whitelist = Array<string>
+type Blacklist = Array<string>
+
+declare type Storage = {
+  setItem: Function,
+  getItem: Function,
+  removeItem: Function,
+  getAllKeys: Function,
+}
+declare type Config = {
+  blacklist?: Blacklist,
+  whitelist?: Whitelist,
+  storage?: Storage,
+  transforms?: Array<Object>,
+  debounce?: number,
+  serialize?: boolean,
+  keyPrefix?: string,
+}
+declare type Purge = (keys: Array<string>) => void
+declare type Rehydrate = (incoming: Object, options: { serial: boolean }) => void
+declare type Persistor = {
+  purge: Purge,
+  rehydrate: Rehydrate,
+  pause: () => void,
+  resume: () => void,
+}
+declare type OnComplete = (err?: any, result?: Object) => void
+
+declare type Transformer = (substate: any, key: string) => any
+declare type TransformConfig = {| whitelist?: Whitelist, blacklist?: Blacklist |}
+declare type Transform = {
+  in: Transformer,
+  out: Transformer,
+}
+type StoredStateCallback = (state: Object, err: any) => void
+
+type StateReconciler = (prevState: any, inboundState: any, nextState: any, log: bool) => any
+type AutoRehydrateConfig = {
+  log?: boolean,
+  stateReconciler?: StateReconciler,
+}
+
+declare function createPersistor(store: Store, config: Config): Persistor
+declare function createTransform(in: Transformer, out: Transformer, config?: TransformConfig): Transform
+declare function getStoredState(config: Config, ?StoredStateCallback): ?Promise<Object>
+declare function persistStore(store: Store, config: Config, onComplete?: OnComplete): Persistor
+declare function purgeStoredState(config: Config, keys?: Array<string>): Promise<void>
+declare function autoRehydrate(config: ?AutoRehydrateConfig): StoreEnhancer
+
+export {
+  createPersistor,
+  createTransform,
+  getStoredState,
+  persistStore,
+  purgeStoredState,
+  autoRehydrate,
+}
+
+export type {
+  Persistor,
+  Config,
 }

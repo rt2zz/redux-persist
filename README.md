@@ -127,7 +127,7 @@ import {AsyncStorage} from 'react-native'
 persistStore(store, {storage: AsyncStorage})
 
 // web with recommended localForage
-import localForage from 'localForage'
+import localForage from 'localforage'
 persistStore(store, {storage: localForage})
 
 ```

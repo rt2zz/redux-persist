@@ -2,7 +2,6 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
-import { NODE_ENV } from './env'
 
 export default function createPersistor (store, config) {
   // defaults
@@ -13,6 +12,7 @@ export default function createPersistor (store, config) {
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  const asyncTransforms = config.asyncTransforms || false
 
   // pluggable state shape (e.g. immutablejs)
   const stateInit = config._stateInit || {}
@@ -58,28 +58,25 @@ export default function createPersistor (store, config) {
           return
         }
 
-        let key = storesToProcess[0]
+        let key = storesToProcess.shift()
         let storageKey = createStorageKey(key)
+        let currentState = stateGetter(store.getState(), key)
 
-        let endState = stateGetter(store.getState(), key)
-        function executeTransformsAsync (transforms) {
-          return transforms.reduce((promise, transformer) => {
-            return promise
-              .then(() => Promise.resolve(transformer.in(endState)).then((subState) => {
-                endState = subState
-                return endState
-              }))
-              .catch(console.error)
-          }, Promise.resolve())
+        function assignKeyInStorage (endState) {
+          if (typeof endState !== 'undefined') {
+            storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+          }
         }
 
-        isTransforming = true
-        executeTransformsAsync(transforms).then((result) => {
-          if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(result), warnIfSetError(key))
-          storesToProcess.shift()
-
-          isTransforming = false
-        })
+        if (asyncTransforms) {
+          isTransforming = true
+          applyTransformsAsync(transforms, currentState, key).then((result) => {
+            assignKeyInStorage(result)
+            isTransforming = false
+          })
+        } else {
+          assignKeyInStorage(applyTransforms(transforms, currentState, key))
+        }
       }, debounce)
     }
 
@@ -103,7 +100,7 @@ export default function createPersistor (store, config) {
           }, data)
           state = stateSetter(state, key, value)
         } catch (err) {
-          if (NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
         }
       })
     } else state = incoming
@@ -125,15 +122,32 @@ export default function createPersistor (store, config) {
   }
 }
 
+function applyTransforms (transforms, currentState, key) {
+  return transforms.reduce((subState, transformer) => {
+    return transformer.in(subState, key)
+  }, currentState)
+}
+
+function applyTransformsAsync (transforms, currentState, key) {
+  return transforms.reduce((promise, transformer) => {
+    return promise
+      .then(() => Promise.resolve(transformer.in(currentState, key)).then((subState) => {
+        currentState = subState
+        return currentState
+      }))
+      .catch(console.error)
+  }, Promise.resolve())
+}
+
 function warnIfSetError (key) {
   return function setError (err) {
-    if (err && NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
+    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
 
 function defaultSerializer (data) {
   return stringify(data, null, null, (k, v) => {
-    if (NODE_ENV !== 'production') return null
+    if (process.env.NODE_ENV !== 'production') return null
     throw new Error(`
       redux-persist: cannot process cyclical state.
       Consider changing your state structure to have no cycles.

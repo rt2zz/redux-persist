@@ -1,16 +1,13 @@
 import { REHYDRATE } from './constants'
 import getStoredState from './getStoredState'
 import createPersistor from './createPersistor'
-import { NODE_ENV } from './env'
-
-// try to source setImmediate as follows: setImmediate (global) -> global.setImmediate -> setTimeout(fn, 0)
-const genericSetImmediate = typeof setImmediate === 'undefined' ? global.setImmediate || function (fn) { return setTimeout(fn, 0) } : setImmediate
+import setImmediate from './utils/setImmediate'
 
 export default function persistStore (store, config = {}, onComplete) {
   // defaults
   // @TODO remove shouldRestore
   const shouldRestore = !config.skipRestore
-  if (NODE_ENV !== 'production' && config.skipRestore) console.warn('redux-persist: config.skipRestore has been deprecated. If you want to skip restoration use `createPersistor` instead')
+  if (process.env.NODE_ENV !== 'production' && config.skipRestore) console.warn('redux-persist: config.skipRestore has been deprecated. If you want to skip restoration use `createPersistor` instead')
 
   let purgeKeys = null
 
@@ -20,8 +17,12 @@ export default function persistStore (store, config = {}, onComplete) {
 
   // restore
   if (shouldRestore) {
-    genericSetImmediate(() => {
+    setImmediate(() => {
       getStoredState(config, (err, restoredState) => {
+        if (err) {
+          complete(err)
+          return
+        }
         // do not persist state for purgeKeys
         if (purgeKeys) {
           if (purgeKeys === '*') restoredState = {}
@@ -32,7 +33,7 @@ export default function persistStore (store, config = {}, onComplete) {
         complete(err, restoredState)
       })
     })
-  } else genericSetImmediate(complete)
+  } else setImmediate(complete)
 
   function complete (err, restoredState) {
     persistor.resume()
