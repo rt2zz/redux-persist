@@ -8,6 +8,7 @@ export default function getStoredState (config, onComplete) {
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  const asyncTransforms = config.asyncTransforms || false
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
@@ -32,38 +33,63 @@ export default function getStoredState (config, onComplete) {
     if (restoreCount === 0) complete(null, restoredState)
 
     keysToRestore.forEach((key) => {
-
       storage.getItem(createStorageKey(key), (err, serialized) => {
+        function onKeyRehydrated () {
+          completionCount += 1
+          if (completionCount === restoreCount) {
+            complete(null, restoredState)
+          }
+        }
 
         if (err && process.env.NODE_ENV !== 'production') {
           console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
         } else {
-          restoredState[key] = rehydrate(key, serialized)
-        }
-
-        completionCount += 1
-        if (completionCount === restoreCount) {
-          complete(null, restoredState)
+          rehydrate(restoredState, key, serialized, onKeyRehydrated)
         }
       })
     })
   })
 
-  function rehydrate (key, serialized) {
-    let state = null
-
-    try {
-      let data = deserializer(serialized)
-      state = transforms.reduceRight((subState, transformer) => {
-        return transformer.out(subState, key)
-      }, data)
-    } catch (err) {
+  function rehydrate (restoredState, key, serialized, onKeyRehydrated) {
+    function onRehydrateError (err) {
       if (process.env.NODE_ENV !== 'production') {
         console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
       }
+      restoredState[key] = null
     }
 
-    return state
+    let data
+    try {
+      data = deserializer(serialized)
+    } catch (err) {
+      onRehydrateError(err)
+      onKeyRehydrated()
+      return
+    }
+
+    if (asyncTransforms) {
+      transforms.reduceRight((promise, transformer) => {
+        return promise
+          .then(() => Promise.resolve(transformer.out(data, key)).then((transformed) => {
+            data = transformed
+            return data
+          }))
+          .catch(onRehydrateError)
+      }, Promise.resolve()).then((result) => {
+        restoredState[key] = result
+        onKeyRehydrated()
+      })
+    } else {
+      try {
+        restoredState[key] = transforms.reduceRight((subState, transformer) => {
+          return transformer.out(subState, key)
+        }, data)
+      } catch (err) {
+        onRehydrateError(err)
+      } finally {
+        onKeyRehydrated()
+      }
+    }
   }
 
   function complete (err, restoredState) {
