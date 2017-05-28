@@ -7,7 +7,7 @@
 - [getStoredState(config, callback)](#getstoredstateconfig-callback) -> Promise -> State
 - [createPersistor(store, config)](#createpersistorstore-config) -> Persistor
 - [createTransform(in, out, config)](#createtransformin-out-config) -> Transform
-- [purgeStoredState(config, keys)](#purgestoredstateconfig-keys) -> Promise -> void  
+- [purgeStoredState(config, keys)](#purgestoredstateconfig-keys) -> Promise -> void
 
 **objects**
 - [config](#config-)
@@ -53,6 +53,7 @@ let counterTransform = createTransform(
 
 persistStore(store, { transforms: [counterTransform] })
 ```
+Async transform methods are supported if you set config.asyncTransforms.
 
 #### purgeStoredState(config, keys)
 Purge stored state. Config should specify the storage engine to purge against, and if necessary the keyPrefix used. If keys is falsy, will purge all persist keys, if keys is an array, it will be treated as a whitelist of keys to purge.
@@ -71,6 +72,7 @@ purgeStoredState({storage: AsyncStorage}, ['someReducer']).then(() => {
   whitelist: ['reducerA'],
   blacklist: ['reducerB'],
   transforms: [transformA],
+  asyncTransforms: true,
   storage: AsyncStorage,
   debounce: 33,
   keyPrefix: 'myAppStorage:'
