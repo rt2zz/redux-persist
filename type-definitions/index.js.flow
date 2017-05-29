@@ -25,7 +25,7 @@ declare type Config = {
   serialize?: boolean,
   keyPrefix?: string,
 }
-declare type Purge = (keys: Array<string>) => void
+declare type Purge = (keys?: Array<string>) => void
 declare type Rehydrate = (incoming: Object, options: { serial: boolean }) => void
 declare type Persistor = {
   purge: Purge,
