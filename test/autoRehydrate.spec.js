@@ -48,10 +48,10 @@ test('can rehydrating immutable state', (t) => {
   t.truthy(state.immutableSpace.equals(immutableData))
 })
 
-test('does not rehydrate unknown state keys', (t) => {
+test('does rehydrate unknown state keys', (t) => {
   let store = configureStore(createReducer())
   let someData = 1
   store.dispatch(rehydrate({someData}))
   let state = store.getState()
-  t.truthy(state.someData === undefined)
+  t.truthy(state.someData === 1)
 })
