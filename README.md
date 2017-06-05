@@ -157,6 +157,14 @@ let myTransform = createTransform(
 persistStore(store, {transforms: [myTransform]})
 ```
 
+Please keep care of the orders in which transform are applied e.g. 'compress' has to be used as the first transform in most cases like when used in combination with 'immutable':
+
+```js
+transforms: [ createCompressor(), immutableTransform() ]
+```
+
+Otherwise you might see JSON parse errors from deep inside of the [transit implementation](https://github.com/glenjamin/transit-immutable-js).
+
 ## Migrations
 One challenge developers encounter when persisting state for the first time is what happens when the shape of the application state changes between deployments? Solution: [redux-persist-migrate](https://github.com/wildlifela/redux-persist-migrate)
 
