@@ -7,8 +7,8 @@ declare type Store = Object
 declare type StoreEnhancer = (next: Function) => Function
 
 // redux-persist typing
-type Whitelist = Array<string>
-type Blacklist = Array<string>
+type Whitelist = Array<$Subtype<string>>
+type Blacklist = Array<$Subtype<string>>
 
 declare type Storage = {
   setItem: Function,
