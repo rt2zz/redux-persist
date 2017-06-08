@@ -2,13 +2,18 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
+import map from 'lodash/fp/map'
+import some from 'lodash/fp/some'
+import isRegExp from 'lodash/isRegExp'
+import isFunction from 'lodash/isFunction'
+import isArray from 'lodash/isArray'
 
 export default function createPersistor (store, config) {
   // defaults
   const serializer = config.serialize === false ? (data) => data : defaultSerializer
   const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
-  const blacklist = config.blacklist || []
-  const whitelist = config.whitelist || false
+  const blacklist = map(matches)(isArray(config.blacklist) ? config.blacklist : [])
+  const whitelist = isArray(config.whitelist) ? map(matches)(config.whitelist) : false
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
@@ -63,8 +68,9 @@ export default function createPersistor (store, config) {
   })
 
   function passWhitelistBlacklist (key) {
-    if (whitelist && whitelist.indexOf(key) === -1) return false
-    if (blacklist.indexOf(key) !== -1) return false
+    if (whitelist && !some(t => t(key))(whitelist)) return false
+    if (some(t => t(key))(blacklist)) return false
+
     return true
   }
 
@@ -142,3 +148,12 @@ function defaultStateSetter (state, key, value) {
   state[key] = value
   return state
 }
+
+const matches = target => source =>
+  isFunction(target)
+    ? target(source)
+    : (
+        isRegExp(target)
+          ? target.test(String(source))
+          : target === source
+      )
