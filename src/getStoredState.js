@@ -13,7 +13,6 @@ export default function getStoredState (config, onComplete) {
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
 
   let restoredState = {}
-  let completionCount = 0
 
   storage.getAllKeys((err, allKeys) => {
     if (err) {
@@ -24,16 +23,13 @@ export default function getStoredState (config, onComplete) {
     let persistKeys = allKeys.filter((key) => key.indexOf(keyPrefix) === 0).map((key) => key.slice(keyPrefix.length))
     let keysToRestore = persistKeys.filter(passWhitelistBlacklist)
 
-    let restoreCount = keysToRestore.length
-    if (restoreCount === 0) complete(null, restoredState)
     keysToRestore.forEach((key) => {
       storage.getItem(createStorageKey(key), (err, serialized) => {
         if (err && process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
         else restoredState[key] = rehydrate(key, serialized)
-        completionCount += 1
-        if (completionCount === restoreCount) complete(null, restoredState)
       })
     })
+    complete(null, restoredState)
   })
 
   function rehydrate (key, serialized) {
