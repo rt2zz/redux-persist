@@ -60,7 +60,7 @@ declare module "redux-persist" {
 
   export function createTransform<State, Raw>(transformIn: TransformIn<State, Raw>, transformOut: TransformOut<Raw, State>, config?: TransformConfig): Transform<State, Raw>;
 
-  export function getStoredState(persistorConfig?: PersistorConfig, onComplete?: OnComplete<any>): undefined;
+  export function getStoredState(persistorConfig?: PersistorConfig, onComplete?: OnComplete<any>): Promise<any>;
 
   export function persistStore<State>(store: Store<State>, persistorConfig?: PersistorConfig, onComplete?: OnComplete<any>): Persistor;
 
