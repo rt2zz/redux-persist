@@ -1,11 +1,28 @@
 {
+  "plugins": ["transform-object-rest-spread", "transform-class-properties"],
+  "presets": [
+    "flow",
+    ["env", {
+      "useBuiltIns": true,
+      "modules": "commonjs",
+      "targets": {
+        "browsers": ["last 2 versions"]
+      }
+    }]
+  ],
   "env": {
-    "commonjs": {
-      "presets": [["es2015", { "loose": true }], "stage-2"]
-    },
     "es": {
-      "presets": [["es2015", { "loose": true, "modules": false }], "stage-2"],
-      "plugins": ["./tools/use-lodash-es"]
+      "plugins": ["transform-object-rest-spread", "transform-class-properties"],
+      "presets": [
+        "flow",
+        ["env", {
+          "useBuiltIns": true,
+          "modules": false,
+          "targets": {
+            "browsers": ["last 2 versions"]
+          }
+        }]
+      ]
     }
   }
 }

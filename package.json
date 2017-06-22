@@ -1,84 +1,66 @@
 {
   "name": "redux-persist",
-  "version": "4.8.1",
-  "description": "persist and rehydrate redux stores",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "module": "es/index.js",
-  "jsnext:main": "es/index.js",
+  "version": "0.0.0-p2-proto",
+  "description": "",
+  "main": "index.js",
+  "files": [
+    "es",
+    "src",
+    "lib"
+  ],
   "scripts": {
-    "test": "standard 'src/**/*.js' 'test/**/*.js' && BABEL_ENV=commonjs ava --esnext",
-    "test:watch": "npm test -- --watch",
-    "copy-types": "cp -r type-definitions/ lib/ && cp -r type-definitions/ es/",
-    "clean": "rimraf lib dist es",
-    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min && npm run copy-types",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
-    "build:umd": "cross-env BABEL_ENV=es NODE_ENV=development rollup -c -i src/index.js -o dist/redux-persist.js",
-    "build:umd:min": "cross-env BABEL_ENV=es NODE_ENV=production rollup -c -i src/index.js -o dist/redux-persist.min.js",
-    "build:watch": "npm run build:commonjs -- -watch",
-    "prepare": "npm run build",
-    "prepublish": "npm run clean && npm run prepare"
+    "build": "flow-copy-source src es && cross-env BABEL_ENV=es babel src --out-dir es",
+    "clean": "rimraf es && rimraf lib",
+    "precommit": "lint-staged",
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "ava"
   },
+  "lint-staged": {
+    "src/**/*.js": [
+      "prettier --no-semi --single-quote --trailing-comma --parser=flow --write",
+      "git add"
+    ]
+  },
+  "author": "",
+  "license": "MIT",
   "ava": {
+    "files": [
+      "tests/**/*.spec.js"
+    ],
     "require": [
-      "babel-register",
-      "babel-polyfill"
+      "babel-polyfill",
+      "babel-register"
     ],
     "babel": "inherit"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rt2zz/redux-persist.git"
-  },
-  "homepage": "https://github.com/rt2zz/redux-persist",
-  "keywords": [
-    "redux",
-    "redux-middleware",
-    "localstorage",
-    "redux-persist",
-    "redux-storage",
-    "redux-rehydrate"
-  ],
-  "author": "rt2zz <zack@root-two.com>",
-  "license": "MIT",
-  "dependencies": {
-    "json-stringify-safe": "^5.0.1",
-    "lodash": "^4.17.4",
-    "lodash-es": "^4.17.4"
-  },
   "devDependencies": {
-    "ava": "^0.18.1",
-    "babel-cli": "^6.22.2",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-polyfill": "^6.22.0",
-    "babel-preset-es2015": "^6.22.0",
-    "babel-preset-stage-2": "^6.22.0",
-    "cross-env": "^3.1.4",
-    "immutable": "^3.8.1",
+    "ava": "^0.19.1",
+    "babel-eslint": "^7.2.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.5.2",
+    "babel-preset-flow": "^6.23.0",
+    "babel-register": "^6.24.1",
+    "cross-env": "^5.0.1",
+    "eslint": "^3.19.0",
+    "eslint-plugin-flowtype": "^2.30.4",
+    "eslint-plugin-import": "^2.2.0",
+    "flow-bin": "^0.47.0",
+    "flow-copy-source": "^1.1.0",
+    "husky": "^0.13.3",
+    "lint-staged": "^3.4.0",
+    "lodash": "^4.17.4",
+    "prettier": "^1.4.4",
     "redux": "^3.6.0",
-    "rimraf": "~2.5.4",
-    "rollup": "^0.41.6",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-replace": "^1.1.1",
-    "rollup-plugin-uglify": "^1.0.2",
-    "standard": "^8.6.0"
+    "redux-mock-store": "^1.2.3",
+    "rimraf": "^2.6.1",
+    "sinon": "^2.3.2"
   },
-  "files": [
-    "es",
-    "dist",
-    "lib",
-    "src",
-    "constants",
-    "storages",
-    "index.js.flow",
-    "index.d.ts"
-  ],
-  "standard": {
-    "parser": "babel-eslint"
+  "peerDependencies": {
+    "redux": ">3.0.0"
+  },
+  "dependencies": {
+    "json-stringify-safe": "^5.0.1"
   }
 }

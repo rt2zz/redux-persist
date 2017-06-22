@@ -1,58 +1,67 @@
-import { REHYDRATE } from './constants'
-import getStoredState from './getStoredState'
-import createPersistor from './createPersistor'
-import setImmediate from './utils/setImmediate'
+// @flow
 
-export default function persistStore (store, config = {}, onComplete) {
-  // defaults
-  // @TODO remove shouldRestore
-  const shouldRestore = !config.skipRestore
-  if (process.env.NODE_ENV !== 'production' && config.skipRestore) console.warn('redux-persist: config.skipRestore has been deprecated. If you want to skip restoration use `createPersistor` instead')
+import type {
+  PersistConfig,
+  MigrationManifest,
+  RehydrateAction,
+  RehydrateErrorType,
+} from './types'
 
-  let purgeKeys = null
+import { createStore } from 'redux'
+import { persistReducer } from './persistReducer'
+import { PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 
-  // create and pause persistor
-  const persistor = createPersistor(store, config)
-  persistor.pause()
+type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
+type Persist = <R>(PersistConfig, MigrationManifest) => R => R
+type CreatePersistor = Object => void
 
-  // restore
-  if (shouldRestore) {
-    setImmediate(() => {
-      getStoredState(config, (err, restoredState) => {
-        if (err) {
-          complete(err)
-          return
-        }
-        // do not persist state for purgeKeys
-        if (purgeKeys) {
-          if (purgeKeys === '*') restoredState = {}
-          else purgeKeys.forEach((key) => delete restoredState[key])
-        }
+const initialState = {
+  registry: [],
+  bootstrapped: false,
+}
 
-        store.dispatch(rehydrateAction(restoredState, err))
-        complete(err, restoredState)
-      })
-    })
-  } else setImmediate(complete)
-
-  function complete (err, restoredState) {
-    persistor.resume()
-    onComplete && onComplete(err, restoredState)
-  }
-
-  return {
-    ...persistor,
-    purge: (keys) => {
-      purgeKeys = keys || '*'
-      return persistor.purge(keys)
-    }
+const persistorReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case REGISTER:
+      return { ...state, registry: [...state.registry, action.key] }
+    case REHYDRATE:
+      let firstIndex = state.registry.indexOf(action.key)
+      let registry = [...state.registry]
+      registry.splice(firstIndex, 1)
+      return { ...state, registry, bootstrapped: registry.length === 0 }
+    default:
+      return state
   }
 }
 
-function rehydrateAction (payload, error = null) {
-  return {
-    type: REHYDRATE,
-    payload,
-    error
+export const persistStore = (store: Object) => {
+  let persistor = createStore(persistorReducer, undefined)
+  persistor.purge = () => {
+    store.dispatch({
+      type: PURGE,
+    })
   }
+
+  let register = (key: string) => {
+    persistor.dispatch({
+      type: REGISTER,
+      key,
+    })
+  }
+
+  let rehydrate = (key: string, payload: Object, err: any) => {
+    let rehydrateAction = {
+      type: REHYDRATE,
+      payload,
+      err,
+      key,
+    }
+    // dispatch to `store` to rehydrate and `persistor` to track result
+    store.dispatch(rehydrateAction)
+    persistor.dispatch(rehydrateAction)
+  }
+
+  store.dispatch({ type: PERSIST, register, rehydrate })
+
+  return persistor
 }
