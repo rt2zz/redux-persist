@@ -10,7 +10,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "flow-copy-source src es && cross-env BABEL_ENV=es babel src --out-dir es && cross-env babel src --out-dir lib",
+    "build": "flow-copy-source src es && cross-env BABEL_ENV=es babel src --out-dir es && cross-env BABEL_ENV=lib babel src --out-dir lib",
     "clean": "rimraf es && rimraf lib",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run clean && npm run build",
