@@ -1,3 +1,52 @@
+This is WIP documentation for a major api change proposed for redux-persist. You can install this via `npm i redux-persist@proto`.
+### Usage
+```js
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/es/storages/local'
+import rootReducer from './rootReducer'
+
+const config = {
+  key: 'root', // key is required
+  version: 1, // this refers to the state version and is used by migrations
+  storage, // storage is now required
+}
+
+const migrations = {} // none for now
+
+const reducer = persistReducer(config, migrations, rootReducer)
+
+function configureStore () {
+  // ...
+  let store = createStore(reducer)
+
+  persistStore(store)
+}
+```
+
+**Alternate Usage**
+If in redux-persist you used getStoredState + createPersistor, the usage is nearly identical with some minor modifications. Note: because no `persistor` is created, `react/PersistGate` cannot be used.
+```js
+import { getStoredState } from 'redux-persist/es/getStoredState'
+import { createPersistoid } from 'redux-persist/es/createPersistoid'
+import storage from 'redux-persist/es/storages/local'
+
+// ...
+
+const config = { key: 'root', version: 1, storage }
+
+function configureStore () {
+  const initState = await getStoredState(config)
+  // createPersistoid instead of createPersistor
+  let persistoid = createPersistoid(config)
+
+  const store = createStore(reducer, initState)
+ 
+  // need to hook up the subscription (this used to be done automatically by createPersistor)
+  store.subscribe(() => {
+    persistoid.update(store.getState())
+  })
+}
+```
 ### P2 Proto Overview
 This is a prototype for a new version of redux-persist that fundamentally changes the architecture. These changes are largely motivated by the desire to better support
 - HMR of store files

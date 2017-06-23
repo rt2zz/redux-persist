@@ -5,7 +5,7 @@ import stringify from 'json-stringify-safe'
 
 import type { PersistConfig, Transform } from './types'
 
-export function createPersistoid(store: Object, config: PersistConfig) {
+export function createPersistoid(config: PersistConfig) {
   // defaults
   const blacklist: ?Array<string> = config.blacklist || null
   const whitelist: ?Array<string> = config.whitelist || null
@@ -23,13 +23,10 @@ export function createPersistoid(store: Object, config: PersistConfig) {
 
   // initialize stateful values
   let lastState = {}
-  let paused = false
   let keysToProcess = []
   let timeIterator: ?number = null
 
   const update = (state: Object) => {
-    if (paused) return
-
     Object.keys(state).forEach(key => {
       let subState = state[key]
       if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
@@ -81,14 +78,8 @@ export function createPersistoid(store: Object, config: PersistConfig) {
     }
   }
 
-  // return `persistor`
+  // return `persistoid`
   return {
-    pause: () => {
-      paused = true
-    },
-    resume: () => {
-      paused = false
-    },
     update,
   }
 }
