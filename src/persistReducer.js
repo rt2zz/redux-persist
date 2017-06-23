@@ -26,9 +26,12 @@ export function persistReducer<State: Object, Action: Object>(
   baseReducer: (State, Action) => State
 ): (State, Action) => State & PersistPartial {
   if (process.env.NODE_ENV !== 'production') {
+    if (!config) throw new Error('config is required for persistReducer')
     if (!config.key) throw new Error('key is required in persistor config')
     if (!config.storage)
-      throw new Error('storage is required in persistor config')
+      throw new Error(
+        "redux-persist: config.storage is required. Try using `import storageLocal from 'redux-persist/es/storages/local'"
+      )
     if (!config.version)
       throw new Error('version is required in persistor config')
   }
@@ -39,10 +42,14 @@ export function persistReducer<State: Object, Action: Object>(
   let _purge = false
 
   // $FlowFixMe perhaps there is a better way to do this?
-  let defaultState = baseReducer(undefined, { type: 'redux-p/default-probe' })
+  let defaultState = baseReducer(undefined, {
+    type: 'redux-persist/default-probe',
+  })
   if (process.env.NODE_ENV !== 'production') {
     if (Array.isArray(defaultState) || typeof defaultState !== 'object')
-      console.error('redux-p: does not yet support non plain object state.')
+      console.error(
+        'redux-persist: does not yet support non plain object state.'
+      )
   }
   return (state: State = defaultState, action: Action) => {
     let { _persist, ...rest } = state || {}
@@ -52,17 +59,17 @@ export function persistReducer<State: Object, Action: Object>(
       case PERSIST:
         if (state._persist) {
           console.warn(
-            'redux-p: unexpected _persist state before PERSIST action is handled. If you are doing hmr or code-splitting this may be a valid use case. Please open a ticket, requires further review.'
+            'redux-persist: unexpected _persist state before PERSIST action is handled. If you are doing hmr or code-splitting this may be a valid use case. Please open a ticket, requires further review.'
           )
           return state
         }
         if (typeof action.rehydrate !== 'function')
           throw new Error(
-            'redux-p: action.rehydrate is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
+            'redux-persist: action.rehydrate is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
           )
         if (typeof action.register !== 'function')
           throw new Error(
-            'redux-p: action.register is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
+            'redux-persist: action.register is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
           )
 
         let rehydrate = action.rehydrate

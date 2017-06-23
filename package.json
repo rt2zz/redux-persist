@@ -1,15 +1,16 @@
 {
   "name": "redux-persist",
   "version": "0.0.0-p2-proto",
-  "description": "",
-  "main": "index.js",
+  "description": "persist and rehydrate redux stores",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "files": [
     "es",
     "src",
     "lib"
   ],
   "scripts": {
-    "build": "flow-copy-source src es && cross-env BABEL_ENV=es babel src --out-dir es",
+    "build": "flow-copy-source src es && cross-env BABEL_ENV=es babel src --out-dir es && cross-env babel src --out-dir lib",
     "clean": "rimraf es && rimraf lib",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run clean && npm run build",

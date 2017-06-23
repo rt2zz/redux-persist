@@ -12,11 +12,13 @@ export function migrateState(
 ) {
   let inboundVersion = (state && state.version) || DEFAULT_VERSION
   if (inboundVersion === currentVersion) {
-    if (debug) console.log('redux-p: verions match, noop migration')
+    if (process.env.NODE_ENV !== 'production' && debug)
+      console.log('redux-persist: verions match, noop migration')
     return state
   }
   if (inboundVersion > currentVersion) {
-    if (debug) console.error('redux-p: downgrading version is not supported')
+    if (process.env.NODE_ENV !== 'production' && debug)
+      console.error('redux-persist: downgrading version is not supported')
     return state
   }
 
@@ -25,10 +27,11 @@ export function migrateState(
     .filter(key => key > inboundVersion)
     .sort()
 
-  if (debug) console.log('redux-p: migrationKeys', migrationKeys)
+  if (process.env.NODE_ENV !== 'production' && debug)
+    console.log('redux-persist: migrationKeys', migrationKeys)
   let migratedState = migrationKeys.reduce((state, versionKey) => {
-    if (debug)
-      console.log('redux-p: running migration for versionKey', versionKey)
+    if (process.env.NODE_ENV !== 'production' && debug)
+      console.log('redux-persist: running migration for versionKey', versionKey)
     return migrations[versionKey](state)
   }, state)
 

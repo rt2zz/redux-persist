@@ -1,8 +1,8 @@
 // @flow
 
-export const KEY_PREFIX = 'redux-p:'
-export const REHYDRATE = 'redux-p/REHYDRATE'
-export const PERSIST = 'redux-p/PERSIST'
-export const PURGE = 'redux-p/PURGE'
-export const REGISTER = 'redux-p/REGISTER'
+export const KEY_PREFIX = 'persist:'
+export const REHYDRATE = 'persist/REHYDRATE'
+export const PERSIST = 'persist/PERSIST'
+export const PURGE = 'persist/PURGE'
+export const REGISTER = 'persist/REGISTER'
 export const DEFAULT_VERSION = -1

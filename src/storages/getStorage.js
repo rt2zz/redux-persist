@@ -2,22 +2,12 @@
 
 import type { Storage } from '../types'
 
-let noStorage = (type: string) => (a: any) => {
-  /* noop */ return undefined
-}
-
-if (process.env.NODE_ENV !== 'production') {
-  let warned = false
-  noStorage = storageType => () => {
-    if (warned) {
-      return null
-    }
-    warned = true
-    console.error(
-      `redux-persist storage requires a global ${storageType} object. Either use a different storage backend or if this is a universal redux application you probably should conditionally persist like so: https://gist.github.com/rt2zz/ac9eb396793f95ff3c3b`
-    )
-    return null
-  }
+function noop() {}
+let noopStorage = {
+  getItem: noop,
+  setItem: noop,
+  removeItem: noop,
+  getAllKeys: noop,
 }
 
 function hasStorage(storageType) {
@@ -44,12 +34,12 @@ function hasStorage(storageType) {
 export default function getStorage(type: string): Storage {
   const storageType = `${type}Storage`
   if (hasStorage(storageType)) return window[storageType]
-
-  const noStorageType = noStorage(storageType)
-  return {
-    getItem: noStorageType,
-    setItem: noStorageType,
-    removeItem: noStorageType,
-    getAllKeys: noStorageType,
+  else {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(
+        `redux-persist failed to create sync storage. falling back to memory storage.`
+      )
+    }
+    return noopStorage
   }
 }
