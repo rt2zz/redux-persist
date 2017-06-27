@@ -36,7 +36,7 @@ export type Transform = {
 export type RehydrateErrorType = any
 
 export type RehydrateAction = {
-  type: 'redux-p/REHYDRATE',
+  type: 'redux-persist/REHYDRATE',
   key: string,
   payload: ?Object,
   err: ?RehydrateErrorType,
@@ -47,7 +47,7 @@ export type Persistoid = {
 }
 
 type RegisterAction = {
-  type: 'redux-p/REGISTER',
+  type: 'redux-persist/REGISTER',
   key: string,
 }
 

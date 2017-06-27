@@ -4,7 +4,7 @@ import { DEFAULT_VERSION } from './constants'
 
 import type { PersistConfig, MigrationManifest } from './types'
 
-export function migrateState(
+export default function migrateState(
   state: Object = {},
   migrations: MigrationManifest,
   currentVersion: number,

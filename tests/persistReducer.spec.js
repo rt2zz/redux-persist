@@ -6,8 +6,8 @@ import sinon from 'sinon'
 import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 
-import { persistReducer } from '../src/persistReducer'
-import { createSyncStorage } from '../src/storages/createSyncStorage'
+import persistReducer from '../src/persistReducer'
+import createSyncStorage from '../src/storages/createSyncStorage'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 

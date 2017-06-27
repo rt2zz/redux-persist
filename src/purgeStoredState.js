@@ -4,7 +4,7 @@ import type { PersistConfig } from './types'
 
 import { KEY_PREFIX } from './constants'
 
-export function purgeStoredState(config: PersistConfig) {
+export default function purgeStoredState(config: PersistConfig) {
   const storage = config.storage
   const storageKey = `${config.keyPrefix !== undefined
     ? config.keyPrefix

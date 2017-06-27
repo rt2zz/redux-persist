@@ -8,11 +8,11 @@ import type {
   Persistoid,
 } from './types'
 
-import { migrateState } from './migrateState'
-import { stateReconciler } from './stateReconciler'
-import { createPersistoid } from './createPersistoid'
-import { getStoredState } from './getStoredState'
-import { purgeStoredState } from './purgeStoredState'
+import migrateState from './migrateState'
+import stateReconciler from './stateReconciler'
+import createPersistoid from './createPersistoid'
+import getStoredState from './getStoredState'
+import purgeStoredState from './purgeStoredState'
 
 type PersistPartial = { _persist: PersistState }
 /* 
@@ -20,11 +20,12 @@ type PersistPartial = { _persist: PersistState }
   - persisting a reducer which has nested _persist
   - handling actions that fire before reydrate is called
 */
-export function persistReducer<State: Object, Action: Object>(
+export default function persistReducer<State: Object, Action: Object>(
   config: PersistConfig,
   migrations: MigrationManifest = {},
   baseReducer: (State, Action) => State
 ): (State, Action) => State & PersistPartial {
+  console.log('PR', config)
   if (process.env.NODE_ENV !== 'production') {
     if (!config) throw new Error('config is required for persistReducer')
     if (!config.key) throw new Error('key is required in persistor config')
@@ -76,7 +77,7 @@ export function persistReducer<State: Object, Action: Object>(
         action.register(config.key)
 
         getStoredState(config, (err, restoredState) => {
-          _persistoid = createPersistoid(baseReducer, config)
+          _persistoid = createPersistoid(config)
           // @NOTE setTimeout 0 to ensure that we do not dispatch sync before this reduction completes
           setTimeout(() => action.rehydrate(config.key, restoredState, err), 0)
         })

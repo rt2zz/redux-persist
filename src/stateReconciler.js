@@ -2,7 +2,7 @@
 
 import type { PersistConfig } from './types'
 
-export function stateReconciler<State: Object>(
+export default function stateReconciler<State: Object>(
   originalState: State,
   inboundState: State,
   reducedState: State,

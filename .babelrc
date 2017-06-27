@@ -1,4 +1,15 @@
 {
+  "plugins": ["transform-object-rest-spread", "transform-class-properties"],
+  "presets": [
+    "flow",
+    ["env", {
+      "useBuiltIns": true,
+      "modules": "commonjs",
+      "targets": {
+        "browsers": ["last 2 versions"]
+      }
+    }]
+  ],
   "env": {
     "lib": {
       "plugins": ["transform-object-rest-spread", "transform-class-properties"],

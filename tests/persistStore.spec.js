@@ -4,7 +4,7 @@ import test from 'ava'
 import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 
-import { persistStore } from '../src/persistStore'
+import persistStore from '../src/persistStore'
 import { PERSIST, REHYDRATE } from '../src/constants'
 
 let mockStore = configureStore([])

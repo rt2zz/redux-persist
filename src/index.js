@@ -1,4 +1,4 @@
 // @flow
 
-export { persistReducer } from './persistReducer'
-export { persistStore } from './persistStore'
+export { default as persistReducer } from './persistReducer'
+export { default as persistStore } from './persistStore'
