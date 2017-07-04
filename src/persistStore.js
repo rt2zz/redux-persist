@@ -28,9 +28,13 @@ export default function persistStore (store, config = {}, onComplete) {
           if (purgeKeys === '*') restoredState = {}
           else purgeKeys.forEach((key) => delete restoredState[key])
         }
-
-        store.dispatch(rehydrateAction(restoredState, err))
-        complete(err, restoredState)
+        try {
+          store.dispatch(rehydrateAction(restoredState, err))
+        } catch (err) {
+          console.log(err)
+        } finally {
+          complete(err, restoredState)
+        }
       })
     })
   } else setImmediate(complete)
