@@ -30,8 +30,6 @@ export default function persistStore (store, config = {}, onComplete) {
         }
         try {
           store.dispatch(rehydrateAction(restoredState, err))
-        } catch (err) {
-          console.log(err)
         } finally {
           complete(err, restoredState)
         }
