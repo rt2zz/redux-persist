@@ -61,6 +61,7 @@ type PersistorState = {
 type PersistorSubscribeCallback = () => void
 
 export type Persistor = {
+  purge: () => void,
   +dispatch: PersistorAction => PersistorAction,
   +getState: () => PersistorState,
   +subscribe: PersistorSubscribeCallback => () => void,
