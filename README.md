@@ -2,18 +2,15 @@ This is WIP documentation for a major api change proposed for redux-persist. You
 ### Usage
 ```js
 import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/es/storages/local'
+import storage from 'redux-persist/es/storage'
 import rootReducer from './rootReducer'
 
 const config = {
   key: 'root', // key is required
-  version: 1, // this refers to the state version and is used by migrations
   storage, // storage is now required
 }
 
-const migrations = {} // none for now
-
-const reducer = persistReducer(config, migrations, rootReducer)
+const reducer = persistReducer(config, rootReducer)
 
 function configureStore () {
   // ...
