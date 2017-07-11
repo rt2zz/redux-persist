@@ -1,5 +1,7 @@
 This is WIP documentation for a major api change proposed for redux-persist. You can install this via `npm i redux-persist@proto`.
 
+[API](./docs/api.md)
+
 ### Open Questions
 - naming
   - createPersistoid
