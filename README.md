@@ -1,4 +1,13 @@
 This is WIP documentation for a major api change proposed for redux-persist. You can install this via `npm i redux-persist@proto`.
+
+### Open Questions
+- naming
+  - createPersistoid
+    - this is the stateful object that actually does the serialization and writing out of state (per persistReducer). Other names could be `createPersistNode` or `createSink`.
+  - config.migrate
+    - this is an optional async method to transform state after retrieval but before rehydration. The anticipated usage is for migrations, but technically it is not limited to this. Perhaps the name should be more general.
+- performance related to workaround for combineReducers warning
+  
 ### Usage
 ```js
 import { persistStore, persistReducer } from 'redux-persist'
