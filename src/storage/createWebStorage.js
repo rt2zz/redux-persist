@@ -1,7 +1,7 @@
 // @flow
 import getStorage from './getStorage'
 
-export default function createSyncStorage(type: string) {
+export default function createWebStorage(type: string) {
   let storage = getStorage(type)
   return {
     getItem: (key: string, cb: Function) => cb(null, storage.getItem(key)),

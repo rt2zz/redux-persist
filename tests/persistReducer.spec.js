@@ -7,7 +7,7 @@ import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 
 import persistReducer from '../src/persistReducer'
-import createSyncStorage from '../src/storages/createSyncStorage'
+import createWebStorage from '../src/storage/createWebStorage'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 
@@ -16,7 +16,7 @@ let reducer = () => ({})
 const config = {
   key: 'persist-reducer-test',
   version: 1,
-  storage: createSyncStorage('local')
+  storage: createWebStorage('local')
 }
 
 test('persistedReducer does not automatically set _persist state', t => {

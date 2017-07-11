@@ -1,7 +1,7 @@
 // @flow
 
 export type PersistConfig = {
-  version: number,
+  version?: number,
   storage: Object,
   key: string,
   keyPrefix?: string,
@@ -10,7 +10,7 @@ export type PersistConfig = {
   whitelist?: Array<string>,
   transforms?: Array<Transform>,
   throttle?: number,
-  noAutoRehydrate?: boolean,
+  migrate?: (Object, number) => Promise<Object>,
 }
 
 export type Storage = {

@@ -8,7 +8,6 @@ import type {
   Persistoid,
 } from './types'
 
-import migrateState from './migrateState'
 import stateReconciler from './stateReconciler'
 import createPersistoid from './createPersistoid'
 import getStoredState from './getStoredState'
@@ -25,7 +24,6 @@ export default function persistReducer<State: Object, Action: Object>(
   migrations: MigrationManifest = {},
   baseReducer: (State, Action) => State
 ): (State, Action) => State & PersistPartial {
-  console.log('PR', config)
   if (process.env.NODE_ENV !== 'production') {
     if (!config) throw new Error('config is required for persistReducer')
     if (!config.key) throw new Error('key is required in persistor config')
@@ -33,8 +31,6 @@ export default function persistReducer<State: Object, Action: Object>(
       throw new Error(
         "redux-persist: config.storage is required. Try using `import storageLocal from 'redux-persist/es/storages/local'"
       )
-    if (!config.version)
-      throw new Error('version is required in persistor config')
   }
 
   const version = config.version || DEFAULT_VERSION
@@ -78,8 +74,12 @@ export default function persistReducer<State: Object, Action: Object>(
 
         getStoredState(config, (err, restoredState) => {
           _persistoid = createPersistoid(config)
-          // @NOTE setTimeout 0 to ensure that we do not dispatch sync before this reduction completes
-          setTimeout(() => action.rehydrate(config.key, restoredState, err), 0)
+          const migrate = config.migrate || ((s, v) => Promise.resolve(s))
+          migrate(restoredState, version).then((migratedState, migrateErr) => {
+            if (process.env.NODE_ENV !== 'production' && migrateErr)
+              console.error('redux-persist: migration error', migrateErr)
+            action.rehydrate(config.key, migratedState, err || migrateErr)
+          })
         })
 
         return { ...state, _persist: { version, rehydrated: false } }
@@ -92,16 +92,10 @@ export default function persistReducer<State: Object, Action: Object>(
         if (action.key === config.key) {
           let reducedState = baseReducer(restState, action)
           let inboundState = action.payload
-          let migratedInboundState = migrateState(
-            inboundState,
-            migrations,
-            version,
-            config
-          )
-          // $FlowFixMe: not sure what the deal is here
+
           let reconciledRest: State = stateReconciler(
             state,
-            migratedInboundState,
+            inboundState,
             reducedState,
             config
           )
@@ -118,6 +112,7 @@ export default function persistReducer<State: Object, Action: Object>(
         return state
 
       default:
+        // @TODO more performant workaround for combineReducers warning
         let newState = {
           ...baseReducer(restState, action),
           _persist,
