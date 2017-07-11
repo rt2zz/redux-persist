@@ -20,14 +20,14 @@ const config = {
 }
 
 test('persistedReducer does not automatically set _persist state', t => {
-  let persistedReducer = persistReducer(config, {}, reducer)
+  let persistedReducer = persistReducer(config, reducer)
   let state = persistedReducer({}, {})
   console.log('state', state)
   t.is(undefined, state._persist)
 })
 
 test('persistedReducer does returns versioned, rehydrate tracked _persist state upon PERSIST', t => {
-  let persistedReducer = persistReducer(config, {}, reducer)
+  let persistedReducer = persistReducer(config, reducer)
   let register = sinon.spy()
   let rehydrate = sinon.spy()
   let state = persistedReducer({}, { type: PERSIST, register, rehydrate })
@@ -36,7 +36,7 @@ test('persistedReducer does returns versioned, rehydrate tracked _persist state 
 })
 
 test('persistedReducer calls register and rehydrate after PERSIST', async (t) => {
-  let persistedReducer = persistReducer(config, {}, reducer)
+  let persistedReducer = persistReducer(config, reducer)
   let register = sinon.spy()
   let rehydrate = sinon.spy()
   let state = persistedReducer({}, { type: PERSIST, register, rehydrate })

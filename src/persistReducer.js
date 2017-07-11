@@ -21,7 +21,6 @@ type PersistPartial = { _persist: PersistState }
 */
 export default function persistReducer<State: Object, Action: Object>(
   config: PersistConfig,
-  migrations: MigrationManifest = {},
   baseReducer: (State, Action) => State
 ): (State, Action) => State & PersistPartial {
   if (process.env.NODE_ENV !== 'production') {
