@@ -28,6 +28,7 @@ Where Persistor is [defined below](#type-persistor)
   version?: number, // the state version as an integer (defaults to -1)
   blacklist?: Array<string>, // do not persist these keys
   whitelist?: Array<string>, // only persist they keys
+  migrate?: (Object, number) => Promise<Object>,
   transforms?: Array<Transform>,
   throttle?: number,
   keyPrefix?: string, // will be prefixed to the storage key
