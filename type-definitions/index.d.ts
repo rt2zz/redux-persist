@@ -3,8 +3,14 @@ declare module "redux-persist" {
 
   export interface Storage {
     setItem(key: string, value: any, onComplete?: OnComplete<any>): Promise<any>;
-    getItem<Result>(key: string, onComplete?: OnComplete<Result>): Promise<Result>;
+    getItem<Result>(
+      key: string,
+      onComplete?: OnComplete<Result | string>
+    ): Promise<Result | string>;
     removeItem(key: string, onComplete?: OnComplete<any>): Promise<any>;
+    getAllKeys?<Result>(
+      callback?: (error?: Error, keys?: string[]) => void
+    ): Promise<string[]>;
     getAllKeys?<Result>(onComplete?: OnComplete<Result>): Promise<Result>;
     keys?: (...args: any[]) => any;
     [key: string]: any; // In case Storage object has some other (private?) methods and properties.
