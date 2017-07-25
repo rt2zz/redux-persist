@@ -1,4 +1,6 @@
-This is WIP documentation for redux-persist v5, a major api change proposed for redux-persist. You can install this via `npm i redux-persist@proto`. Feedback is welcome.
+`npm i redux-persist@next`
+
+This is WIP documentation for redux-persist v5, a major api change proposed for redux-persist. You can install this via `npm i redux-persist@next`. Feedback is welcome.
 
 [v4](https://github.com/rt2zz/redux-persist/tree/v4.8.2) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4 until v5 is fully ready and battle tested.
 
