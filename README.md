@@ -1,3 +1,5 @@
+[v5](https://github.com/rt2zz/redux-persist/tree/v5) is on the way! It is a major api change, so please read the notes carefully and open an issue if you have questions or concerns. The new api will allow for code splitting, better lib integrations, and colocating persistence rules with each reducer. [Check it out now](https://github.com/rt2zz/redux-persist/tree/v5)!
+
 # Redux Persist
 Persist and rehydrate a redux store.
 
