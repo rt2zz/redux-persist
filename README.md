@@ -16,6 +16,7 @@ The most difficult piece to migrate is if you previously depended on the callbac
 If your implementatation uses getStoredState + createPersistor see [alternate migration]('./docs/migration-alternate.md)
 
 ## Usage
+[API Docs](./docs/api.md)
 ```js
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/es/storage'
