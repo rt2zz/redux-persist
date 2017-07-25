@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react' // eslint-disable-line import/no-un
 import type { Persistor } from '../types'
 
 type Props = {
+  onBeforeLift?: Function,
   children?: any,
   loading: React.Element<any>,
   persistor: Persistor,
@@ -25,6 +26,7 @@ export class PersistGate extends PureComponent {
     this._unsubscribe = this.props.persistor.subscribe(() => {
       let { bootstrapped } = persistor.getState()
       if (bootstrapped) {
+        this.props.onBeforeLift && this.props.onBeforeLift()
         this.setState({ bootstrapped: true })
         this._unsubscribe && this._unsubscribe()
       }

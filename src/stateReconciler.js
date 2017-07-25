@@ -16,7 +16,7 @@ export default function stateReconciler<State: Object>(
         if (!originalState.hasOwnProperty(key))
           console.log(
             `
-          redux-p/stateReconciler: state missing key
+          redux-persist/stateReconciler: state missing key
           "${key}". state-manager will still store the rehydrated value. If you
           removed ${key} from your reducer tree, you should write a migration to
           remove ${key} from stored state. If you code-split ${key} reducer, then
@@ -26,16 +26,20 @@ export default function stateReconciler<State: Object>(
 
         // check recently added reducer properties that may require a migration
         if (
+          originalState[key] &&
           typeof originalState[key] === 'object' &&
+          inboundState[key] &&
           typeof inboundState[key] === 'object'
         ) {
-          const stateKeys = Object.keys(originalState[key])
+          const stateKeys = originalState[key]
+            ? Object.keys(originalState[key])
+            : []
           const inboundStateKeys = Object.keys(inboundState[key])
           stateKeys.forEach(checkKey => {
             if (inboundState[checkKey] === 'undefined')
               console.log(
                 `
-              redux-persist-state-manager/autoRehydrate: initialState for "${key}"
+              redux-persist/stateReconciler: initialState for "${key}"
               has property "${checkKey}" which is missing in rehydratedState. After
               rehydration, "${checkKey}" will be null. If you recently added
               ${checkKey} to your ${key} reducer, consider adding ${checkKey} to a
@@ -48,11 +52,16 @@ export default function stateReconciler<State: Object>(
     }
   }
 
-  let newState = { ...reducedState, ...inboundState }
+  let newState = { ...reducedState }
+  if (inboundState && typeof inboundState === 'object') {
+    Object.keys(inboundState).forEach(key => {
+      newState[key] = inboundState[key]
+    })
+  }
 
   if (process.env.NODE_ENV !== 'production' && debug)
     console.log(
-      `redux-p/stateReconciler: rehydrated keys '${Object.keys(
+      `redux-persist/stateReconciler: rehydrated keys '${Object.keys(
         inboundState
       ).join(', ')}'`
     )

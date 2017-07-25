@@ -2,23 +2,24 @@
 
 import { DEFAULT_VERSION } from './constants'
 
-import type { PersistConfig, MigrationManifest } from './types'
+import type { MigrationManifest } from './types'
 
 export default function createMigrate(
   migrations: MigrationManifest,
-  { debug }: PersistConfig
+  config?: { debug: boolean }
 ) {
-  return (state: Object = {}, currentVersion: number) => {
+  let { debug } = config || {}
+  return function(state: Object = {}, currentVersion: number): Promise<any> {
     let inboundVersion = (state && state.version) || DEFAULT_VERSION
     if (inboundVersion === currentVersion) {
       if (process.env.NODE_ENV !== 'production' && debug)
         console.log('redux-persist: verions match, noop migration')
-      return state
+      return Promise.resolve(state)
     }
     if (inboundVersion > currentVersion) {
       if (process.env.NODE_ENV !== 'production' && debug)
         console.error('redux-persist: downgrading version is not supported')
-      return state
+      return Promise.resolve(state)
     }
 
     let migrationKeys = Object.keys(migrations)
@@ -28,15 +29,18 @@ export default function createMigrate(
 
     if (process.env.NODE_ENV !== 'production' && debug)
       console.log('redux-persist: migrationKeys', migrationKeys)
-    let migratedState = migrationKeys.reduce((state, versionKey) => {
-      if (process.env.NODE_ENV !== 'production' && debug)
-        console.log(
-          'redux-persist: running migration for versionKey',
-          versionKey
-        )
-      return migrations[versionKey](state)
-    }, state)
-
-    return Promise.resolve(migratedState)
+    try {
+      let migratedState = migrationKeys.reduce((state, versionKey) => {
+        if (process.env.NODE_ENV !== 'production' && debug)
+          console.log(
+            'redux-persist: running migration for versionKey',
+            versionKey
+          )
+        return migrations[versionKey](state)
+      }, state)
+      return Promise.resolve(migratedState)
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
 }

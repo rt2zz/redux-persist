@@ -2,6 +2,7 @@ es
 lib
 package-lock.json
 yarn.lock
+.watchmanconfig
 
 # Logs
 logs

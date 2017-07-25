@@ -73,12 +73,20 @@ export default function persistReducer<State: Object, Action: Object>(
 
         getStoredState(config, (err, restoredState) => {
           _persistoid = createPersistoid(config)
-          const migrate = config.migrate || ((s, v) => Promise.resolve(s))
-          migrate(restoredState, version).then((migratedState, migrateErr) => {
-            if (process.env.NODE_ENV !== 'production' && migrateErr)
-              console.error('redux-persist: migration error', migrateErr)
-            action.rehydrate(config.key, migratedState, err || migrateErr)
-          })
+          if (err) {
+            action.rehydrate(config.key, undefined, err)
+          } else {
+            const migrate = config.migrate || ((s, v) => Promise.resolve(s))
+            migrate(restoredState, version)
+              .then(migratedState => {
+                action.rehydrate(config.key, migratedState)
+              })
+              .catch(migrateErr => {
+                if (process.env.NODE_ENV !== 'production' && migrateErr)
+                  console.error('redux-persist: migration error', migrateErr)
+                action.rehydrate(config.key, undefined, migrateErr)
+              })
+          }
         })
 
         return { ...state, _persist: { version, rehydrated: false } }
@@ -91,7 +99,6 @@ export default function persistReducer<State: Object, Action: Object>(
         if (action.key === config.key) {
           let reducedState = baseReducer(restState, action)
           let inboundState = action.payload
-
           let reconciledRest: State = stateReconciler(
             state,
             inboundState,
