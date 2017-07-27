@@ -53,13 +53,29 @@ export default function stateReconciler<State: Object>(
   }
 
   let newState = { ...reducedState }
+  // only rehydrate if inboundState exists and is an object
   if (inboundState && typeof inboundState === 'object') {
     Object.keys(inboundState).forEach(key => {
+      // if reducer modifies substate, skip auto rehydration
+      if (originalState[key] !== reducedState[key]) {
+        if (process.env.NODE_ENV !== 'production' && debug)
+          console.log(
+            'redux-persist/stateReconciler: sub state for key `%s` modified, skipping.',
+            key
+          )
+        return
+      }
+      // otherwise hard set the new value
       newState[key] = inboundState[key]
     })
   }
 
-  if (process.env.NODE_ENV !== 'production' && debug)
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    debug &&
+    inboundState &&
+    typeof inboundState === 'object'
+  )
     console.log(
       `redux-persist/stateReconciler: rehydrated keys '${Object.keys(
         inboundState
