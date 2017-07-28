@@ -2,6 +2,7 @@
 
 import type {
   PersistConfig,
+  PersistorOptions,
   MigrationManifest,
   RehydrateAction,
   RehydrateErrorType,
@@ -34,8 +35,11 @@ const persistorReducer = (state = initialState, action) => {
   }
 }
 
-export default function persistStore(store: Object) {
-  let persistor = createStore(persistorReducer, undefined)
+export default function persistStore(
+  store: Object,
+  options: PersistorOptions = {}
+) {
+  let persistor = createStore(persistorReducer, undefined, options.enhancer)
   persistor.purge = () => {
     store.dispatch({
       type: PURGE,

@@ -13,6 +13,10 @@ export type PersistConfig = {
   migrate?: (Object, number) => Promise<Object>,
 }
 
+export type PersistorOptions = {
+  enhancer: Function,
+}
+
 export type Storage = {
   getItem: (string, ?(string) => any) => any,
   setItem: (string, string, ?() => any) => any,
