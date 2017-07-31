@@ -1,13 +1,15 @@
 import { KEY_PREFIX } from './constants'
 import createAsyncLocalStorage from './defaults/asyncLocalStorage'
 
-export default function getStoredState (config, onComplete) {
+export default function getStoredState (config, onComplete, store) {
   let storage = config.storage || createAsyncLocalStorage('local')
   const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  const createFragmentedKey = config.createFragmentedKey || defaultCreateFragmentedKey
+  const fragmentKeyToReducerKey = config.fragmentKeyToReducerKey || defaultFragmentKeyToReducerKey
 
   // fallback getAllKeys to `keys` if present (LocalForage compatability)
   if (storage.keys && !storage.getAllKeys) storage = {...storage, getAllKeys: storage.keys}
@@ -27,9 +29,12 @@ export default function getStoredState (config, onComplete) {
     let restoreCount = keysToRestore.length
     if (restoreCount === 0) complete(null, restoredState)
     keysToRestore.forEach((key) => {
-      storage.getItem(createStorageKey(key), (err, serialized) => {
+      const state = store ? store.getState() : undefined
+      const storageKey = createStorageKey(keyPrefix, key, state)
+      storage.getItem(storageKey, (err, serialized) => {
+        const reducerKey = fragmentKeyToReducerKey(key, state)
         if (err && process.env.NODE_ENV !== 'production') console.warn('redux-persist/getStoredState: Error restoring data for key:', key, err)
-        else restoredState[key] = rehydrate(key, serialized)
+        else restoredState[reducerKey] = rehydrate(reducerKey, serialized)
         completionCount += 1
         if (completionCount === restoreCount) complete(null, restoredState)
       })
@@ -55,14 +60,26 @@ export default function getStoredState (config, onComplete) {
     onComplete(err, restoredState)
   }
 
+  function mapKey (key) {
+    return createFragmentedKey(key, store ? store.getState() : undefined)
+  }
+
   function passWhitelistBlacklist (key) {
-    if (whitelist && whitelist.indexOf(key) === -1) return false
-    if (blacklist.indexOf(key) !== -1) return false
+    if (whitelist && whitelist.map(mapKey).indexOf(key) === -1) return false
+    if (blacklist.map(mapKey).indexOf(key) !== -1) return false
     return true
   }
 
-  function createStorageKey (key) {
-    return `${keyPrefix}${key}`
+  function defaultFragmentKeyToReducerKey (key) {
+    return key
+  }
+
+  function defaultCreateFragmentedKey (key) {
+    return key
+  }
+
+  function createStorageKey (keyPrefix, key, state) {
+    return `${keyPrefix}${createFragmentedKey(key, state)}`
   }
 
   if (typeof onComplete !== 'function' && !!Promise) {

@@ -12,6 +12,7 @@ export default function createPersistor (store, config) {
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  const createFragmentedKey = config.createFragmentedKey || defaultCreateFragmentedKey
 
   // pluggable state shape (e.g. immutablejs)
   const stateInit = config._stateInit || {}
@@ -53,8 +54,16 @@ export default function createPersistor (store, config) {
         }
 
         let key = storesToProcess.shift()
-        let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
+        let storageKey = createStorageKey(keyPrefix, key, state)
+        // storageKey can be undefined, if there's no info to generate it
+        if (!storageKey) {
+          storesToProcess.shift()
+        }
+        let endState = transforms.reduce(
+          (subState, transformer) =>
+            transformer.in(subState, key),
+            stateGetter(store.getState(), key)
+        )
         if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
       }, debounce)
     }
@@ -88,8 +97,12 @@ export default function createPersistor (store, config) {
     return state
   }
 
-  function createStorageKey (key) {
-    return `${keyPrefix}${key}`
+  function defaultCreateFragmentedKey (key) {
+    return key
+  }
+
+  function createStorageKey (keyPrefix, key, state) {
+    return `${keyPrefix}${createFragmentedKey(key, state)}`
   }
 
   // return `persistor`
