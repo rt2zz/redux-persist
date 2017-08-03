@@ -14,7 +14,7 @@ export type PersistConfig = {
 }
 
 export type PersistorOptions = {
-  enhancer: Function,
+  enhancer?: Function,
 }
 
 export type Storage = {
