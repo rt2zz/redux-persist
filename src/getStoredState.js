@@ -26,7 +26,7 @@ export default function getStoredState(
       onComplete(err)
     }
 
-    if (!serialized) onComplete(null, null)
+    if (!serialized) onComplete(null, undefined)
     else {
       try {
         let state = {}
