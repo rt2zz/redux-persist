@@ -22,15 +22,20 @@ export class PersistGate extends PureComponent {
   _unsubscribe: ?Function
 
   componentDidMount() {
+    this.handlePersistorState()
+    this._unsubscribe = this.props.persistor.subscribe(
+      this.handlePersistorState
+    )
+  }
+
+  handlePersistorState = () => {
     const { persistor } = this.props
-    this._unsubscribe = this.props.persistor.subscribe(() => {
-      let { bootstrapped } = persistor.getState()
-      if (bootstrapped) {
-        this.props.onBeforeLift && this.props.onBeforeLift()
-        this.setState({ bootstrapped: true })
-        this._unsubscribe && this._unsubscribe()
-      }
-    })
+    let { bootstrapped } = persistor.getState()
+    if (bootstrapped) {
+      this.props.onBeforeLift && this.props.onBeforeLift()
+      this.setState({ bootstrapped: true })
+      this._unsubscribe && this._unsubscribe()
+    }
   }
 
   componentWillUnmount() {
