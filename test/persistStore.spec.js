@@ -87,3 +87,17 @@ test.cb('processes adhoc rehydrate with serial: false', (t) => {
     throw new Error('timeout')
   }, 10000)
 })
+
+test('Returns state to persistStore promise', (t) => {
+  let store = createMockStore({
+    mockState: {foo: 1, bar: 2},
+    dispatch: () => {}
+  })
+
+  let seedState = {foo: 3, bar: 4}
+  return persistStore(store, { storage: createMemoryStorage(seedState) }).promise.then(({ err, state }) => {
+    t.ifError(err, 'persistStore errored')
+    t.deepEqual(state, seedState)
+    t.pass()
+  })
+})
