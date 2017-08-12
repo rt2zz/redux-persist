@@ -1,5 +1,9 @@
 PersistGate example usage
 ```js
+import { PersistGate } from 'redux-persist/es/integration/react'
+
+import configureStore from './store/configureStore'
+
 const { persistore, store } = configureStore()
 
 const onBeforeLift = () => {
