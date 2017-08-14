@@ -1,6 +1,6 @@
 {
   "name": "redux-persist",
-  "version": "5.0.0-proto.12",
+  "version": "5.0.0-alpha.1",
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -10,8 +10,11 @@
     "lib"
   ],
   "scripts": {
-    "build": "flow-copy-source src es && cross-env BABEL_ENV=es babel src --out-dir es && cross-env BABEL_ENV=lib babel src --out-dir lib",
+    "build": "npm run flow-copy && npm run build:commonjs && npm run build:es",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "clean": "rimraf es && rimraf lib",
+    "flow-copy": "flow-copy-source src es && flow-copy-source src lib",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run clean && npm run build",
     "test": "ava"
@@ -38,6 +41,7 @@
     "ava": "^0.19.1",
     "babel-eslint": "^7.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.5.2",
