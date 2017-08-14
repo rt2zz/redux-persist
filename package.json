@@ -17,7 +17,7 @@
     "flow-copy": "flow-copy-source src es && flow-copy-source src lib",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run clean && npm run build",
-    "test": "ava"
+    "test": "BABEL_ENV=commonjs ava"
   },
   "lint-staged": {
     "src/**/*.js": [

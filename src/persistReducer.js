@@ -77,15 +77,16 @@ export default function persistReducer<State: Object, Action: Object>(
             action.rehydrate(config.key, undefined, err)
           } else {
             const migrate = config.migrate || ((s, v) => Promise.resolve(s))
-            migrate(restoredState, version)
-              .then(migratedState => {
+            migrate(restoredState, version).then(
+              migratedState => {
                 action.rehydrate(config.key, migratedState)
-              })
-              .catch(migrateErr => {
+              },
+              migrateErr => {
                 if (process.env.NODE_ENV !== 'production' && migrateErr)
                   console.error('redux-persist: migration error', migrateErr)
                 action.rehydrate(config.key, undefined, migrateErr)
-              })
+              }
+            )
           }
         })
 
