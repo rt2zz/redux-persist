@@ -14,7 +14,7 @@ import getStoredState from './getStoredState'
 import purgeStoredState from './purgeStoredState'
 
 type PersistPartial = { _persist: PersistState }
-/* 
+/*
   @TODO add validation / handling for:
   - persisting a reducer which has nested _persist
   - handling actions that fire before reydrate is called
@@ -113,11 +113,6 @@ export default function persistReducer<State: Object, Action: Object>(
           }
         }
 
-      case PURGE:
-        _purge = true
-        purgeStoredState(config)
-        return state
-
       default:
         // @TODO more performant workaround for combineReducers warning
         let newState = {
@@ -126,6 +121,11 @@ export default function persistReducer<State: Object, Action: Object>(
         }
         _persistoid && _persistoid.update(newState)
         return newState
+
+      case PURGE:
+        _purge = true
+        purgeStoredState(config)
+        return state
     }
   }
 }
