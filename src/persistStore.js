@@ -15,7 +15,7 @@ import { PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
-
+type BoostrappedCb = () => {}
 const initialState = {
   registry: [],
   bootstrapped: false,
@@ -37,8 +37,10 @@ const persistorReducer = (state = initialState, action) => {
 
 export default function persistStore(
   store: Object,
-  options: PersistorOptions = {}
+  options: PersistorOptions = {},
+  cb?: BoostrappedCb
 ) {
+  let boostrappedCb = cb || false
   let persistor = createStore(persistorReducer, undefined, options.enhancer)
   persistor.purge = () => {
     store.dispatch({
@@ -63,6 +65,10 @@ export default function persistStore(
     // dispatch to `store` to rehydrate and `persistor` to track result
     store.dispatch(rehydrateAction)
     persistor.dispatch(rehydrateAction)
+    if (boostrappedCb && persistor.getState().bootstrapped) {
+      boostrappedCb()
+      boostrappedCb = false
+    }
   }
 
   store.dispatch({ type: PERSIST, register, rehydrate })
