@@ -113,19 +113,19 @@ export default function persistReducer<State: Object, Action: Object>(
           }
         }
 
-      default:
-        // @TODO more performant workaround for combineReducers warning
-        let newState = {
-          ...baseReducer(restState, action),
-          _persist,
-        }
-        _persistoid && _persistoid.update(newState)
-        return newState
-
       case PURGE:
         _purge = true
         purgeStoredState(config)
         return state
     }
+
+    // @NOTE default pass through reducer if the switch statement above did not return
+    // @TODO more performant workaround for combineReducers warning
+    let newState = {
+      ...baseReducer(restState, action),
+      _persist,
+    }
+    _persistoid && _persistoid.update(newState)
+    return newState
   }
 }
