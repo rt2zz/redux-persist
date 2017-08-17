@@ -1,5 +1,6 @@
 // @flow
 import test from 'ava'
+import sinon from 'sinon'
 
 import _ from 'lodash'
 import configureStore from 'redux-mock-store'
@@ -94,4 +95,21 @@ test('once persistor is flagged as bootstrapped, further registry changes do not
   persistAction.register('canary')
   t.deepEqual(persistor.getState().registry, ['canary'])
   t.true(persistor.getState().bootstrapped)
+})
+
+test('persistStore calls bootstrapped callback (at most once) if provided', t => {
+  let store = mockStore()
+  let bootstrappedCb = sinon.spy()  
+  let persistor = persistStore(store, {}, bootstrappedCb)
+  let actions = store.getActions()
+  let persistAction  =_.find(actions, { type: PERSIST })
+  
+  persistAction.register('canary')
+  persistAction.rehydrate('canary', { foo: 'bar' }, null)
+  t.is(bootstrappedCb.callCount, 1)
+
+  // further rehydrates do not trigger the cb
+  persistAction.register('canary')
+  persistAction.rehydrate('canary', { foo: 'bar' }, null)
+  t.is(bootstrappedCb.callCount, 1)
 })
