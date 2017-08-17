@@ -51,81 +51,76 @@ export default function persistReducer<State: Object, Action: Object>(
     let { _persist, ...rest } = state || {}
     let restState: State = rest
 
-    switch (action.type) {
-      case PERSIST:
-        if (state._persist) {
-          console.warn(
-            'redux-persist: unexpected _persist state before PERSIST action is handled. If you are doing hmr or code-splitting this may be a valid use case. Please open a ticket, requires further review.'
-          )
-          return state
-        }
-        if (typeof action.rehydrate !== 'function')
-          throw new Error(
-            'redux-persist: action.rehydrate is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
-          )
-        if (typeof action.register !== 'function')
-          throw new Error(
-            'redux-persist: action.register is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
-          )
-
-        let rehydrate = action.rehydrate
-        action.register(config.key)
-
-        getStoredState(config, (err, restoredState) => {
-          _persistoid = createPersistoid(config)
-          if (err) {
-            action.rehydrate(config.key, undefined, err)
-          } else {
-            const migrate = config.migrate || ((s, v) => Promise.resolve(s))
-            migrate(restoredState, version).then(
-              migratedState => {
-                action.rehydrate(config.key, migratedState)
-              },
-              migrateErr => {
-                if (process.env.NODE_ENV !== 'production' && migrateErr)
-                  console.error('redux-persist: migration error', migrateErr)
-                action.rehydrate(config.key, undefined, migrateErr)
-              }
-            )
-          }
-        })
-
-        return { ...state, _persist: { version, rehydrated: false } }
-
-      case REHYDRATE:
-        // noop if purging
-        if (_purge) return state
-
-        // @NOTE if key does not match, will continue to default case
-        if (action.key === config.key) {
-          let reducedState = baseReducer(restState, action)
-          let inboundState = action.payload
-          let reconciledRest: State = stateReconciler(
-            state,
-            inboundState,
-            reducedState,
-            config
-          )
-
-          return {
-            ...reconciledRest,
-            _persist: { ..._persist, rehydrated: true },
-          }
-        }
-
-      case PURGE:
-        _purge = true
-        purgeStoredState(config)
+    if (action.type === PERSIST) {
+      if (state._persist) {
+        // @NOTE PERSIST can be called multiple times, noop after the first
         return state
-    }
+      }
+      if (typeof action.rehydrate !== 'function')
+        throw new Error(
+          'redux-persist: action.rehydrate is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
+        )
+      if (typeof action.register !== 'function')
+        throw new Error(
+          'redux-persist: action.register is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
+        )
 
-    // @NOTE default pass through reducer if the switch statement above did not return
-    // @TODO more performant workaround for combineReducers warning
-    let newState = {
-      ...baseReducer(restState, action),
-      _persist,
+      let rehydrate = action.rehydrate
+      action.register(config.key)
+
+      getStoredState(config, (err, restoredState) => {
+        _persistoid = createPersistoid(config)
+        if (err) {
+          action.rehydrate(config.key, undefined, err)
+        } else {
+          const migrate = config.migrate || ((s, v) => Promise.resolve(s))
+          migrate(restoredState, version).then(
+            migratedState => {
+              action.rehydrate(config.key, migratedState)
+            },
+            migrateErr => {
+              if (process.env.NODE_ENV !== 'production' && migrateErr)
+                console.error('redux-persist: migration error', migrateErr)
+              action.rehydrate(config.key, undefined, migrateErr)
+            }
+          )
+        }
+      })
+
+      return { ...state, _persist: { version, rehydrated: false } }
+    } else if (action.type === PURGE) {
+      _purge = true
+      purgeStoredState(config)
+      return state
+    } else if (action.type === REHYDRATE) {
+      // noop if purging
+      if (_purge) return state
+
+      // @NOTE if key does not match, will continue to default else below
+      if (action.key === config.key) {
+        let reducedState = baseReducer(restState, action)
+        let inboundState = action.payload
+        let reconciledRest: State = stateReconciler(
+          state,
+          inboundState,
+          reducedState,
+          config
+        )
+
+        return {
+          ...reconciledRest,
+          _persist: { ..._persist, rehydrated: true },
+        }
+      }
+    } else {
+      // @NOTE default pass through reducer if the switch statement above did not return
+      // @TODO more performant workaround for combineReducers warning
+      let newState = {
+        ...baseReducer(restState, action),
+        _persist,
+      }
+      _persistoid && _persistoid.update(newState)
+      return newState
     }
-    _persistoid && _persistoid.update(newState)
-    return newState
   }
 }
