@@ -46,6 +46,7 @@ export default function persistStore(
     store.dispatch({
       type: PURGE,
     })
+    return persistor
   }
 
   let register = (key: string) => {
