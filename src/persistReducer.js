@@ -112,15 +112,15 @@ export default function persistReducer<State: Object, Action: Object>(
           _persist: { ..._persist, rehydrated: true },
         }
       }
-    } else {
-      // @NOTE default pass through reducer if the switch statement above did not return
-      // @TODO more performant workaround for combineReducers warning
-      let newState = {
-        ...baseReducer(restState, action),
-        _persist,
-      }
-      _persistoid && _persistoid.update(newState)
-      return newState
     }
+
+    // @NOTE default pass through reducer if the switch statement above did not return
+    // @TODO more performant workaround for combineReducers warning
+    let newState = {
+      ...baseReducer(restState, action),
+      _persist,
+    }
+    _persistoid && _persistoid.update(newState)
+    return newState
   }
 }
