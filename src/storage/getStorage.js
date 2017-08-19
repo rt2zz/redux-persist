@@ -7,7 +7,6 @@ let noopStorage = {
   getItem: noop,
   setItem: noop,
   removeItem: noop,
-  getAllKeys: noop,
 }
 
 function hasStorage(storageType) {

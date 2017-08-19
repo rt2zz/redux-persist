@@ -14,6 +14,5 @@ export default function createWebStorage(type: string) {
     },
     removeItem: (key: string, cb: Function) =>
       cb(null, storage.removeItem(key)),
-    getAllKeys: (cb: Function) => cb(null, Object.keys(storage)),
   }
 }

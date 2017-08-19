@@ -15,11 +15,7 @@ export default function createPersistoid(config: PersistConfig) {
     ? config.keyPrefix
     : KEY_PREFIX}${config.key}`
 
-  // storage with keys -> getAllKeys for localForage support
-  let storage = config.storage
-  if (storage.keys && !storage.getAllKeys) {
-    storage.getAllKeys = storage.keys
-  }
+  const storage = config.storage
 
   // initialize stateful values
   let lastState = {}

@@ -21,7 +21,6 @@ export type Storage = {
   getItem: (string, ?(string) => any) => any,
   setItem: (string, string, ?() => any) => any,
   removeItem: (string, ?() => any) => any,
-  getAllKeys: ((?Array<string>) => any) => any,
 }
 
 export type MigrationManifest = {}
