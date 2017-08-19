@@ -1,6 +1,7 @@
 // @flow
 
 import type {
+  Persistor,
   PersistConfig,
   PersistorOptions,
   MigrationManifest,
@@ -16,6 +17,7 @@ type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
 type BoostrappedCb = () => {}
+
 const initialState = {
   registry: [],
   bootstrapped: false,
@@ -39,7 +41,7 @@ export default function persistStore(
   store: Object,
   options: PersistorOptions = {},
   cb?: BoostrappedCb
-) {
+): Persistor {
   let boostrappedCb = cb || false
   let persistor = createStore(persistorReducer, undefined, options.enhancer)
   persistor.purge = () => {

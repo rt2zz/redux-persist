@@ -13,14 +13,15 @@ export default function getStoredState(
     ? config.keyPrefix
     : KEY_PREFIX}${config.key}`
   const storage = config.storage
+  const debug = config.debug
 
   let restoredState = {}
   let completionCount = 0
 
   storage.getItem(storageKey, (err, serialized) => {
     if (err) {
-      if (process.env.NODE_ENV !== 'production')
-        console.warn('redux-p/getStoredState: Error in storage.get')
+      if (process.env.NODE_ENV !== 'production' && debug)
+        console.log('redux-persist/getStoredState: Error in storage.get', err)
       onComplete(err)
     }
 
@@ -36,8 +37,8 @@ export default function getStoredState(
         })
         onComplete(null, state)
       } catch (err) {
-        if (process.env.NODE_ENV !== 'production')
-          console.error(
+        if (process.env.NODE_ENV !== 'production' && debug)
+          console.log(
             `redux-persist/getStoredState: Error restoring data ${serialized}`,
             err
           )

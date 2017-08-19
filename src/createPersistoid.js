@@ -3,9 +3,9 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
 import stringify from 'json-stringify-safe'
 
-import type { PersistConfig, Transform } from './types'
+import type { Persistoid, PersistConfig, Transform } from './types'
 
-export default function createPersistoid(config: PersistConfig) {
+export default function createPersistoid(config: PersistConfig): Persistoid {
   // defaults
   const blacklist: ?Array<string> = config.blacklist || null
   const whitelist: ?Array<string> = config.whitelist || null

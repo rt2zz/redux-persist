@@ -37,35 +37,31 @@ export default function persistReducer<State: Object, Action: Object>(
   let _persistoid = null
   let _purge = false
 
-  // $FlowFixMe perhaps there is a better way to do this?
-  let defaultState = baseReducer(undefined, {
-    type: 'redux-persist/default-probe',
-  })
   if (process.env.NODE_ENV !== 'production') {
+    // $FlowFixMe perhaps there is a better way to do this?
+    let defaultState = baseReducer(undefined, {
+      type: 'redux-persist/default-state-probe',
+    })
     if (Array.isArray(defaultState) || typeof defaultState !== 'object')
       console.error(
         'redux-persist: does not yet support non plain object state.'
       )
   }
-  return (state: State = defaultState, action: Action) => {
+  return (state: State, action: Action) => {
     let { _persist, ...rest } = state || {}
     let restState: State = rest
 
     if (action.type === PERSIST) {
-      if (state._persist) {
-        // @NOTE PERSIST can be called multiple times, noop after the first
-        return state
-      }
-      if (typeof action.rehydrate !== 'function')
+      // @NOTE PERSIST can be called multiple times, noop after the first
+      if (_persist) return state
+      if (
+        typeof action.rehydrate !== 'function' ||
+        typeof action.register !== 'function'
+      )
         throw new Error(
-          'redux-persist: action.rehydrate is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
-        )
-      if (typeof action.register !== 'function')
-        throw new Error(
-          'redux-persist: action.register is not a function. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
+          'redux-persist: either rehydrate or register is not a function on the PERSIST action. This can happen if the action is being replayed. This is an unexplored use case, please open an issue and we will figure out a resolution.'
         )
 
-      let rehydrate = action.rehydrate
       action.register(config.key)
 
       getStoredState(config, (err, restoredState) => {
