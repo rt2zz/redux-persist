@@ -12,9 +12,7 @@ export default function getStoredState(
   const storageKey = `${config.keyPrefix !== undefined
     ? config.keyPrefix
     : KEY_PREFIX}${config.key}`
-
-  // storage with keys -> getAllKeys for localForage support
-  let storage = config.storage
+  const storage = config.storage
 
   let restoredState = {}
   let completionCount = 0
