@@ -29,11 +29,11 @@ export default function getStoredState(
     else {
       try {
         let state = {}
-        let rawState = deserializer(serialized)
+        let rawState = deserialize(serialized)
         Object.keys(rawState).forEach(key => {
           state[key] = transforms.reduceRight((subState, transformer) => {
             return transformer.out(subState, key)
-          }, deserializer(rawState[key]))
+          }, deserialize(rawState[key]))
         })
         onComplete(null, state)
       } catch (err) {
@@ -57,6 +57,6 @@ export default function getStoredState(
   }
 }
 
-function deserializer(serial) {
+function deserialize(serial) {
   return JSON.parse(serial)
 }
