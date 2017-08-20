@@ -23,7 +23,11 @@ export type Storage = {
   removeItem: (string, ?() => any) => any,
 }
 
-export type MigrationManifest = {}
+type State = {}
+
+export type MigrationManifest = {
+  [number]: (State) => State,
+}
 
 export type PersistState = {
   version: number,

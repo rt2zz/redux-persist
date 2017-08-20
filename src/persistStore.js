@@ -16,7 +16,7 @@ import { PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
-type BoostrappedCb = () => {}
+type BoostrappedCb = () => void
 
 const initialState = {
   registry: [],

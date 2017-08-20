@@ -1,5 +1,5 @@
 ## Alternate Migration
-If in redux-persist you used getStoredState + createPersistor, the v5 usage is similar with some minor modifications. Note: because no `persistor` is created, `react/PersistGate` cannot be used.
+If in redux-persist you used getStoredState + createPersistor, the v5 usage is similar with some small modifications. Note: because no `persistor` is created the react integration helper `PersistGate` cannot be used.
 
 1. replace `createPersistor` with `createPersistoid`
 2. update persistoid whenever state changes
@@ -25,3 +25,4 @@ function configureStore () {
     persistoid.update(store.getState())
   })
 }
+```

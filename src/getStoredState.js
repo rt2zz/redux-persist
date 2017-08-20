@@ -47,14 +47,15 @@ export default function getStoredState(
     }
   })
 
-  if (typeof onComplete !== 'function' && !!Promise) {
-    return new Promise((resolve, reject) => {
+  return (
+    !!Promise &&
+    new Promise((resolve, reject) => {
       onComplete = (err, restoredState) => {
         if (err) reject(err)
         else resolve(restoredState)
       }
     })
-  }
+  )
 }
 
 function deserialize(serial) {
