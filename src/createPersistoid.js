@@ -1,7 +1,6 @@
 // @flow
 
 import { KEY_PREFIX, REHYDRATE } from './constants'
-import stringify from 'json-stringify-safe'
 
 import type { Persistoid, PersistConfig, Transform } from './types'
 
@@ -53,9 +52,16 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
   let stagedState = {}
   function stagedWrite(key: string, endState: any) {
-    stagedState[key] = serializer(endState)
+    try {
+      stagedState[key] = serialize(endState)
+    } catch (err) {
+      console.error(
+        'redux-persist/createPersistoid: error serializing state',
+        err
+      )
+    }
     if (keysToProcess.length === 0) {
-      storage.setItem(storageKey, serializer(stagedState), onWriteFail)
+      storage.setItem(storageKey, serialize(stagedState), onWriteFail)
     }
   }
 
@@ -80,22 +86,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }
 }
 
-function serializer(data) {
-  return stringify(data, null, null, (k, v) => {
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error(
-        `
-        redux-persist: cannot process cyclical state.
-        Consider changing your state structure to have no cycles.
-        Alternatively blacklist the corresponding reducer key.
-        Cycle encounted at key "${k}" with value "${v}".
-      `
-      )
-    }
-    return null
-  })
-}
-
-function deserializer(serial) {
-  return JSON.parse(serial)
+// @NOTE in the future this may be exposed via config
+function serialize(data) {
+  return JSON.stringify(data)
 }

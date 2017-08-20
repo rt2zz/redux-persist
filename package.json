@@ -65,7 +65,5 @@
   "peerDependencies": {
     "redux": ">3.0.0"
   },
-  "dependencies": {
-    "json-stringify-safe": "^5.0.1"
-  }
+  "dependencies": {}
 }
