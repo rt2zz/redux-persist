@@ -52,7 +52,7 @@ type AutoRehydrateConfig = {
 declare function createPersistor(store: Store, config: Config): Persistor
 declare function createTransform(in: Transformer, out: Transformer, config?: TransformConfig): Transform
 declare function getStoredState(config: Config, ?StoredStateCallback): ?Promise<Object>
-declare function persistStore(store: Store, config: Config, onComplete?: OnComplete): Persistor
+declare function persistStore(store: Store, config?: Config, onComplete?: OnComplete): Persistor
 declare function purgeStoredState(config: Config, keys?: Array<string>): Promise<void>
 declare function autoRehydrate(config: ?AutoRehydrateConfig): StoreEnhancer
 
