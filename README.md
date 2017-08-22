@@ -21,7 +21,7 @@ Standard Usage:
   - e.g. `let persistedReducer = persistReducer(config, reducer)`
 - changes to `config`:
   - `key` is now required. Can be set to anything, e.g. 'primary'
-  - `storage` is not required. For default web storage: `import storage from 'redux-persist/lib/storage'`
+  - `storage` is now required. For default web storage: `import storage from 'redux-persist/lib/storage'`
 
 Recommended Additions
 - use new PersistGate to delay rendering until rehydration is complete
