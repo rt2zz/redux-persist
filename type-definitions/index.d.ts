@@ -66,9 +66,9 @@ declare module "redux-persist" {
 
   export function createTransform<State, Raw>(transformIn: TransformIn<State, Raw>, transformOut: TransformOut<Raw, State>, config?: TransformConfig): Transform<State, Raw>;
 
-  export function getStoredState<State>(persistorConfig?: PersistorConfig, onComplete?: OnComplete<any>): Promise<State>;
+  export function getStoredState<State>(persistorConfig?: PersistorConfig, onComplete?: OnComplete<Partial<State>>): Promise<State>;
 
-  export function persistStore<State>(store: Store<State>, persistorConfig?: PersistorConfig, onComplete?: OnComplete<any>): Persistor;
+  export function persistStore<State>(store: Store<State>, persistorConfig?: PersistorConfig, onComplete?: OnComplete<Partial<State>>): Persistor;
 
   export function purgeStoredState(persistorConfig?: PersistorConfig, keys?: string[]): Promise<any>;
 
