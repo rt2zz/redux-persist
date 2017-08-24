@@ -47,8 +47,9 @@ const reducer = persistReducer(config, rootReducer)
 function configureStore () {
   // ...
   let store = createStore(reducer)
-
-  persistStore(store)
+  let persistor = persistStore(store)
+  
+  return { persistor, store }
 }
 ```
 
