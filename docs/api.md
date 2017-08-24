@@ -70,11 +70,10 @@ Where the keys are state version numbers and the values are migration functions 
 ---
 ## Expanded API
 The following methods are used internally by the standard api. They can be accessed directly if more control is needed.
-### `getStoredState(config, callback)`
+### `getStoredState(config)`
 ```js
 getStoredState(
-  config: PersistConfig,
-  callback?: (Error, State) => void
+  config: PersistConfig
 ): Promise<State>
 ```
 
