@@ -63,12 +63,10 @@ export default function persistReducer<State: Object, Action: Object>(
         )
 
       action.register(config.key)
+      _persistoid = createPersistoid(config)
 
-      getStoredState(config, (err, restoredState) => {
-        _persistoid = createPersistoid(config)
-        if (err) {
-          action.rehydrate(config.key, undefined, err)
-        } else {
+      getStoredState(config).then(
+        restoredState => {
           const migrate = config.migrate || ((s, v) => Promise.resolve(s))
           migrate(restoredState, version).then(
             migratedState => {
@@ -80,8 +78,11 @@ export default function persistReducer<State: Object, Action: Object>(
               action.rehydrate(config.key, undefined, migrateErr)
             }
           )
+        },
+        err => {
+          action.rehydrate(config.key, undefined, err)
         }
-      })
+      )
 
       return { ...state, _persist: { version, rehydrated: false } }
     } else if (action.type === PURGE) {
