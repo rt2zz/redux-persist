@@ -117,6 +117,7 @@ const secondaryPersistor = createPersistor(store, {storage: specialBackupStorage
 - **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
 - **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** for use in react-native Android to mitigate storage size limitations ([#199](https://github.com/rt2zz/redux-persist/issues/199), [284](https://github.com/rt2zz/redux-persist/issues/284))
 - **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
+- **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** for use in react-native for sensitive information (uses [react-native-sensitive-storage](https://github.com/mCodex/react-native-sensitive-info)).
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. (**NB**: These methods must support callbacks, not promises.) [[example](https://github.com/facebook/react-native/blob/master/Libraries/Storage/AsyncStorage.js)]
 
 ```js
