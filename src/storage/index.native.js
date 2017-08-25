@@ -1,4 +1,5 @@
 // @noflow
+/* eslint-disable */
 
 import { AsyncStorage } from 'react-native'
 

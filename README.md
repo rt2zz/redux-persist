@@ -28,7 +28,7 @@ Recommended Additions
   - `import { PersistGate } from 'redux-persist/lib/integration/react`
 - set `config.debug = true` to get useful logging
 
-If your implementatation uses getStoredState + createPersistor see [alternate migration]('./docs/migration-alternate.md)
+If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
 
 ## Usage
 [API Docs](./docs/api.md)
@@ -73,7 +73,7 @@ Long story short, the changes are required in order to support new use cases
 ## Migrations
 `persistReducer` has a general purpose "migrate" config which will be called after getting stored state but before actually reconciling with the reducer. It can be any function which takes state as an argument and returns a promise to return a new state object.
 
-Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version.
+Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
 
 ## Storage Engines
 - **localStorage** (default) web
