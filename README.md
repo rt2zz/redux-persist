@@ -13,18 +13,18 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 
 ## Migration from v4 to v5
 Standard Usage:
-- remove `autoRehydrate`
-- changes to `persistStore`:
-  - 1. remove config (or replace with an empty object)
+- remove **autoRehydrate**
+- changes to **persistStore**:
+  - 1. remove config argument (or replace with an empty object)
   - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
-- add `persistReducer` to your reducer
+- add **persistReducer** to your reducer
   - e.g. `let persistedReducer = persistReducer(config, reducer)`
-- changes to `config`:
+- changes to **config**:
   - `key` is now required. Can be set to anything, e.g. 'primary'
-  - `storage` is now required. For default web storage: `import storage from 'redux-persist/lib/storage'`
+  - `storage` is now required. For default storage: `import storage from 'redux-persist/lib/storage'`
 
 Recommended Additions
-- use new PersistGate to delay rendering until rehydration is complete
+- use new **PersistGate** to delay rendering until rehydration is complete
   - `import { PersistGate } from 'redux-persist/lib/integration/react`
 - set `config.debug = true` to get useful logging
 
@@ -34,7 +34,7 @@ If your implementatation uses getStoredState + createPersistor see [alternate mi
 [API Docs](./docs/api.md)
 ```js
 import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/es/storage'
+import storage from 'redux-persist/es/storage' // default: localStorage if web, AsyncStorage if react-native
 import rootReducer from './rootReducer'
 
 const config = {
@@ -82,6 +82,7 @@ Redux Persist ships with `createMigrate`, which helps create a synchronous migra
 - **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
 - **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** for use in react-native Android to mitigate storage size limitations ([#199](https://github.com/rt2zz/redux-persist/issues/199), [284](https://github.com/rt2zz/redux-persist/issues/284))
 - **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
+- **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** for use in react-native for sensitive information (uses [react-native-sensitive-storage](https://github.com/mCodex/react-native-sensitive-info)).
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. (**NB**: These methods must support callbacks, not promises.) [[example](https://github.com/facebook/react-native/blob/master/Libraries/Storage/AsyncStorage.js)]
 
 
