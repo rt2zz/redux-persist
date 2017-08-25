@@ -2,7 +2,7 @@
 
 ### Example with createMigrate
 ```js
-import { createMigrate, persistReducer, persistStore } from 'redux-persist
+import { createMigrate, persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/es/storage'
 
 const migrations = {
