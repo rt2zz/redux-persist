@@ -76,14 +76,14 @@ Long story short, the changes are required in order to support new use cases
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
 
 ## Storage Engines
-- **localStorage** (default) web
-- **sessionStorage**
-- **[localForage](https://github.com/mozilla/localForage)** (recommended) web, see usage below
-- **[AsyncStorage](http://facebook.github.io/react-native/docs/asyncstorage.html#content)** for react-native
-- **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** for use in react-native Android to mitigate storage size limitations ([#199](https://github.com/rt2zz/redux-persist/issues/199), [284](https://github.com/rt2zz/redux-persist/issues/284))
+- **localStorage** `import storage from 'redux-persist/lib/storage'`
+- **sessionStorage** `import sessionStorage from 'redux-persist/lib/storage/session'`
+- **AsyncStorage** react-native `import storage from 'redux-persist/lib/storage'`
+- **[localForage](https://github.com/mozilla/localForage)** recommended for web
+- **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** react-native, to mitigate storage size limitations in android ([#199](https://github.com/rt2zz/redux-persist/issues/199), [#284](https://github.com/rt2zz/redux-persist/issues/284))
 - **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
-- **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** for use in react-native for sensitive information (uses [react-native-sensitive-storage](https://github.com/mCodex/react-native-sensitive-info)).
-- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem` `getAllKeys`. (**NB**: These methods must support callbacks, not promises.) [[example](https://github.com/facebook/react-native/blob/master/Libraries/Storage/AsyncStorage.js)]
+- **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** react-native, for sensitive information (uses [react-native-sensitive-storage](https://github.com/mCodex/react-native-sensitive-info)).
+- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support callbacks)
 
 
 ## Transforms
