@@ -40,9 +40,12 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
         }
 
         let key = keysToProcess.shift()
-        let endState = transforms.reduce((subState, transformer) => {
-          return transformer.in(subState, key)
-        }, lastState[key])
+        let endState = lastState[key];
+        (async function() {
+          for (const transformer of transforms) {
+            endState = await transformer.in(endState, key);
+          }
+        })();
         if (typeof endState !== 'undefined') stagedWrite(key, endState)
       }, throttle)
     }
