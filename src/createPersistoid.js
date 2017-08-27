@@ -45,8 +45,8 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
           for (const transformer of transforms) {
             endState = await transformer.in(endState, key);
           }
+          if (typeof endState !== 'undefined') stagedWrite(key, endState)
         })();
-        if (typeof endState !== 'undefined') stagedWrite(key, endState)
       }, throttle)
     }
 
