@@ -111,7 +111,10 @@ export default function persistReducer<State: Object, Action: Object>(
       }
     }
 
-    // @NOTE default pass through reducer if the switch statement above did not return
+    // if we have not already handled PERSIST, straight passthrough
+    if (!_persist) return baseReducer(state, action)
+
+    // otherwise, pull off _persist, run the reducer, and update the persistoid
     // @TODO more performant workaround for combineReducers warning
     let newState = {
       ...baseReducer(restState, action),
