@@ -26,14 +26,14 @@ export default function createMigrate(
       return Promise.resolve(state)
     }
     if (inboundVersion > currentVersion) {
-      if (process.env.NODE_ENV !== 'production' && debug)
+      if (process.env.NODE_ENV !== 'production')
         console.error('redux-persist: downgrading version is not supported')
       return Promise.resolve(state)
     }
 
     let migrationKeys = Object.keys(migrations)
       .map(ver => parseInt(ver))
-      .filter(key => key > inboundVersion)
+      .filter(key => currentVersion >= key && key > inboundVersion)
       .sort()
 
     if (process.env.NODE_ENV !== 'production' && debug)
