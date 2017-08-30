@@ -2,18 +2,27 @@
 
 import { DEFAULT_VERSION } from './constants'
 
-import type { MigrationManifest } from './types'
+import type { PersistedState, MigrationManifest } from './types'
 
 export default function createMigrate(
   migrations: MigrationManifest,
   config?: { debug: boolean }
 ) {
   let { debug } = config || {}
-  return function(state: Object = {}, currentVersion: number): Promise<any> {
-    let inboundVersion = (state && state.version) || DEFAULT_VERSION
+  return function(
+    state: PersistedState,
+    currentVersion: number
+  ): Promise<PersistedState> {
+    if (!state) {
+      if (process.env.NODE_ENV !== 'production' && debug)
+        console.log('redux-persist: no inbound state, skipping migration')
+      return Promise.resolve(undefined)
+    }
+    // this is gauranteed to exist as version gets added before any state is stored
+    let inboundVersion: number = state._persist.version
     if (inboundVersion === currentVersion) {
       if (process.env.NODE_ENV !== 'production' && debug)
-        console.log('redux-persist: verions match, noop migration')
+        console.log('redux-persist: versions match, noop migration')
       return Promise.resolve(state)
     }
     if (inboundVersion > currentVersion) {

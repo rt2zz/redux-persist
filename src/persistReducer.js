@@ -38,7 +38,7 @@ export default function persistReducer<State: Object, Action: Object>(
   let _purge = false
 
   if (process.env.NODE_ENV !== 'production') {
-    // $FlowFixMe perhaps there is a better way to do this?
+    // $FlowIgnore
     let defaultState = baseReducer(undefined, {
       type: 'redux-persist/default-state-probe',
     })

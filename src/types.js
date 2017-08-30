@@ -1,5 +1,14 @@
 // @flow
 
+export type PersistState = {
+  version: number,
+  rehydrated: boolean,
+}
+
+export type PersistedState = {
+  _persist: PersistState,
+} | void
+
 export type PersistConfig = {
   version?: number,
   storage: Object,
@@ -10,7 +19,7 @@ export type PersistConfig = {
   whitelist?: Array<string>,
   transforms?: Array<Transform>,
   throttle?: number,
-  migrate?: (Object, number) => Promise<Object>,
+  migrate?: (PersistedState, number) => Promise<PersistedState>,
 }
 
 export type PersistorOptions = {
@@ -23,15 +32,8 @@ export type Storage = {
   removeItem: (string, ?() => any) => any,
 }
 
-type State = {}
-
 export type MigrationManifest = {
-  [number]: (State) => State,
-}
-
-export type PersistState = {
-  version: number,
-  rehydrated: boolean,
+  [number]: (PersistedState) => PersistedState,
 }
 
 export type Transform = {

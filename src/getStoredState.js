@@ -4,7 +4,9 @@ import type { PersistConfig } from './types'
 
 import { KEY_PREFIX } from './constants'
 
-export default function getStoredState(config: PersistConfig): Promise<Object> {
+export default function getStoredState(
+  config: PersistConfig
+): Promise<Object | void> {
   return new Promise((resolve, reject) => {
     const transforms = config.transforms || []
     const storageKey = `${config.keyPrefix !== undefined
