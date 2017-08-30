@@ -32,7 +32,8 @@ export default function persistReducer<State: Object, Action: Object>(
       )
   }
 
-  const version = config.version || DEFAULT_VERSION
+  const version =
+    config.version !== undefined ? config.version : DEFAULT_VERSION
   const debug = config.debug || false
   let _persistoid = null
   let _purge = false
