@@ -34,7 +34,7 @@ export type Storage = {
 }
 
 export type MigrationManifest = {
-  [number]: (PersistedState) => PersistedState,
+  [number | string]: (PersistedState) => PersistedState,
 }
 
 export type Transform = {
