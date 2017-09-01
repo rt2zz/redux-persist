@@ -2,7 +2,7 @@
 
 import getStoredStateV5 from '../getStoredState'
 
-import { PersistConfig, Transform } from '../types'
+import type { PersistConfig, Transform } from '../types'
 
 type V4Config = {
   storage?: Object,
