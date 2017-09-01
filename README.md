@@ -27,6 +27,7 @@ Recommended Additions
 - use new **PersistGate** to delay rendering until rehydration is complete
   - `import { PersistGate } from 'redux-persist/lib/integration/react`
 - set `config.debug = true` to get useful logging
+- experimental [v4 -> v5 state migration](#experimental-v4-to-v5-state-migration)
 
 If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
 
@@ -74,6 +75,20 @@ Long story short, the changes are required in order to support new use cases
 `persistReducer` has a general purpose "migrate" config which will be called after getting stored state but before actually reconciling with the reducer. It can be any function which takes state as an argument and returns a promise to return a new state object.
 
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
+
+## Experimental v4 to v5 State Migration
+- **warning: this method is completely untested**
+- v5 getStoredState is not compatible with v4, so by default v5 will cause all of the persisted state from v4 to disappear on first run
+- v5 ships with an experimental v4 -> v5 migration that works by overriding the default getStoredState implementation
+**Warning** this is completely untested, please try and report back with any issues.
+```js
+import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigratev4'
+// ...
+persistReducer({
+  // ...
+  getStoredState: getStoredStateMigrateV4(yourOldV4Config)
+}, baseReducer)
+```
 
 ## Storage Engines
 - **localStorage** `import storage from 'redux-persist/lib/storage'`
