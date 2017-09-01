@@ -10,7 +10,7 @@ import type {
 
 import stateReconciler from './stateReconciler'
 import createPersistoid from './createPersistoid'
-import getStoredState from './getStoredState'
+import defaultGetStoredState from './getStoredState'
 import purgeStoredState from './purgeStoredState'
 
 type PersistPartial = { _persist: PersistState }
@@ -35,6 +35,7 @@ export default function persistReducer<State: Object, Action: Object>(
   const version =
     config.version !== undefined ? config.version : DEFAULT_VERSION
   const debug = config.debug || false
+  const getStoredState = config.getStoredState || defaultGetStoredState
   let _persistoid = null
   let _purge = false
 

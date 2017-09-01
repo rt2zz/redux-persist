@@ -20,6 +20,7 @@ export type PersistConfig = {
   transforms?: Array<Transform>,
   throttle?: number,
   migrate?: (PersistedState, number) => Promise<PersistedState>,
+  getStoredState?: PersistConfig => Promise<PersistedState>,
 }
 
 export type PersistorOptions = {
