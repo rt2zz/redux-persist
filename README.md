@@ -115,9 +115,9 @@ import { createTransform, persistReducer } from 'redux-persist'
 
 let myTransform = createTransform(
   // transform state coming from redux on its way to being serialized and stored
-  (inboundState, key) => specialSerialize(inboundState, key),
+  (state, key) => specialSerialize(state, key),
   // transform state coming from storage, on its way to be rehydrated into redux
-  (outboundState, key) => specialDeserialize(outboundState, key),
+  (state, key) => specialDeserialize(state, key),
   // configuration options
   {whitelist: ['specialKey']}
 )
