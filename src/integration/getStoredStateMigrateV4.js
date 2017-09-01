@@ -12,14 +12,13 @@ type V4Config = {
   whitelist?: Array<string>,
 }
 
-export default function getStoredState(
-  v5Config: PersistConfig,
-  v4Config: V4Config
-) {
-  return getStoredStateV5(v5Config).then(state => {
-    if (state) return state
-    else return getStoredStateV4(v4Config)
-  })
+export default function getStoredState(v4Config: V4Config) {
+  return function(v5Config: PersistConfig) {
+    return getStoredStateV5(v5Config).then(state => {
+      if (state) return state
+      else return getStoredStateV4(v4Config)
+    })
+  }
 }
 
 const KEY_PREFIX = 'reduxPersist:'
