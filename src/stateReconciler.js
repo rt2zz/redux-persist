@@ -56,6 +56,8 @@ export default function stateReconciler<State: Object>(
   // only rehydrate if inboundState exists and is an object
   if (inboundState && typeof inboundState === 'object') {
     Object.keys(inboundState).forEach(key => {
+      // ignore _persist data
+      if (key === '_persist') return
       // if reducer modifies substate, skip auto rehydration
       if (originalState[key] !== reducedState[key]) {
         if (process.env.NODE_ENV !== 'production' && debug)
