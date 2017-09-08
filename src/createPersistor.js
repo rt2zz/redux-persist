@@ -31,7 +31,9 @@ export default function createPersistor (store, config) {
   let storesToProcess = []
   let timeIterator = null
 
-  store.subscribe(() => {
+  store.subscribe(storeListener)
+
+  function storeListener () {
     if (paused) return
 
     let state = store.getState()
@@ -58,9 +60,12 @@ export default function createPersistor (store, config) {
     }
 
     lastState = state
-  })
+  }
 
   function flush () {
+    // Because redux can batch calling the subscribed listeners in some edge-cases, we need to
+    // make sure our `storesToProcess` array is up to date by calling `storeListener` here.
+    storeListener()
     return Promise.all(storesToProcess.map(persistOneStore))
   }
 
