@@ -53,14 +53,33 @@ export default function createPersistor (store, config) {
         }
 
         let key = storesToProcess.shift()
-        let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+        persistOneStore(key)
       }, debounce)
     }
 
     lastState = state
   })
+
+  function flush () {
+    return Promise.all(storesToProcess.map(persistOneStore))
+  }
+
+  function persistOneStore (key) {
+    return new Promise((resolve, reject) => {
+      let storageKey = createStorageKey(key)
+      let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
+      if (typeof endState !== 'undefined') {
+        storage.setItem(storageKey, serializer(endState), (err) => {
+          if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
+      }
+    })
+  }
 
   function passWhitelistBlacklist (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return false
@@ -95,15 +114,10 @@ export default function createPersistor (store, config) {
   // return `persistor`
   return {
     rehydrate: adhocRehydrate,
+    flush,
     pause: () => { paused = true },
     resume: () => { paused = false },
     purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
-  }
-}
-
-function warnIfSetError (key) {
-  return function setError (err) {
-    if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
 
