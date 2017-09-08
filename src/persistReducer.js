@@ -126,7 +126,8 @@ export default function persistReducer<State: Object, Action: Object>(
       ...baseReducer(restState, action),
       _persist,
     }
-    _persistoid && _persistoid.update(newState)
+    // update the persistoid only if we are already rehydrated
+    _persist.rehydrated && _persistoid && _persistoid.update(newState)
     return newState
   }
 }
