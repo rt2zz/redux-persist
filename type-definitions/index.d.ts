@@ -1,19 +1,18 @@
 declare module "redux-persist" {
   import { Store, StoreEnhancer } from "redux";
 
-  export interface Storage {
+  export interface Storage<Result> {
     setItem(key: string, value: any, onComplete?: OnComplete<any>): Promise<any>;
-    getItem<Result>(
+    getItem(
       key: string,
       onComplete?: OnComplete<Result | string>
     ): Promise<Result | string>;
     removeItem(key: string, onComplete?: OnComplete<any>): Promise<any>;
-    getAllKeys?<Result>(
+    getAllKeys?(
       callback?: (error?: Error, keys?: string[]) => void
     ): Promise<string[]>;
-    getAllKeys?<Result>(onComplete?: OnComplete<Result>): Promise<Result>;
+    getAllKeys?(onComplete?: OnComplete<Result>): Promise<Result>;
     keys?: (...args: any[]) => any;
-    [key: string]: any; // In case Storage object has some other (private?) methods and properties.
   }
 
   export interface PersistorConfig {
