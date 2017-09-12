@@ -1,24 +1,24 @@
 declare module "redux-persist" {
   import { Store, StoreEnhancer } from "redux";
 
-  export interface Storage<Result> {
-    setItem(key: string, value: any, onComplete?: OnComplete<any>): Promise<any>;
-    getItem(
-      key: string,
-      onComplete?: OnComplete<Result | string>
-    ): Promise<Result | string>;
-    removeItem(key: string, onComplete?: OnComplete<any>): Promise<any>;
-    getAllKeys?(
-      callback?: (error?: Error, keys?: string[]) => void
-    ): Promise<string[]>;
-    getAllKeys?(onComplete?: OnComplete<Result>): Promise<Result>;
+  export interface AsyncStorage<Result> {
+    setItem(key: string, value: Result, onComplete?: OnComplete<Result>): Promise<void>;
+    getItem(key: string, onComplete?: OnComplete<Result>): Promise<Result>
+    removeItem(key: string, onComplete?: OnComplete<Result>): Promise<void>;
+    getAllKeys(onComplete?: OnComplete<Result[]>): Promise<Result[]>;
+  }
+
+  export interface WebStorage<Result> {
+    setItem(key: string, value: Result, onComplete?: OnComplete<Result>): void;
+    getItem(key: string, onComplete?: OnComplete<Result>): Result | null;
+    removeItem(key: string, onComplete?: OnComplete<Result>): void;
     keys?: (...args: any[]) => any;
   }
 
-  export interface PersistorConfig {
+  export interface PersistorConfig<Result> {
     blacklist?: string[];
     whitelist?: string[];
-    storage?: Storage;
+    storage?: AsyncStorage<Result> | WebStorage<Result>;
     transforms?: Array<Transform<any, any>>;
     debounce?: number;
     serialize?: boolean;
