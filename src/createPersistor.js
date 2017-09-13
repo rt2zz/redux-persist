@@ -112,7 +112,7 @@ function defaultSerializer (data) {
     const message = `redux-persist: cannot process cyclical state.
       Consider changing your state structure to have no cycles.
       Alternatively blacklist the corresponding reducer key.
-      Cycle encounted at key "${k}" with value "${v}".`;
+      Cycle encounted at key "${k}" with value "${v}".`
     if (process.env.NODE_ENV !== 'production') {
       console.warn(message)
       return null
