@@ -1,24 +1,10 @@
 declare module "redux-persist" {
   import { Store, StoreEnhancer } from "redux";
 
-  export interface AsyncStorage<Result> {
-    setItem(key: string, value: Result, onComplete?: OnComplete<Result>): Promise<void>;
-    getItem(key: string, onComplete?: OnComplete<Result>): Promise<Result>
-    removeItem(key: string, onComplete?: OnComplete<Result>): Promise<void>;
-    getAllKeys(onComplete?: OnComplete<Result[]>): Promise<Result[]>;
-  }
-
-  export interface WebStorage<Result> {
-    setItem(key: string, value: Result, onComplete?: OnComplete<Result>): void;
-    getItem(key: string, onComplete?: OnComplete<Result>): Result | null;
-    removeItem(key: string, onComplete?: OnComplete<Result>): void;
-    keys?: (...args: any[]) => any;
-  }
-
-  export interface PersistorConfig<Result> {
+  export interface PersistorConfig {
     blacklist?: string[];
     whitelist?: string[];
-    storage?: AsyncStorage<Result> | WebStorage<Result>;
+    storage?: AsyncStorage | WebStorage | LocalForageStorage;
     transforms?: Array<Transform<any, any>>;
     debounce?: number;
     serialize?: boolean;
@@ -32,6 +18,44 @@ declare module "redux-persist" {
   export interface Transform<State, Raw> {
     in: TransformIn<State, Raw>;
     out: TransformOut<Raw, State>;
+  }
+  
+ /**
+   * React-native AsyncStorage API
+   */
+  export interface AsyncStorage {
+    setItem(key: string, value: string, onComplete?: OnComplete<string>): Promise<void>;
+    getItem(key: string, onComplete?: OnComplete<string>): Promise<string>
+    removeItem(key: string, onComplete?: OnComplete<string>): Promise<void>;
+    getAllKeys(onComplete?: OnComplete<string[]>): Promise<string[]>;
+  }
+
+  /**
+   * localStorage, sessionStorage.
+   */
+  export interface WebStorage {
+    setItem(key: string, value: string): void;
+    getItem(key: string): string | null;
+    removeItem(key: string): void;
+    readonly length: number;
+  }
+
+  /**
+   * LocalForage
+   * https://github.com/localForage/localForage/blob/master/typings/localforage.d.ts
+   */
+  export interface LocalForageStorage {
+    getItem<T>(key: string): Promise<T>;
+    getItem<T>(key: string, callback: OnComplete<T>): void;
+
+    setItem<T>(key: string, value: T): Promise<T>;
+    setItem<T>(key: string, value: T, callback: OnComplete<T>): void;
+
+    removeItem(key: string): Promise<void>;
+    removeItem(key: string, callback: OnComplete<T>): void;
+
+    keys(): Promise<string[]>;
+    keys(callback: (err: any, keys: string[]) => void): void;
   }
 
   export type OnComplete<Result> = (err?: any, result?: Result) => any;
