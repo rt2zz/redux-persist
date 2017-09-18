@@ -7,6 +7,7 @@ export default function createPersistor (store, config) {
   // defaults
   const serializer = config.serialize === false ? (data) => data : defaultSerializer
   const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
+  const createSetItemCB = config.createSetItemCB || defaultCreateSetItemCB
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
   const transforms = config.transforms || []
@@ -55,7 +56,7 @@ export default function createPersistor (store, config) {
         let key = storesToProcess.shift()
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), didSetItem(key))
+        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), createSetItemCB(key))
       }, debounce)
     }
 
@@ -101,8 +102,8 @@ export default function createPersistor (store, config) {
   }
 }
 
-function didSetItem (key) {
-  return function setError (err) {
+function defaultCreateSetItemCB (key) {
+  return function didSetItem (err) {
     if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
 }
