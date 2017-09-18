@@ -55,7 +55,7 @@ export default function createPersistor (store, config) {
         let key = storesToProcess.shift()
         let storageKey = createStorageKey(key)
         let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), didSetItem(key))
       }, debounce)
     }
 
@@ -101,7 +101,7 @@ export default function createPersistor (store, config) {
   }
 }
 
-function warnIfSetError (key) {
+function didSetItem (key) {
   return function setError (err) {
     if (err && process.env.NODE_ENV !== 'production') { console.warn('Error storing data for key:', key, err) }
   }
