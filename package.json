@@ -44,7 +44,7 @@
   "author": "rt2zz <zack@root-two.com>",
   "license": "MIT",
   "dependencies": {
-    "json-stringify-safe": "^5.0.1",
+    "json-stringify-safe": "~5.0.1",
     "lodash": "^4.17.4",
     "lodash-es": "^4.17.4"
   },
