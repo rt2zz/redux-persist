@@ -63,10 +63,14 @@ export default function persistStore(
   let boostrappedCb = cb || false
   let persistor = createStore(persistorReducer, undefined, options.enhancer)
   persistor.purge = () => {
+    let purges = []
     store.dispatch({
       type: PURGE,
+      registerPurge: purgePromise => {
+        purges.push(purgePromise)
+      },
     })
-    return persistor
+    return Promise.all(purges)
   }
 
   let register = (key: string) => {

@@ -37,7 +37,7 @@ createMigrate(
 ### `type Persistor`
 ```js
 {
-  purge: () => void
+  purge: () => Promise<void>
 }
 ```
 

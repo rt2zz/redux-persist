@@ -89,7 +89,7 @@ export default function persistReducer<State: Object, Action: Object>(
       return { ...state, _persist: { version, rehydrated: false } }
     } else if (action.type === PURGE) {
       _purge = true
-      purgeStoredState(config)
+      action.registerPurge(purgeStoredState(config))
       return state
     } else if (action.type === REHYDRATE) {
       // noop on restState if purging
