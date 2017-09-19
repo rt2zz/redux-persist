@@ -19,7 +19,7 @@ Where Reducer is any reducer `(state, action) => state` and PersistConfig is [de
 ```js
 persistStore(
   store: Store,
-  config?: { enhancer?: Function }
+  config?: { enhancer?: Function },
   callback?: () => {}
 ): Persistor
 ```
@@ -37,11 +37,14 @@ createMigrate(
 ### `type Persistor`
 ```js
 {
-  purge: () => Promise<void>
+  purge: () => Promise<void>,
+  flush: () => Promise<void>,
 }
 ```
 
-The Persistor is a redux store unto itself, plus the purge method for clearing out stored state.
+The Persistor is a redux store unto itself, plus
+1. the purge method for clearing out stored state.
+2. the flush method for flushing all pending state serialization and immediately write to disk
 
 ### `type PersistConfig`
 ```js
