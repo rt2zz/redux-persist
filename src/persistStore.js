@@ -11,12 +11,12 @@ import type {
 
 import { createStore } from 'redux'
 import persistReducer from './persistReducer'
-import { PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
+import { FLUSH, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
-type BoostrappedCb = () => void
+type BoostrappedCb = () => any
 
 const initialState = {
   registry: [],
@@ -62,15 +62,27 @@ export default function persistStore(
   }
   let boostrappedCb = cb || false
   let persistor = createStore(persistorReducer, undefined, options.enhancer)
+
   persistor.purge = () => {
-    let purges = []
+    let results = []
     store.dispatch({
       type: PURGE,
-      registerPurge: purgePromise => {
-        purges.push(purgePromise)
+      result: purgeResult => {
+        results.push(purgeResult)
       },
     })
-    return Promise.all(purges)
+    return Promise.all(results)
+  }
+
+  persistor.flush = () => {
+    let results = []
+    store.dispatch({
+      type: FLUSH,
+      result: flushResult => {
+        results.push(flushResult)
+      },
+    })
+    return Promise.all(results)
   }
 
   let register = (key: string) => {

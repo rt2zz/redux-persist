@@ -54,6 +54,7 @@ export type RehydrateAction = {
 
 export type Persistoid = {
   update: Object => void,
+  flush: () => Promise<any>,
 }
 
 type RegisterAction = {
@@ -71,7 +72,8 @@ type PersistorState = {
 type PersistorSubscribeCallback = () => void
 
 export type Persistor = {
-  purge: () => void,
+  purge: () => Promise<any>,
+  flush: () => Promise<any>,
   +dispatch: PersistorAction => PersistorAction,
   +getState: () => PersistorState,
   +subscribe: PersistorSubscribeCallback => () => void,

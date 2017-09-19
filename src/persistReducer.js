@@ -1,5 +1,5 @@
 // @flow
-import { PERSIST, PURGE, REHYDRATE, DEFAULT_VERSION } from './constants'
+import { FLUSH, PERSIST, PURGE, REHYDRATE, DEFAULT_VERSION } from './constants'
 
 import type {
   PersistConfig,
@@ -89,8 +89,10 @@ export default function persistReducer<State: Object, Action: Object>(
       return { ...state, _persist: { version, rehydrated: false } }
     } else if (action.type === PURGE) {
       _purge = true
-      action.registerPurge(purgeStoredState(config))
+      action.result(purgeStoredState(config))
       return state
+    } else if (action.type === FLUSH) {
+      action.result(_persistoid && _persistoid.flush())
     } else if (action.type === REHYDRATE) {
       // noop on restState if purging
       if (_purge)

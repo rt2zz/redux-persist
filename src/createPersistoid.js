@@ -20,8 +20,11 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   let lastState = {}
   let keysToProcess = []
   let timeIterator: ?number = null
+  let writePromise = null
 
   const update = (state: Object) => {
+    console.log('update', state)
+    // add any changed keys to the queue
     Object.keys(state).forEach(key => {
       let subState = state[key]
       if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
@@ -30,24 +33,27 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       keysToProcess.push(key) // add key to queue
     })
 
-    // time iterator (read: throttle)
+    // start the time iterator if not running (read: throttle)
     if (timeIterator === null) {
-      timeIterator = setInterval(() => {
-        if (keysToProcess.length === 0) {
-          if (timeIterator) clearInterval(timeIterator)
-          timeIterator = null
-          return
-        }
-
-        let key = keysToProcess.shift()
-        let endState = transforms.reduce((subState, transformer) => {
-          return transformer.in(subState, key)
-        }, lastState[key])
-        if (typeof endState !== 'undefined') stagedWrite(key, endState)
-      }, throttle)
+      timeIterator = setInterval(processNextKey, throttle)
     }
 
     lastState = state
+  }
+
+  function processNextKey() {
+    if (keysToProcess.length === 0) {
+      if (timeIterator) clearInterval(timeIterator)
+      timeIterator = null
+      return
+    }
+
+    let key = keysToProcess.shift()
+    console.log('pn', key)
+    let endState = transforms.reduce((subState, transformer) => {
+      return transformer.in(subState, key)
+    }, lastState[key])
+    if (typeof endState !== 'undefined') stagedWrite(key, endState)
   }
 
   let stagedState = {}
@@ -61,7 +67,9 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       )
     }
     if (keysToProcess.length === 0) {
-      storage.setItem(storageKey, serialize(stagedState), onWriteFail)
+      writePromise = storage
+        .setItem(storageKey, serialize(stagedState))
+        .catch(onWriteFail)
     }
   }
 
@@ -71,18 +79,25 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     return true
   }
 
-  function onWriteFail() {
-    return function setError(err) {
-      // @TODO add fail handlers (typically storage full)
-      if (err && process.env.NODE_ENV !== 'production') {
-        console.error('Error storing data', err)
-      }
+  function onWriteFail(err) {
+    // @TODO add fail handlers (typically storage full)
+    if (err && process.env.NODE_ENV !== 'production') {
+      console.error('Error storing data', err)
     }
+  }
+
+  const flush = () => {
+    console.log('flush', keysToProcess)
+    while (keysToProcess.length !== 0) {
+      processNextKey()
+    }
+    return writePromise || Promise.resolve()
   }
 
   // return `persistoid`
   return {
     update,
+    flush,
   }
 }
 

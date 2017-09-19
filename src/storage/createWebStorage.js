@@ -4,15 +4,14 @@ import getStorage from './getStorage'
 export default function createWebStorage(type: string) {
   let storage = getStorage(type)
   return {
-    getItem: (key: string, cb: Function) => cb(null, storage.getItem(key)),
-    setItem: (key: string, item: string, cb: Function) => {
-      try {
-        cb(null, storage.setItem(key, item))
-      } catch (err) {
-        cb(err)
-      }
+    getItem: async (key: string) => {
+      return storage.getItem(key)
     },
-    removeItem: (key: string, cb: Function) =>
-      cb(null, storage.removeItem(key)),
+    setItem: async (key: string, item: string) => {
+      return storage.setItem(key, item)
+    },
+    removeItem: async (key: string) => {
+      return storage.removeItem(key)
+    },
   }
 }
