@@ -62,6 +62,7 @@ persistStore(store, config, callback).purge()
       - **transforms** *array* transforms to be applied during storage and during rehydration.
       - **debounce** *integer* debounce interval applied to storage calls (in miliseconds).
       - **keyPrefix** *string* change localstorage default key (default: **reduxPersist:**) [Discussion on why we need this feature ?](https://github.com/rt2zz/redux-persist/issues/137)
+      - **createSetItemCB** *function* will be called with `key` when storage will write object. Should return a callback function for `storage.setItem`;
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
 
