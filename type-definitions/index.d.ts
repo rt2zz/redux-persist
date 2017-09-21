@@ -6,6 +6,7 @@ declare module "redux-persist" {
     whitelist?: string[];
     storage?: AsyncStorage | WebStorage | LocalForageStorage;
     transforms?: Array<Transform<any, any>>;
+    asyncTransforms?: boolean;
     debounce?: number;
     serialize?: boolean;
     keyPrefix?: string;

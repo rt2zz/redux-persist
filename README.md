@@ -60,6 +60,7 @@ persistStore(store, config, callback).purge()
       - **whitelist** *array* keys (read: reducers) to persist, if set all other keys will be ignored.
       - **storage** *object* a [conforming](https://github.com/rt2zz/redux-persist#storage-engines) storage engine.
       - **transforms** *array* transforms to be applied during storage and during rehydration.
+      - **asyncTransforms** *boolean* set to true to allow for asynchronous transforms.
       - **debounce** *integer* debounce interval applied to storage calls (in miliseconds).
       - **keyPrefix** *string* change localstorage default key (default: **reduxPersist:**) [Discussion on why we need this feature ?](https://github.com/rt2zz/redux-persist/issues/137)
     - **callback** *function* will be called after rehydration is finished.
@@ -158,6 +159,27 @@ let myTransform = createTransform(
 )
 
 persistStore(store, {transforms: [myTransform]})
+```
+- async transforms:
+``` js
+import { createTransform, persistStore } from 'redux-persist'
+
+let myTransform = createTransform(
+  async (inboundState, key) => {
+    const serialized = await asyncSerialize(inboundState, key)
+    return serialized
+  },
+  async (outboundState, key) => {
+    const deserialized = await specialDeserialize(outboundState, key)
+    return deserialized
+  },
+  {whitelist: ['specialReducer']}
+)
+
+persistStore(store, {
+  transforms: [myTransform],
+  asyncTransforms: true
+})
 ```
 
 ## Migrations

@@ -12,6 +12,7 @@ export default function createPersistor (store, config) {
   const transforms = config.transforms || []
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  const asyncTransforms = config.asyncTransforms || false
 
   // pluggable state shape (e.g. immutablejs)
   const stateInit = config._stateInit || {}
@@ -30,6 +31,7 @@ export default function createPersistor (store, config) {
   let paused = false
   let storesToProcess = []
   let timeIterator = null
+  let isTransforming = false
 
   store.subscribe(() => {
     if (paused) return
@@ -46,6 +48,10 @@ export default function createPersistor (store, config) {
     // time iterator (read: debounce)
     if (timeIterator === null) {
       timeIterator = setInterval(() => {
+        if (isTransforming) {
+          return
+        }
+
         if (storesToProcess.length === 0) {
           clearInterval(timeIterator)
           timeIterator = null
@@ -54,13 +60,43 @@ export default function createPersistor (store, config) {
 
         let key = storesToProcess.shift()
         let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+        let currentState = stateGetter(store.getState(), key)
+
+        isTransforming = true
+
+        function assignKeyInStorage (endState) {
+          if (typeof endState === 'undefined') return
+          storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+          isTransforming = false
+        }
+
+        applyInboundTransforms(currentState, key, assignKeyInStorage)
       }, debounce)
     }
 
     lastState = state
   })
+
+  function applyInboundTransforms (currentState, key, assignKeyInStorage) {
+    if (asyncTransforms) {
+      transforms.reduce((promise, transformer) => {
+        return promise
+          .then(() => Promise.resolve(transformer.in(currentState, key)).then((subState) => {
+            currentState = subState
+            return currentState
+          }))
+          .catch(console.error)
+      }, Promise.resolve()).then((result) => {
+        assignKeyInStorage(result)
+      })
+    } else {
+      let result = transforms.reduce((subState, transformer) => {
+        return transformer.in(subState, key)
+      }, currentState)
+
+      assignKeyInStorage(result)
+    }
+  }
 
   function passWhitelistBlacklist (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return false
@@ -71,6 +107,10 @@ export default function createPersistor (store, config) {
   function adhocRehydrate (incoming, options = {}) {
     let state = {}
     if (options.serial) {
+      if (asyncTransforms) {
+        throw new Error(`Async transforms not implemented with serial: true`)
+      }
+
       stateIterator(incoming, (subState, key) => {
         try {
           let data = deserializer(subState)
@@ -79,10 +119,14 @@ export default function createPersistor (store, config) {
           }, data)
           state = stateSetter(state, key, value)
         } catch (err) {
-          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+          }
         }
       })
-    } else state = incoming
+    } else {
+      state = incoming
+    }
 
     store.dispatch(rehydrateAction(state))
     return state
