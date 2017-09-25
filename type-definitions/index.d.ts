@@ -19,7 +19,7 @@ declare module "redux-persist" {
     in: TransformIn<State, Raw>;
     out: TransformOut<Raw, State>;
   }
-  
+
  /**
    * React-native AsyncStorage API
    */
@@ -52,7 +52,7 @@ declare module "redux-persist" {
     setItem<T>(key: string, value: T, callback: OnComplete<T>): void;
 
     removeItem(key: string): Promise<void>;
-    removeItem(key: string, callback: OnComplete<T>): void;
+    removeItem<T>(key: string, callback: OnComplete<T>): void;
 
     keys(): Promise<string[]>;
     keys(callback: (err: any, keys: string[]) => void): void;
