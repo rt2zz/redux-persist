@@ -52,7 +52,7 @@ declare module "redux-persist" {
     setItem<T>(key: string, value: T, callback: OnComplete<T>): void;
 
     removeItem(key: string): Promise<void>;
-    removeItem(key: string, callback: OnComplete<T>): void;
+    removeItem<T>(key: string, callback: OnComplete<T>): void;
 
     keys(): Promise<string[]>;
     keys(callback: (err: any, keys: string[]) => void): void;
@@ -105,8 +105,8 @@ declare module "redux-persist/constants" {
 }
 
 declare module "redux-persist/storages" {
-  import { Storage } from "redux-persist";
+  import { AsyncStorage } from "redux-persist";
 
-  export const asyncLocalStorage: Storage;
-  export const asyncSessionStorage: Storage;
+  export const asyncLocalStorage: AsyncStorage;
+  export const asyncSessionStorage: AsyncStorage;
 }
