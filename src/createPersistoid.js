@@ -49,7 +49,6 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     }
 
     let key = keysToProcess.shift()
-    console.log('pn', key)
     let endState = transforms.reduce((subState, transformer) => {
       return transformer.in(subState, key)
     }, lastState[key])
