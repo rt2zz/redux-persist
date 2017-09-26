@@ -54,6 +54,9 @@ export default function persistReducer<State: Object, Action: Object>(
     let restState: State = rest
 
     if (action.type === PERSIST) {
+      // @NOTE only ever create persistoid once, ensure we call it at least once, even if _persist has already been set
+      if (!_persistoid) _persistoid = createPersistoid(config)
+
       // @NOTE PERSIST can be called multiple times, noop after the first
       if (_persist) return state
       if (
@@ -65,7 +68,6 @@ export default function persistReducer<State: Object, Action: Object>(
         )
 
       action.register(config.key)
-      _persistoid = createPersistoid(config)
 
       getStoredState(config).then(
         restoredState => {
