@@ -23,7 +23,6 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   let writePromise = null
 
   const update = (state: Object) => {
-    console.log('update', state)
     // add any changed keys to the queue
     Object.keys(state).forEach(key => {
       let subState = state[key]
@@ -86,7 +85,6 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }
 
   const flush = () => {
-    console.log('flush', keysToProcess)
     while (keysToProcess.length !== 0) {
       processNextKey()
     }
