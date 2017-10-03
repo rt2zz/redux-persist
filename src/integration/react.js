@@ -1,6 +1,6 @@
 // @flow
-import React, { PureComponent, type Node } from 'react' // eslint-disable-line import/no-unresolved
-
+import React, { PureComponent } from 'react' // eslint-disable-line import/no-unresolved
+import type { Node } from 'react' // eslint-disable-line import/no-unresolved
 import type { Persistor } from '../types'
 
 type Props = {
