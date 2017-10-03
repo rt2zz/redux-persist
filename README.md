@@ -54,7 +54,24 @@ function configureStore () {
 }
 ```
 
-## Breaking Changes
+Additionally if you are using react, it is recommended you use the provided [PersistGate](./docs/PersistGate.md) component for integration. This will take care of delaying the rendering of the app until rehydration is complete.
+```js
+class App extends Component {
+  //...
+  render() {
+    return (
+      <PersistGate 
+        persistor={persistor} 
+        loading={<Loading />}
+        >
+        {/* rest of app */}
+      </PersistGate>
+    )
+  }
+}
+```
+
+## v5 Breaking Changes
 There are two important breaking changes. 
 1. api has changed as described in the above migration section
 2. state with cycles is no longer serialized using json-stringify-safe, and will instead noop.
