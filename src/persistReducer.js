@@ -35,6 +35,7 @@ export default function persistReducer<State: Object, Action: Object>(
   const version =
     config.version !== undefined ? config.version : DEFAULT_VERSION
   const debug = config.debug || false
+  const autoRehydrate = config.autoRehydrate
   const getStoredState = config.getStoredState || defaultGetStoredState
   let _persistoid = null
   let _purge = false
@@ -111,12 +112,10 @@ export default function persistReducer<State: Object, Action: Object>(
       if (action.key === config.key) {
         let reducedState = baseReducer(restState, action)
         let inboundState = action.payload
-        let reconciledRest: State = stateReconciler(
-          state,
-          inboundState,
-          reducedState,
-          config
-        )
+        let reconciledRest: State =
+          autoRehydrate === false
+            ? reducedState
+            : stateReconciler(state, inboundState, reducedState, config)
 
         return {
           ...reconciledRest,

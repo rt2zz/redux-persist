@@ -59,6 +59,7 @@ The Persistor is a redux store unto itself, plus
   throttle?: number,
   keyPrefix?: string, // will be prefixed to the storage key
   debug?: boolean, // true -> verbose logs
+  autoRehydrate?: boolean, // false -> do not automatically reconcile state, the presumes the REHYDRATE action will be handled manually
 }
 ```
 

@@ -21,6 +21,7 @@ export type PersistConfig = {
   throttle?: number,
   migrate?: (PersistedState, number) => Promise<PersistedState>,
   getStoredState?: PersistConfig => Promise<PersistedState>,
+  autoRehydrate?: boolean,
 }
 
 export type PersistorOptions = {
