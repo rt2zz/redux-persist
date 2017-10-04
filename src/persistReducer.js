@@ -1,5 +1,12 @@
 // @flow
-import { FLUSH, PERSIST, PURGE, REHYDRATE, DEFAULT_VERSION } from './constants'
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REHYDRATE,
+  DEFAULT_VERSION,
+} from './constants'
 
 import type {
   PersistConfig,
@@ -39,6 +46,7 @@ export default function persistReducer<State: Object, Action: Object>(
   const getStoredState = config.getStoredState || defaultGetStoredState
   let _persistoid = null
   let _purge = false
+  let _paused = true
 
   if (process.env.NODE_ENV !== 'production') {
     // $FlowIgnore
@@ -55,6 +63,9 @@ export default function persistReducer<State: Object, Action: Object>(
     let restState: State = rest
 
     if (action.type === PERSIST) {
+      // @NOTE PERSIST resumes if paused.
+      _paused = false
+
       // @NOTE only ever create persistoid once, ensure we call it at least once, even if _persist has already been set
       if (!_persistoid) _persistoid = createPersistoid(config)
 
@@ -106,6 +117,8 @@ export default function persistReducer<State: Object, Action: Object>(
         ...baseReducer(restState, action),
         _persist,
       }
+    } else if (action.type === PAUSE) {
+      _paused = true
     } else if (action.type === REHYDRATE) {
       // noop on restState if purging
       if (_purge)
@@ -139,8 +152,11 @@ export default function persistReducer<State: Object, Action: Object>(
       ...baseReducer(restState, action),
       _persist,
     }
-    // update the persistoid only if we are already rehydrated
-    _persist.rehydrated && _persistoid && _persistoid.update(newState)
+    // update the persistoid only if we are already rehydrated and are not paused
+    _persist.rehydrated &&
+      _persistoid &&
+      !_paused &&
+      _persistoid.update(newState)
     return newState
   }
 }
