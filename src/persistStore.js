@@ -15,39 +15,43 @@ export default function persistStore (store, config = {}, onComplete) {
   const persistor = createPersistor(store, config)
   persistor.pause()
 
-  // restore
-  if (shouldRestore) {
-    setImmediate(() => {
-      getStoredState(config, (err, restoredState) => {
-        if (err) {
-          complete(err)
-          return
-        }
-        // do not persist state for purgeKeys
-        if (purgeKeys) {
-          if (purgeKeys === '*') restoredState = {}
-          else purgeKeys.forEach((key) => delete restoredState[key])
-        }
-        try {
-          store.dispatch(rehydrateAction(restoredState, err))
-        } finally {
-          complete(err, restoredState)
-        }
+  const persistPromise = new Promise((resolve, reject) => {
+    // restore
+    if (shouldRestore) {
+      setImmediate(() => {
+        getStoredState(config, (err, restoredState) => {
+          if (err) {
+            complete(err)
+            return
+          }
+          // do not persist state for purgeKeys
+          if (purgeKeys) {
+            if (purgeKeys === '*') restoredState = {}
+            else purgeKeys.forEach((key) => delete restoredState[key])
+          }
+          try {
+            store.dispatch(rehydrateAction(restoredState, err))
+          } finally {
+            complete(err, restoredState)
+          }
+        })
       })
-    })
-  } else setImmediate(complete)
+    } else setImmediate(complete)
 
-  function complete (err, restoredState) {
-    persistor.resume()
-    onComplete && onComplete(err, restoredState)
-  }
+    function complete (err, restoredState) {
+      persistor.resume()
+      onComplete && onComplete(err, restoredState)
+      err ? reject({ err, state: restoredState }) : resolve({ state: restoredState })
+    }
+  })
 
   return {
     ...persistor,
     purge: (keys) => {
       purgeKeys = keys || '*'
       return persistor.purge(keys)
-    }
+    },
+    promise: persistPromise
   }
 }
 
