@@ -1,5 +1,5 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
-import createAsyncLocalStorage from './defaults/asyncLocalStorage'
+import createAsyncLocalStorage from './storages/asyncLocalStorage'
 import purgeStoredState from './purgeStoredState'
 import stringify from 'json-stringify-safe'
 

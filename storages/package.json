@@ -1,7 +1,7 @@
 {
   "name": "redux-persist/storages",
   "private": true,
-  "main": "../lib/defaultStorages.js",
-  "module": "../es/defaultStorages.js",
-  "jsnext:main": "../es/defaultStorages.js"
+  "main": "../lib/storages",
+  "module": "../es/storages",
+  "jsnext:main": "../es/storages"
 }
