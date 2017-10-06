@@ -36,9 +36,7 @@ export default function createPersistor (store, config) {
 
     let state = store.getState()
 
-    stateIterator(state, (subState, key) => {
-      if (!passWhitelistBlacklist(key)) return
-      if (stateGetter(lastState, key) === stateGetter(state, key)) return
+    findStoresToProcess(state).forEach(key => {
       if (storesToProcess.indexOf(key) !== -1) return
       storesToProcess.push(key)
     })
@@ -55,14 +53,39 @@ export default function createPersistor (store, config) {
         }
 
         let key = storesToProcess.shift()
-        let storageKey = createStorageKey(key)
-        let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), stateGetter(store.getState(), key))
-        if (typeof endState !== 'undefined') storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+        persistCurrentStateForKey(state, key)
       }, debounce)
     }
 
     lastState = state
   })
+
+  function findStoresToProcess (state) {
+    let keys = []
+    stateIterator(state, (subState, key) => {
+      if (!passWhitelistBlacklist(key)) return
+      let newState = stateGetter(state, key)
+      if (stateGetter(lastState, key) === newState) return
+      keys.push(key)
+    })
+
+    return keys
+  }
+
+  function persistCurrentStateForKey (state, key) {
+    let storageKey = createStorageKey(key)
+    let currentState = stateGetter(state, key)
+    let endState = transforms.reduce((subState, transformer) => transformer.in(subState, key), currentState)
+    if (typeof endState === 'undefined') return null
+    return storage.setItem(storageKey, serializer(endState), warnIfSetError(key))
+  }
+
+  function persistCurrentState () {
+    let state = store.getState()
+    let promises = storesToProcess.map(k => persistCurrentStateForKey(state, k))
+    storesToProcess.splice(0)
+    return promises
+  }
 
   function passWhitelistBlacklist (key) {
     if (whitelist && whitelist.indexOf(key) === -1) return false
@@ -99,7 +122,8 @@ export default function createPersistor (store, config) {
     rehydrate: adhocRehydrate,
     pause: () => { paused = true },
     resume: () => { paused = false },
-    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys)
+    purge: (keys) => purgeStoredState({storage, keyPrefix}, keys),
+    flush: persistCurrentState
   }
 }
 

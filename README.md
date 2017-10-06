@@ -77,6 +77,8 @@ persistStore(store, config, callback).purge()
       - pauses persistence
     - `resume()`
       - resumes persistence
+    - `flush()`
+      - Writes the current state of the store out to storage.
 
 #### `autoRehydrate(config)`
   - This is a store enhancer that will automatically shallow merge the persisted state for each key. Additionally it queues any actions that are dispatched before rehydration is complete, and fires them after rehydration is finished.
