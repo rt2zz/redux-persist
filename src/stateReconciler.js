@@ -1,12 +1,13 @@
 // @flow
 
 import type { PersistConfig } from './types'
+import { AUTO_REHYDRATE, AUTO_REHYDRATE_WITH_REDUCED_STATE } from './constants'
 
 export default function stateReconciler<State: Object>(
   originalState: State,
   inboundState: State,
   reducedState: State,
-  { debug }: PersistConfig
+  { debug, autoRehydrate }: PersistConfig
 ): State {
   // various dev only sanity checks
   if (process.env.NODE_ENV !== 'production') {
@@ -67,8 +68,10 @@ export default function stateReconciler<State: Object>(
           )
         return
       }
-      // otherwise hard set the new value
-      newState[key] = inboundState[key]
+      newState[key] = autoRehydrate === AUTO_REHYDRATE_WITH_REDUCED_STATE
+                    ? {...newState[key], ...inboundState[key]}
+                    // otherwise hard set the new value
+                    : inboundState[key]
     })
   }
 
