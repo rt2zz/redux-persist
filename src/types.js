@@ -19,7 +19,7 @@ export type PersistConfig = {
   transforms?: Array<Transform>,
   throttle?: number,
   migrate?: (PersistedState, number) => Promise<PersistedState>,
-  autoRehydrate?: boolean | Function,
+  stateReconciler?: boolean | Function,
   getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
   debug?: boolean,
 }
