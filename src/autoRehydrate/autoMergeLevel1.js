@@ -1,8 +1,14 @@
 // @flow
 
-import type { PersistConfig } from './types'
+/*
+  autoMergeLevel1: 
+    - merges 1 level of substate
+    - skips substate if already modified
+*/
 
-export default function stateReconciler<State: Object>(
+import type { PersistConfig } from '../types'
+
+export default function autoMergeLevel1<State: Object>(
   originalState: State,
   inboundState: State,
   reducedState: State,
