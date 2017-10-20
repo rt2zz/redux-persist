@@ -13,15 +13,15 @@ export type PersistConfig = {
   version?: number,
   storage: Object,
   key: string,
-  keyPrefix?: string,
-  debug?: boolean,
+  keyPrefix?: string, // @TODO remove in v6
   blacklist?: Array<string>,
   whitelist?: Array<string>,
   transforms?: Array<Transform>,
   throttle?: number,
   migrate?: (PersistedState, number) => Promise<PersistedState>,
-  getStoredState?: PersistConfig => Promise<PersistedState>,
-  autoRehydrate?: boolean,
+  stateReconciler?: boolean | Function,
+  getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
+  debug?: boolean,
 }
 
 export type PersistorOptions = {

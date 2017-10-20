@@ -15,7 +15,7 @@ import type {
   Persistoid,
 } from './types'
 
-import stateReconciler from './stateReconciler'
+import autoMergeLevel1 from './stateReconciler/autoMergeLevel1'
 import createPersistoid from './createPersistoid'
 import defaultGetStoredState from './getStoredState'
 import purgeStoredState from './purgeStoredState'
@@ -42,7 +42,10 @@ export default function persistReducer<State: Object, Action: Object>(
   const version =
     config.version !== undefined ? config.version : DEFAULT_VERSION
   const debug = config.debug || false
-  const autoRehydrate = config.autoRehydrate
+  const stateReconciler =
+    config.stateReconciler === undefined
+      ? autoMergeLevel1
+      : config.stateReconciler
   const getStoredState = config.getStoredState || defaultGetStoredState
   let _persistoid = null
   let _purge = false
@@ -132,9 +135,9 @@ export default function persistReducer<State: Object, Action: Object>(
         let reducedState = baseReducer(restState, action)
         let inboundState = action.payload
         let reconciledRest: State =
-          autoRehydrate === false
-            ? reducedState
-            : stateReconciler(state, inboundState, reducedState, config)
+          typeof stateReconciler === 'function'
+            ? stateReconciler(state, inboundState, reducedState, config)
+            : reducedState
 
         return {
           ...reconciledRest,
