@@ -52,12 +52,16 @@ class App extends Component {
 ```
 
 ## v5 Breaking Changes
-There are two important breaking changes. 
+There are three important breaking changes. 
 1. api has changed as described in the above migration section
 2. state with cycles is no longer serialized using json-stringify-safe, and will instead noop.
 3. state methods can no longer be overridden which means all top level state needs to be plain objects. `redux-persist-transform-immutable` will continue to operate as before as it works on substate, not top level state.
 
+Additionally v5 does not yet have typescript bindings.
+
 ## Migration from v4 to v5
+**WARNING** v4 stored state is not compatible with v5. If you upgrade a v4 application, your users will lose their stored state upon upgrade. You can try the (highly) experimental [v4 -> v5 state migration](#experimental-v4-to-v5-state-migration) if you please. Feedback appreciated.
+
 Standard Usage:
 - remove **autoRehydrate**
 - changes to **persistStore**:
@@ -73,7 +77,6 @@ Recommended Additions
 - use new **PersistGate** to delay rendering until rehydration is complete
   - `import { PersistGate } from 'redux-persist/lib/integration/react`
 - set `config.debug = true` to get useful logging
-- experimental [v4 -> v5 state migration](#experimental-v4-to-v5-state-migration)
 
 If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
 
