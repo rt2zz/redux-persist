@@ -70,12 +70,12 @@ type PersistorState = {
   bootstrapped: boolean,
 }
 
-type PersistorSubscribeCallback = () => void
+type PersistorSubscribeCallback = () => any
 
 export type Persistor = {
   purge: () => Promise<any>,
   flush: () => Promise<any>,
   +dispatch: PersistorAction => PersistorAction,
   +getState: () => PersistorState,
-  +subscribe: PersistorSubscribeCallback => () => void,
+  +subscribe: PersistorSubscribeCallback => () => any,
 }
