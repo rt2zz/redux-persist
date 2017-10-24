@@ -75,7 +75,7 @@ Standard Usage:
 
 Recommended Additions
 - use new **PersistGate** to delay rendering until rehydration is complete
-  - `import { PersistGate } from 'redux-persist/lib/integration/react`
+  - `import { PersistGate } from 'redux-persist/lib/integration/react'`
 - set `config.debug = true` to get useful logging
 
 If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
