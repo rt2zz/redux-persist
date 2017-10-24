@@ -11,26 +11,6 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 
 **Note:** These docs apply to redux-persist v5. [v4](https://github.com/rt2zz/redux-persist/tree/v4.8.2) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
 
-## Migration from v4 to v5
-Standard Usage:
-- remove **autoRehydrate**
-- changes to **persistStore**:
-  - 1. remove config argument (or replace with an empty object)
-  - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
-- add **persistReducer** to your reducer
-  - e.g. `let persistedReducer = persistReducer(config, reducer)`
-- changes to **config**:
-  - `key` is now required. Can be set to anything, e.g. 'primary'
-  - `storage` is now required. For default storage: `import storage from 'redux-persist/lib/storage'`
-
-Recommended Additions
-- use new **PersistGate** to delay rendering until rehydration is complete
-  - `import { PersistGate } from 'redux-persist/lib/integration/react`
-- set `config.debug = true` to get useful logging
-- experimental [v4 -> v5 state migration](#experimental-v4-to-v5-state-migration)
-
-If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
-
 ## Usage
 [API Docs](./docs/api.md)
 ```js
@@ -76,6 +56,26 @@ There are two important breaking changes.
 1. api has changed as described in the above migration section
 2. state with cycles is no longer serialized using json-stringify-safe, and will instead noop.
 3. state methods can no longer be overridden which means all top level state needs to be plain objects. `redux-persist-transform-immutable` will continue to operate as before as it works on substate, not top level state.
+
+## Migration from v4 to v5
+Standard Usage:
+- remove **autoRehydrate**
+- changes to **persistStore**:
+  - 1. remove config argument (or replace with an empty object)
+  - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
+- add **persistReducer** to your reducer
+  - e.g. `let persistedReducer = persistReducer(config, reducer)`
+- changes to **config**:
+  - `key` is now required. Can be set to anything, e.g. 'primary'
+  - `storage` is now required. For default storage: `import storage from 'redux-persist/lib/storage'`
+
+Recommended Additions
+- use new **PersistGate** to delay rendering until rehydration is complete
+  - `import { PersistGate } from 'redux-persist/lib/integration/react`
+- set `config.debug = true` to get useful logging
+- experimental [v4 -> v5 state migration](#experimental-v4-to-v5-state-migration)
+
+If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
 
 ## Why v5
 Long story short, the changes are required in order to support new use cases
