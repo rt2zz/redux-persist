@@ -67,6 +67,7 @@ Standard Usage:
 - changes to **persistStore**:
   - 1. remove config argument (or replace with an empty object)
   - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
+  - 3. All constants (ex: `{REHYDRATE, PURGE}`) has moved to `redux-persist/lib/constants` instead of `redux-persist/constants`
 - add **persistReducer** to your reducer
   - e.g. `let persistedReducer = persistReducer(config, reducer)`
 - changes to **config**:
