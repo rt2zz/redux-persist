@@ -18,6 +18,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
   // initialize stateful values
   let lastState = {}
+  let stagedState = {}
   let keysToProcess = []
   let timeIterator: ?number = null
   let writePromise = null
@@ -54,7 +55,6 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     if (typeof endState !== 'undefined') stagedWrite(key, endState)
   }
 
-  let stagedState = {}
   function stagedWrite(key: string, endState: any) {
     try {
       stagedState[key] = serialize(endState)
@@ -65,6 +65,13 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       )
     }
     if (keysToProcess.length === 0) {
+      // cleanup any removed keys just before write.
+      Object.keys(stagedState).forEach(key => {
+        if (lastState[key] === undefined) {
+          delete stagedState[key]
+        }
+      })
+
       writePromise = storage
         .setItem(storageKey, serialize(stagedState))
         .catch(onWriteFail)
