@@ -14,16 +14,16 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 ## Usage
 [API Docs](./docs/api.md)
 ```js
-import { persistStore, persistReducer } from 'redux-persist'
+import { persistStore, persistCombineReducers } from 'redux-persist'
 import storage from 'redux-persist/es/storage' // default: localStorage if web, AsyncStorage if react-native
-import rootReducer from './rootReducer'
+import reducers from './reducers' // where reducers is a object of reducers
 
 const config = {
-  key: 'root', // key is required
-  storage, // storage is now required
+  key: 'root',
+  storage,
 }
 
-const reducer = persistReducer(config, rootReducer)
+const reducer = persistCombineReducers(config, reducers)
 
 function configureStore () {
   // ...
@@ -51,6 +51,11 @@ class App extends Component {
 }
 ```
 
+Additional Usage Examples:
+1. [Nested Persists](#nested-persists)
+3. Code Splitting [coming soon]
+4. Hot Module Reloading [coming soon]
+
 ## v5 Breaking Changes
 There are three important breaking changes. 
 1. api has changed as described in the above migration section
@@ -68,8 +73,8 @@ Standard Usage:
   - 1. remove config argument (or replace with an empty object)
   - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
   - 3. All constants (ex: `{REHYDRATE, PURGE}`) has moved to `redux-persist/lib/constants` instead of `redux-persist/constants`
-- add **persistReducer** to your reducer
-  - e.g. `let persistedReducer = persistReducer(config, reducer)`
+- replace combineReducers with **persistCombineReducers**
+  - e.g. `let reducer = persistCombineReducers(config, reducers)`
 - changes to **config**:
   - `key` is now required. Can be set to anything, e.g. 'primary'
   - `storage` is now required. For default storage: `import storage from 'redux-persist/lib/storage'`
@@ -96,6 +101,52 @@ Long story short, the changes are required in order to support new use cases
 `persistReducer` has a general purpose "migrate" config which will be called after getting stored state but before actually reconciling with the reducer. It can be any function which takes state as an argument and returns a promise to return a new state object.
 
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
+
+## Nested Persists
+Persistence can now be nested, allowing for multiple persistoids with differing configuration to easily coexist.
+```js
+import { combineReducers } from 'redux' 
+import { persistReducer } from 'redux-persist'
+import session from 'redux-persist/lib/storage/session'
+import localForage from 'localForage'
+
+import { fooReducer, barReducer } from './reducers'
+
+// foo state to be stored in localForage, but lets not persist someEmphemeralKey
+const fooPersistConfig = {
+  key: 'foo',
+  storage: localForage,
+  blacklist: ['someEphemeralKey'],
+}
+
+// bar state should only last for the tab session
+const barPersistConfig = {
+  key: 'bar',
+  storage: session,
+}
+
+let rootReducer = combineReducers({
+  foo: persistReducer(fooPersistConfig, fooReducer),
+  bar: persistReducer(barPersistConfig, barReducer),
+})
+```
+
+Additionally depending on the mount point of persistReducer, you may not want to reconcile state at all.
+```
+import { hardSet } from 'redux-persist/lib/stateReconciler/hardSet'
+
+//...
+
+const fooConfig = {
+  key: 'foo',
+  storage: localForage,
+  stateReconciler: hardSet,
+}
+
+let reducer = combineReducer({
+  foo: persistReducer(fooConfig, fooReducer)
+})
+```
 
 ## Experimental v4 to v5 State Migration
 - **warning: this method is completely untested**

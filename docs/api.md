@@ -59,7 +59,7 @@ The Persistor is a redux store unto itself, plus
   throttle?: number,
   keyPrefix?: string, // will be prefixed to the storage key
   debug?: boolean, // true -> verbose logs
-  stateReconciler?: boolean | StateReconciler, // false -> do not automatically reconcile state
+  stateReconciler?: false | StateReconciler, // false -> do not automatically reconcile state
 }
 ```
 
@@ -109,13 +109,13 @@ Where enhancer will be sent verbatim to the redux createStore call used to creat
 ### `type StateReconciler`
 ```js
 (
-  originalState: State,
   inboundState: State,
+  originalState: State,
   reducedState: State,
 ) => State
 ```
 A function which reconciles:
-- **originalState**: the state before the REHYDRATE action
 - **inboundState**: the state being rehydrated from storage
+- **originalState**: the state before the REHYDRATE action
 - **reducedState**: the store state *after* the REHYDRATE action but *before* the reconcilliation
 into final "rehydrated" state.

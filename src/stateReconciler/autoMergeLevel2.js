@@ -1,14 +1,15 @@
 // @flow
 
 /*
-  autoMergeLevel1: 
-    - merges 1 level of substate
+  autoMergeLevel2: 
+    - merges 2 level of substate
     - skips substate if already modified
+    - this is essentially redux-perist v4 behavior
 */
 
 import type { PersistConfig } from '../types'
 
-export default function autoMergeLevel1<State: Object>(
+export default function autoMergeLevel2<State: Object>(
   inboundState: State,
   originalState: State,
   reducedState: State,
@@ -73,8 +74,8 @@ export default function autoMergeLevel1<State: Object>(
           )
         return
       }
-      // otherwise hard set the new value
-      newState[key] = inboundState[key]
+      // otherwise shallow merge the new values (hence "Level2")
+      newState[key] = { ...newState[key], ...inboundState[key] }
     })
   }
 
