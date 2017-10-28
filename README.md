@@ -108,7 +108,7 @@ Persistence can now be nested, allowing for multiple persistoids with differing 
 import { combineReducers } from 'redux' 
 import { persistReducer } from 'redux-persist'
 import session from 'redux-persist/lib/storage/session'
-import localForage from 'localForage'
+import localForage from 'localforage'
 
 import { fooReducer, barReducer } from './reducers'
 
