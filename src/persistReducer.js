@@ -135,8 +135,8 @@ export default function persistReducer<State: Object, Action: Object>(
         let reducedState = baseReducer(restState, action)
         let inboundState = action.payload
         let reconciledRest: State =
-          typeof stateReconciler === 'function'
-            ? stateReconciler(state, inboundState, reducedState, config)
+          stateReconciler !== false
+            ? stateReconciler(inboundState, state, reducedState, config)
             : reducedState
 
         return {
