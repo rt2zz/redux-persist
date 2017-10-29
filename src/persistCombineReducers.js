@@ -1,6 +1,6 @@
 // @flow
 
-import { combineReducers as baseCombineReducers } from 'redux'
+import { combineReducers } from 'redux'
 import persistReducer from './persistReducer'
 import autoMergeLevel2 from './stateReconciler/autoMergeLevel2'
 
@@ -18,6 +18,6 @@ export default function persistCombineReducers(
   reducers: Reducers
 ): Reducer {
   config.stateReconciler = config.stateReconciler || autoMergeLevel2
-  combineReducers = config.combineReducers || baseCombineReducers;
-  return persistReducer(config, combineReducers(reducers))
+  config.combineReducers = config.combineReducers || combineReducers;
+  return persistReducer(config, config.combineReducers(reducers))
 }
