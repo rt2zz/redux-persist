@@ -20,6 +20,7 @@ export type PersistConfig = {
   throttle?: number,
   migrate?: (PersistedState, number) => Promise<PersistedState>,
   stateReconciler?: false | Function,
+  combineReducers?: false | (reducers) => Function,
   getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
   debug?: boolean,
 }
