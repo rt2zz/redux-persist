@@ -6,7 +6,7 @@ import type { Persistor } from '../types'
 type Props = {
   onBeforeLift?: Function,
   children?: Node,
-  loading: Node,
+  loading?: Node,
   persistor: Persistor,
 }
 
@@ -15,6 +15,10 @@ type State = {
 }
 
 export class PersistGate extends PureComponent<Props, State> {
+  static defaultProps = {
+    loading: null
+  }
+  
   state = {
     bootstrapped: false,
   }
