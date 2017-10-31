@@ -40,10 +40,7 @@ class App extends Component {
   //...
   render() {
     return (
-      <PersistGate 
-        persistor={persistor} 
-        loading={<Loading />}
-        >
+      <PersistGate persistor={persistor}>
         {/* rest of app */}
       </PersistGate>
     )
