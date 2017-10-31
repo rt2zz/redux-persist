@@ -16,19 +16,19 @@ type State = {
 
 export class PersistGate extends PureComponent<Props, State> {
   static defaultProps = {
-    loading: null
+    loading: null,
   }
-  
+
   state = {
     bootstrapped: false,
   }
   _unsubscribe: ?Function
 
   componentDidMount() {
-    this.handlePersistorState()
     this._unsubscribe = this.props.persistor.subscribe(
       this.handlePersistorState
     )
+    this.handlePersistorState()
   }
 
   handlePersistorState = () => {
