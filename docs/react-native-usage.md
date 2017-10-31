@@ -1,7 +1,7 @@
 React Native Example Usage.
 
 1. Setup [PersistGate](./PersistGate.md) as starting point of your application.
-2. To Configure Store follow the [Usage](/rt2zz/redux-persist/blob/master/README.md#usage).
+2. To Configure Store follow the [Usage](../README.md#usage).
 3. Redux integration
 
 ```js
