@@ -197,3 +197,13 @@ let myTransform = createTransform(
 
 const reducer = persistReducer({transforms: [myTransform]}, baseReducer)
 ```
+
+## Troubleshooting
+
+1. Store doesn't have a valid reducer.
+
+- Make sure you are using **persistCombineReducers** instead of combineReducers.
+
+2. It's rehydrated but I don't see my persisted data.
+
+- Check your **persistCombineReducers** key config if you are accedentially blacklisting it or whitelisting the wrong key.
