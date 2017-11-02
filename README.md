@@ -206,4 +206,4 @@ const reducer = persistReducer({transforms: [myTransform]}, baseReducer)
 
 2. It's rehydrated but I don't see my persisted data.
 
-- Check your **persistCombineReducers** key config if you are accedentially blacklisting it or whitelisting the wrong key.
+- Check your **persistCombineReducers** key config if you are accidentally blacklisting it or whitelisting the wrong key.
