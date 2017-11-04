@@ -2,7 +2,7 @@
 
 import type { Storage } from '../types'
 
-function noop() {}
+function noop() { }
 let noopStorage = {
   getItem: noop,
   setItem: noop,
@@ -32,6 +32,9 @@ function hasStorage(storageType) {
 
 export default function getStorage(type: string): Storage {
   const storageType = `${type}Storage`
+  if (process.env.NODE_ENV === 'test') {
+    return noopStorage;
+  }
   if (hasStorage(storageType)) return window[storageType]
   else {
     if (process.env.NODE_ENV !== 'production') {
