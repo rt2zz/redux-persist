@@ -16,7 +16,7 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 ```js
 import { persistStore, persistCombineReducers } from 'redux-persist'
 import storage from 'redux-persist/es/storage' // default: localStorage if web, AsyncStorage if react-native
-import reducers from './reducers' // where reducers is a object of reducers
+import reducers from './reducers' // where reducers is an object of reducers
 
 const config = {
   key: 'root',
