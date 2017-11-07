@@ -18,8 +18,8 @@ export default function createMigrate(
         console.log('redux-persist: no inbound state, skipping migration')
       return Promise.resolve(undefined)
     }
-    // this is gauranteed to exist as version gets added before any state is stored
-    let inboundVersion: number = state._persist.version
+
+    let inboundVersion: number = (state._persist && state._persist.version) || DEFAULT_VERSION
     if (inboundVersion === currentVersion) {
       if (process.env.NODE_ENV !== 'production' && debug)
         console.log('redux-persist: versions match, noop migration')
