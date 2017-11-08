@@ -74,8 +74,13 @@ export default function autoMergeLevel2<State: Object>(
           )
         return
       }
-      // otherwise shallow merge the new values (hence "Level2")
-      newState[key] = { ...newState[key], ...inboundState[key] }
+      if (!isPlainEnoughObject(reducedState[key])) {
+        // if object is plain enough shallow merge the new values (hence "Level2")
+        newState[key] = { ...newState[key], ...inboundState[key] }
+        return
+      }
+      // otherwise hard set
+      newState[key] = inboundState[key]
     })
   }
 
@@ -92,4 +97,8 @@ export default function autoMergeLevel2<State: Object>(
     )
 
   return newState
+}
+
+function isPlainEnoughObject(o) {
+  return o !== null && !Array.isArray(o) && typeof o === 'object'
 }
