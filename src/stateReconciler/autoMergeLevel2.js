@@ -74,7 +74,7 @@ export default function autoMergeLevel2<State: Object>(
           )
         return
       }
-      if (!isPlainEnoughObject(reducedState[key])) {
+      if (isPlainEnoughObject(reducedState[key])) {
         // if object is plain enough shallow merge the new values (hence "Level2")
         newState[key] = { ...newState[key], ...inboundState[key] }
         return
