@@ -39,8 +39,8 @@ export type MigrationManifest = {
 }
 
 export type Transform = {
-  in: (Object | string, string) => Object,
-  out: (Object | string, string) => Object,
+  inbound: (Object | string, string) => Object,
+  outbound: (Object | string, string) => Object,
   config?: PersistConfig,
 }
 
