@@ -78,11 +78,8 @@ Standard Usage:
 
 ```diff
 -import { REHYDRATE, PURGE } from 'redux-persist/constants'
-+import { REHYDRATE, PURGE } from 'redux-persist'
-
 -import { combineReducers } from 'redux'
-+import { persistCombineReducers } from 'redux-persist'
-
++import { REHYDRATE, PURGE, persistCombineReducers } from 'redux-persist'
 +import storage from 'redux-persist/lib/storage' // or whatever storage you are using
 
  const config = {
@@ -114,8 +111,6 @@ Standard Usage:
 +     store.getState() // if you want to get restoredState
    }
  )
-
-
 ```
 
 Recommended Additions
