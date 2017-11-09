@@ -28,7 +28,7 @@ type PersistPartial = { _persist: PersistState }
 */
 export default function persistReducer<State: Object, Action: Object>(
   config: PersistConfig,
-  baseReducer: (State, Action) => State
+  baseReducer: (State | void, Action) => State
 ): (State, Action) => State & PersistPartial {
   if (process.env.NODE_ENV !== 'production') {
     if (!config) throw new Error('config is required for persistReducer')
@@ -51,16 +51,6 @@ export default function persistReducer<State: Object, Action: Object>(
   let _purge = false
   let _paused = true
 
-  if (process.env.NODE_ENV !== 'production') {
-    // $FlowIgnore
-    let defaultState = baseReducer(undefined, {
-      type: 'redux-persist/default-state-probe',
-    })
-    if (Array.isArray(defaultState) || typeof defaultState !== 'object')
-      console.error(
-        'redux-persist: does not yet support non plain object state.'
-      )
-  }
   return (state: State, action: Action) => {
     let { _persist, ...rest } = state || {}
     let restState: State = rest

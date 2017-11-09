@@ -146,12 +146,11 @@ function getStoredStateV4(v4Config: V4Config) {
       })
     })
 
-    function rehydrate(key, serialized) {
+    function rehydrate(key: string, serialized: ?string) {
       let state = null
 
       try {
-        // $FlowIgnore
-        let data = deserializer(serialized)
+        let data = serialized ? deserializer(serialized) : undefined
         state = transforms.reduceRight((subState, transformer) => {
           return transformer.out(subState, key)
         }, data)
