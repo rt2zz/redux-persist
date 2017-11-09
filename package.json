@@ -27,6 +27,7 @@
   },
   "author": "",
   "license": "MIT",
+  "homepage": "https://github.com/rt2zz/redux-persist#readme",
   "ava": {
     "files": [
       "tests/**/*.spec.js"
