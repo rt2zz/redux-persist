@@ -56,7 +56,7 @@ Additional Usage Examples:
 ## v5 Breaking Changes
 There are three important breaking changes. 
 1. api has changed as described in the [migration](#migration-from-v4-to-v5) section below.
-2. state with cycles is no longer serialized using json-stringify-safe, and will instead noop.
+2. state with cycles is no longer serialized using `json-stringify-safe`, and will instead noop.
 3. state methods can no longer be overridden which means all top level state needs to be plain objects. `redux-persist-transform-immutable` will continue to operate as before as it works on substate, not top level state.
 
 Additionally v5 does not yet have typescript bindings.
