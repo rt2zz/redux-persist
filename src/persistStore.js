@@ -39,9 +39,11 @@ const persistorReducer = (state = initialState, action) => {
 
 export default function persistStore(
   store: Object,
-  options: PersistorOptions = {},
+  options: PersistorOptions,
   cb?: BoostrappedCb
 ): Persistor {
+  options = options || {}
+
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
   if (process.env.NODE_ENV !== 'production') {
     let bannedKeys = [
