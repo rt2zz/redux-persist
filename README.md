@@ -67,9 +67,9 @@ Additionally v5 does not yet have typescript bindings.
 Standard Usage:
 - remove **autoRehydrate**
 - changes to **persistStore**:
-  - 1. remove config argument (or replace with an empty object)
+  - 1. remove config argument (or replace with an null if you are using a callback)
   - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
-  - 3. All constants (ex: `REHYDRATE`, `PURGE`) has moved to `redux-persist/lib/constants` instead of `redux-persist/constants`
+  - 3. all constants (ex: `REHYDRATE`, `PURGE`) has moved from `redux-persist/constants` to the root module.
 - replace `combineReducers` with **persistCombineReducers**
   - e.g. `let reducer = persistCombineReducers(config, reducers)`
 - changes to **config**:
