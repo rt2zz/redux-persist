@@ -37,7 +37,7 @@ export default function createMigrate(
     let migrationKeys = Object.keys(migrations)
       .map(ver => parseInt(ver))
       .filter(key => currentVersion >= key && key > inboundVersion)
-      .sort()
+      .sort((a, b) => a - b)
 
     if (process.env.NODE_ENV !== 'production' && debug)
       console.log('redux-persist: migrationKeys', migrationKeys)
