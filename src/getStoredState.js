@@ -8,15 +8,18 @@ export default function getStoredState(
   config: PersistConfig
 ): Promise<Object | void> {
   const transforms = config.transforms || []
-  const storageKey = `${config.keyPrefix !== undefined
-    ? config.keyPrefix
-    : KEY_PREFIX}${config.key}`
+  const storageKey = `${
+    config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  }${config.key}`
   const storage = config.storage
   const debug = config.debug
+  const deserialize = getDeSerialize(config)
 
   return storage.getItem(storageKey).then(serialized => {
     if (!serialized) return undefined
     else {
+      const deserialize = shouldSerialise ? deserializeJSON : state => state
+
       try {
         let state = {}
         let rawState = deserialize(serialized)
@@ -38,6 +41,11 @@ export default function getStoredState(
   })
 }
 
-function deserialize(serial) {
-  return JSON.parse(serial)
+function getDeSerialize(config) {
+  if (config.deserialize && typeof config.deserialize === 'function') {
+    return config.deserialize
+  }
+
+  // default deserialize function
+  return JSON.parse
 }
