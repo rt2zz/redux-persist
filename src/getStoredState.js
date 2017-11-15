@@ -18,8 +18,6 @@ export default function getStoredState(
   return storage.getItem(storageKey).then(serialized => {
     if (!serialized) return undefined
     else {
-      const deserialize = shouldSerialise ? deserializeJSON : state => state
-
       try {
         let state = {}
         let rawState = deserialize(serialized)
