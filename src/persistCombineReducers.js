@@ -12,7 +12,7 @@ type Reducers = {
 
 type Reducer = (state: Object, action: Object) => Object
 
-// combineReudcers + persistReducer with stateReconciler defaulted to autoMergeLevel2
+// combineReducers + persistReducer with stateReconciler defaulted to autoMergeLevel2
 export default function persistCombineReducers(
   config: PersistConfig,
   reducers: Reducers
