@@ -10,9 +10,10 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   const whitelist: ?Array<string> = config.whitelist || null
   const transforms = config.transforms || []
   const throttle = config.throttle || 0
-  const storageKey = `${config.keyPrefix !== undefined
-    ? config.keyPrefix
-    : KEY_PREFIX}${config.key}`
+  const storageKey = `${
+    config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  }${config.key}`
+  const serialize = getSerialize(config)
 
   const storage = config.storage
 
@@ -105,7 +106,11 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }
 }
 
-// @NOTE in the future this may be exposed via config
-function serialize(data) {
-  return JSON.stringify(data)
+function getSerialize(config) {
+  if (config.serialize && typeof config.serialize === 'function') {
+    return config.serialize
+  }
+
+  // default serialize function
+  return JSON.stringify
 }
