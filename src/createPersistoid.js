@@ -13,8 +13,8 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   const storageKey = `${config.keyPrefix !== undefined
     ? config.keyPrefix
     : KEY_PREFIX}${config.key}`
-
   const storage = config.storage
+  const serialize = config.serialize === false ? x => x : defaultSerialize
 
   // initialize stateful values
   let lastState = {}
@@ -106,6 +106,6 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 }
 
 // @NOTE in the future this may be exposed via config
-function serialize(data) {
+function defaultSerialize(data) {
   return JSON.stringify(data)
 }

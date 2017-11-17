@@ -60,6 +60,7 @@ The Persistor is a redux store unto itself, plus
   keyPrefix?: string, // will be prefixed to the storage key
   debug?: boolean, // true -> verbose logs
   stateReconciler?: false | StateReconciler, // false -> do not automatically reconcile state
+  serialize?: boolean, // false -> do not call JSON.parse & stringify when setting & getting from storage
 }
 ```
 
@@ -93,7 +94,7 @@ Where Persistoid is [defined below](#type-persistoid).
 
 ### `type Persistoid`
 ```js
-{ 
+{
   update: (State) => void
 }
 ```
