@@ -3,7 +3,7 @@ Persist and rehydrate a redux store.
 
 Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-usage), and easy to [extend](./docs/ecosystem.md).
 
-`npm i redux-persist`  
+`npm i redux-persist`
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
 [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
@@ -14,22 +14,22 @@ Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-us
 ## Usage
 [API Docs](./docs/api.md)
 ```js
-import { persistStore, persistReducer } from 'redux-persist'
+import { persistStore, persistCombineReducers } from 'redux-persist'
 import storage from 'redux-persist/es/storage' // default: localStorage if web, AsyncStorage if react-native
-import rootReducer from './rootReducer'
+import reducers from './reducers' // where reducers is an object of reducers
 
 const config = {
-  key: 'root', // key is required
-  storage, // storage is now required
+  key: 'root',
+  storage,
 }
 
-const reducer = persistReducer(config, rootReducer)
+const reducer = persistCombineReducers(config, reducers)
 
 function configureStore () {
   // ...
   let store = createStore(reducer)
   let persistor = persistStore(store)
-  
+
   return { persistor, store }
 }
 ```
@@ -40,10 +40,7 @@ class App extends Component {
   //...
   render() {
     return (
-      <PersistGate 
-        persistor={persistor} 
-        loading={<Loading />}
-        >
+      <PersistGate persistor={persistor}>
         {/* rest of app */}
       </PersistGate>
     )
@@ -51,10 +48,15 @@ class App extends Component {
 }
 ```
 
+Additional Usage Examples:
+1. [Nested Persists](#nested-persists)
+3. Code Splitting [coming soon]
+4. Hot Module Reloading [coming soon]
+
 ## v5 Breaking Changes
-There are three important breaking changes. 
-1. api has changed as described in the above migration section
-2. state with cycles is no longer serialized using json-stringify-safe, and will instead noop.
+There are three important breaking changes.
+1. api has changed as described in the [migration](#migration-from-v4-to-v5) section below.
+2. state with cycles is no longer serialized using `json-stringify-safe`, and will instead noop.
 3. state methods can no longer be overridden which means all top level state needs to be plain objects. `redux-persist-transform-immutable` will continue to operate as before as it works on substate, not top level state.
 
 Additionally v5 does not yet have typescript bindings.
@@ -65,14 +67,51 @@ Additionally v5 does not yet have typescript bindings.
 Standard Usage:
 - remove **autoRehydrate**
 - changes to **persistStore**:
-  - 1. remove config argument (or replace with an empty object)
+  - 1. remove config argument (or replace with an null if you are using a callback)
   - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
-  - 3. All constants (ex: `{REHYDRATE, PURGE}`) has moved to `redux-persist/lib/constants` instead of `redux-persist/constants`
-- add **persistReducer** to your reducer
-  - e.g. `let persistedReducer = persistReducer(config, reducer)`
+  - 3. all constants (ex: `REHYDRATE`, `PURGE`) has moved from `redux-persist/constants` to the root module.
+- replace `combineReducers` with **persistCombineReducers**
+  - e.g. `let reducer = persistCombineReducers(config, reducers)`
 - changes to **config**:
   - `key` is now required. Can be set to anything, e.g. 'primary'
   - `storage` is now required. For default storage: `import storage from 'redux-persist/lib/storage'`
+
+```diff
+-import { REHYDRATE, PURGE } from 'redux-persist/constants'
+-import { combineReducers } from 'redux'
++import { REHYDRATE, PURGE, persistCombineReducers } from 'redux-persist'
++import storage from 'redux-persist/lib/storage' // or whatever storage you are using
+
+ const config = {
++  key: 'primary',
++  storage
+ }
+
+-let reducer = combineReducers(reducers)
++let reducer = persistCombineReducers(config, reducers)
+
+ const store = createStore(
+   reducer,
+   undefined,
+   compose(
+     applyMiddleware(...),
+-    autoRehydrate()
+   )
+ )
+
+ const callback = ()
+
+ persistStore(
+   store,
+-  config,
++  null,
+   (
+-     err, restoredState
+   ) => {
++     store.getState() // if you want to get restoredState
+   }
+ )
+```
 
 Recommended Additions
 - use new **PersistGate** to delay rendering until rehydration is complete
@@ -97,6 +136,52 @@ Long story short, the changes are required in order to support new use cases
 
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
 
+## Nested Persists
+Persistence can now be nested, allowing for multiple persistoids with differing configuration to easily coexist.
+```js
+import { combineReducers } from 'redux'
+import { persistReducer } from 'redux-persist'
+import session from 'redux-persist/lib/storage/session'
+import localForage from 'localforage'
+
+import { fooReducer, barReducer } from './reducers'
+
+// foo state to be stored in localForage, but lets not persist someEmphemeralKey
+const fooPersistConfig = {
+  key: 'foo',
+  storage: localForage,
+  blacklist: ['someEphemeralKey'],
+}
+
+// bar state should only last for the tab session
+const barPersistConfig = {
+  key: 'bar',
+  storage: session,
+}
+
+let rootReducer = combineReducers({
+  foo: persistReducer(fooPersistConfig, fooReducer),
+  bar: persistReducer(barPersistConfig, barReducer),
+})
+```
+
+Additionally depending on the mount point of persistReducer, you may not want to reconcile state at all.
+```js
+import { hardSet } from 'redux-persist/lib/stateReconciler/hardSet'
+
+//...
+
+const fooConfig = {
+  key: 'foo',
+  storage: localForage,
+  stateReconciler: hardSet,
+}
+
+let reducer = combineReducer({
+  foo: persistReducer(fooConfig, fooReducer)
+})
+```
+
 ## Experimental v4 to v5 State Migration
 - **warning: this method is completely untested**
 - v5 getStoredState is not compatible with v4, so by default v5 will cause all of the persisted state from v4 to disappear on first run
@@ -116,10 +201,12 @@ persistReducer({
 - **sessionStorage** `import sessionStorage from 'redux-persist/lib/storage/session'`
 - **AsyncStorage** react-native `import storage from 'redux-persist/lib/storage'`
 - **[localForage](https://github.com/mozilla/localForage)** recommended for web
+- **[electron storage](https://github.com/psperber/redux-persist-electron-storage)** Electron support via [electron store](https://github.com/sindresorhus/electron-store)
 - **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** react-native, to mitigate storage size limitations in android ([#199](https://github.com/rt2zz/redux-persist/issues/199), [#284](https://github.com/rt2zz/redux-persist/issues/284))
 - **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
 - **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** react-native, for sensitive information (uses [react-native-sensitive-storage](https://github.com/mCodex/react-native-sensitive-info)).
 - **[redux-persist-fs-storage](https://github.com/leethree/redux-persist-fs-storage)** react-native-fs engine
+- **[redux-persist-cookie-storage](https://github.com/abersager/redux-persist-cookie-storage)** Cookie storage engine, works in browser and Node.js, for universal / isomorphic apps
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
 
 

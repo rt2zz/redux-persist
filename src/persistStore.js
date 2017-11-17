@@ -39,9 +39,11 @@ const persistorReducer = (state = initialState, action) => {
 
 export default function persistStore(
   store: Object,
-  options: PersistorOptions = {},
+  persistorOptions?: PersistorOptions,
   cb?: BoostrappedCb
 ): Persistor {
+  let options: Object = persistorOptions || {}
+
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
   if (process.env.NODE_ENV !== 'production') {
     let bannedKeys = [
@@ -53,7 +55,6 @@ export default function persistStore(
       'migrate',
     ]
     bannedKeys.forEach(k => {
-      // $FlowIgnore
       if (!!options[k])
         console.error(
           `redux-persist: invalid option passed to persistStore: "${k}". You may be incorrectly passing persistConfig into persistStore, whereas it should be passed into persistReducer.`

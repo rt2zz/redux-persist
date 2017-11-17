@@ -6,7 +6,7 @@ import type { Persistor } from '../types'
 type Props = {
   onBeforeLift?: Function,
   children?: Node,
-  loading: Node,
+  loading?: Node,
   persistor: Persistor,
 }
 
@@ -15,24 +15,33 @@ type State = {
 }
 
 export class PersistGate extends PureComponent<Props, State> {
+  static defaultProps = {
+    loading: null,
+  }
+
   state = {
     bootstrapped: false,
   }
   _unsubscribe: ?Function
 
   componentDidMount() {
-    this.handlePersistorState()
     this._unsubscribe = this.props.persistor.subscribe(
       this.handlePersistorState
     )
+    this.handlePersistorState()
   }
 
   handlePersistorState = () => {
     const { persistor } = this.props
     let { bootstrapped } = persistor.getState()
     if (bootstrapped) {
-      this.props.onBeforeLift && this.props.onBeforeLift()
-      this.setState({ bootstrapped: true })
+      if (this.props.onBeforeLift) {
+        Promise.resolve(this.props.onBeforeLift())
+          .then(() => this.setState({ bootstrapped: true }))
+          .catch(() => this.setState({ bootstrapped: true }))
+      } else {
+        this.setState({ bootstrapped: true })
+      }
       this._unsubscribe && this._unsubscribe()
     }
   }

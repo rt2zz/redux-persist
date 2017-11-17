@@ -1,6 +1,6 @@
 {
   "name": "redux-persist",
-  "version": "5.0.1",
+  "version": "5.3.5",
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -27,6 +27,7 @@
   },
   "author": "",
   "license": "MIT",
+  "homepage": "https://github.com/rt2zz/redux-persist#readme",
   "ava": {
     "files": [
       "tests/**/*.spec.js"
@@ -52,7 +53,7 @@
     "eslint": "^4.8.0",
     "eslint-plugin-flowtype": "^2.30.4",
     "eslint-plugin-import": "^2.2.0",
-    "flow-bin": "^0.56.0",
+    "flow-bin": "^0.59.0",
     "flow-copy-source": "^1.1.0",
     "husky": "^0.13.3",
     "lint-staged": "^3.4.0",
