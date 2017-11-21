@@ -43,8 +43,10 @@ createMigrate(
 ```
 
 The Persistor is a redux store unto itself, plus
-1. the purge method for clearing out stored state.
-2. the flush method for flushing all pending state serialization and immediately write to disk
+1. the `purge()` method for clearing out stored state.
+2. the `flush()` method for flushing all pending state serialization and immediately write to disk
+
+`purge()` method only clear the content of the storage, leaving the internal data of `redux` untouched. To clean it instead, you can use the [redux-reset](https://github.com/wwayne/redux-reset) module.
 
 ### `type PersistConfig`
 ```js
