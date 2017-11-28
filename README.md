@@ -188,7 +188,7 @@ const myTransform = createTransform(
     return { ...inboundState, mySet: [...inboundState.mySet] };
   },
   // transform state being rehydrated
-  (outboundState) => {
+  (outboundState, key) => {
     // convert mySet back to a Set.
     return { ...outboundState, mySet: new Set(outboundState.mySet) };
   },
