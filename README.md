@@ -1,7 +1,7 @@
 # Redux Persist
 Persist and rehydrate a redux store.
 
-Redux Persist is [performant](#why-redux-persist), easy to [implement](#basic-usage), and easy to [extend](./docs/ecosystem.md).
+Redux Persist is [performant](#why-redux-persist), easy to [implement](#usage), and easy to [extend](./docs/ecosystem.md).
 
 `npm i redux-persist`
 
