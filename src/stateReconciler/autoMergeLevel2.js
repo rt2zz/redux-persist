@@ -32,7 +32,26 @@ export default function autoMergeLevel2<State: Object>(
       }
       if (isPlainEnoughObject(reducedState[key])) {
         // if object is plain enough shallow merge the new values (hence "Level2")
-        newState[key] = { ...newState[key], ...inboundState[key] }
+        Object.keys(inboundState[key]).forEach(prop => {
+          // if the newState doesn't have the stored prop, skip it
+          if(!newState[key].hasOwnProperty(prop)) return;
+
+          const newPropType = typeof newState[key][prop];
+          const inboundPropType = typeof inboundState[key][prop];
+
+          // if the inboundState has the same Level2 prop and it's the same type then merge it. Otherwise skip it.
+          if(newPropType === inboundPropType) {
+            newState[key][prop] = inboundState[key][prop];
+          } else if (process.env.NODE_ENV !== 'production' && debug)
+            console.log(
+              'redux-persist/stateReconciler: sub state for key `%s` under prop `%s` has mismatching type (`%s` vs `%s`), skipping.',
+              key,
+              prop,
+              newPropType,
+              inboundPropType
+            )
+          }
+        });
         return
       }
       // otherwise hard set
