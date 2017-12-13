@@ -136,18 +136,17 @@ export default function persistReducer<State: Object, Action: Object>(
       }
     }
 
-    const reducedState = baseReducer(restState, action)
-
     // if we have not already handled PERSIST, straight passthrough
-    if (!_persist) return reducedState
+    if (!_persist) return baseReducer(state, action)
 
     // if we have not already updated state, straight passthrough
+    const reducedState = baseReducer(restState, action)
     if (reducedState === state) return reducedState
 
     // otherwise, pull off _persist, run the reducer, and update the persistoid
     // @TODO more performant workaround for combineReducers warning
     let newState = {
-      ...reducedState,
+      ...baseReducer(restState, action),
       _persist,
     }
     // update the persistoid only if we are already rehydrated and are not paused
