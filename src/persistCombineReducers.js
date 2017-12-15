@@ -17,6 +17,9 @@ export default function persistCombineReducers(
   config: PersistConfig,
   reducers: Reducers
 ): Reducer {
-  config.stateReconciler = config.stateReconciler || autoMergeLevel2
+  // default to autoMergeLevel2 only if config.stateReconciler is null or undefined
+  // http://www.ecma-international.org/ecma-262/6.0/#sec-abstract-equality-comparison
+  config.stateReconciler =
+    config.stateReconciler == null ? autoMergeLevel2 : config.stateReconciler
   return persistReducer(config, combineReducers(reducers))
 }
