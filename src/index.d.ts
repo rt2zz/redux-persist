@@ -62,11 +62,11 @@ declare module "redux-persist/es/types" {
     export type RehydrateAction = {
         type: 'redux-persist/es/REHYDRATE',
         key: string,
-        payload?: object,
+        payload?: any,
         err?: RehydrateErrorType,
     }
     export interface Persistoid {
-        update(item: object): void;
+        update(item: any): void;
         flush(): Promise<any>;
     }
     export type RegisterAction = {
@@ -225,7 +225,7 @@ declare module "redux-persist/es/createWebStorage" {
 
 declare module "redux-persist/es/getStoredState" {
     import { PersistConfig } from "redux-persist/es/types";
-    export function getStoredState(config: PersistConfig): Promise<Object | void>;
+    export function getStoredState(config: PersistConfig): Promise<any | void>;
 }
 
 declare module "redux-persist/es/persistCombineReducers" {
@@ -304,14 +304,14 @@ declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
     import { PersistConfig, Transform } from "redux-persist";
 
     export interface V4Config {
-        storage?: object;
+        storage?: any;
         keyPrefix?: string;
         transforms?: Array<Transform<any, any>>;
         blacklist?: Array<string>;
         whitelist?: Array<string>;
     }
 
-    export function getStoredState(v4Config: V4Config): (config: PersistConfig) => Promise<object | void>;
+    export function getStoredState(v4Config: V4Config): (config: PersistConfig) => Promise<any | void>;
 }
 
 declare module "redux-persist/es/stateReconciler/autoMergeLevel1" {
