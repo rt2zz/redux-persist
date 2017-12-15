@@ -4,10 +4,10 @@
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "types": "lib/index.d.ts",
   "repository": "rt2zz/redux-persist",
   "files": [
     "es",
-    "src",
     "lib"
   ],
   "scripts": {
@@ -67,6 +67,9 @@
   },
   "peerDependencies": {
     "redux": ">3.0.0"
+  },
+  "optionalDependencies": {
+    "@types/react": "*"
   },
   "dependencies": {}
 }
