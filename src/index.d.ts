@@ -1,5 +1,3 @@
-import { Reducer, Store } from "redux";
-
 declare module "redux-persist" {
     import {
         StoreEnhancer,
