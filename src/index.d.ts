@@ -4,6 +4,7 @@ declare module "redux-persist" {
     export * from "redux-persist/es/types";
     export * from "redux-persist/es/createMigrate";
     export * from "redux-persist/es/createPersistoid";
+    export * from "redux-persist/es/createTransform";
     export * from "redux-persist/es/createWebStorage";
     export * from "redux-persist/es/getStoredState";
     export * from "redux-persist/es/persistCombineReducers";
@@ -12,27 +13,69 @@ declare module "redux-persist" {
     export * from "redux-persist/es/purgeStoredState";
 }
 
+declare module "redux-persist/lib/constants" {
+    export * from "redux-persist/es/constants";
+}
+
+declare module "redux-persist/lib/types" {
+    export * from "redux-persist/es/types";
+}
+
+declare module "redux-persist/lib/createMigrate" {
+    export * from "redux-persist/es/createMigrate";
+}
+
+declare module "redux-persist/lib/createPersistoid" {
+    export * from "redux-persist/es/createPersistoid";
+}
+
+declare module "redux-persist/lib/createTransform" {
+    export * from "redux-persist/es/createTransform";
+}
+
+declare module "redux-persist/lib/createWebStorage" {
+    export * from "redux-persist/es/createWebStorage";
+}
+
+declare module "redux-persist/lib/getStoredState" {
+    export * from "redux-persist/es/getStoredState";
+}
+
+declare module "redux-persist/lib/persistCombineReducers" {
+    export * from "redux-persist/es/persistCombineReducers";
+}
+
+declare module "redux-persist/lib/persistReducer" {
+    export * from "redux-persist/es/persistReducer";
+}
+
+declare module "redux-persist/lib/persistStore" {
+    export * from "redux-persist/es/persistStore";
+}
+
+declare module "redux-persist/lib/purgeStoredState" {
+    export * from "redux-persist/es/purgeStoredState";
+}
+
 declare module "redux-persist/es/constants" {
     /* constants */
     export const DEFAULT_VERSION: number;
-    export const FLUSH: string;
-    export const KEY_PREFIX: string;
-    export const PAUSE: string;
-    export const PERSIST: string;
-    export const PURGE: string;
-    export const REGISTER: string;
-    export const REHYDRATE: string;
+    export const KEY_PREFIX: "persist:";
+    export const FLUSH: "persist/FLUSH";
+    export const REHYDRATE: "persist/REHYDRATE";
+    export const PAUSE: "persist/PAUSE";
+    export const PERSIST: "persist/PERSIST";
+    export const PURGE: "persist/PURGE";
+    export const REGISTER: "persist/REGISTER";
 }
 
 declare module "redux-persist/es/types" {
+    import { StoreEnhancer } from "redux";
+    import { Transform } from "redux-persist/es/createTransform"
     /* types */
     export interface PersistState { version: number; rehydrated: boolean; }
     export type PersistedState = { _persist: PersistState } | void;
-    export interface Transform<S, R> {
-        in(state: S, key: string): R;
-        out(state: R, key: string): S;
-        config?: PersistConfig
-    }
+
     export interface PersistConfig {
         version?: number;
         storage: WebStorage | AsyncStorage | LocalForageStorage | Storage;
@@ -54,15 +97,15 @@ declare module "redux-persist/es/types" {
         debug?: boolean;
         serialize?: boolean;
     }
-    export interface PersistorOptions { enhancer?: Function }
+    export interface PersistorOptions { enhancer?: StoreEnhancer<any> }
     export interface MigrationManifest {
         [key: string]: (state: PersistedState) => PersistedState;
     }
     export type RehydrateErrorType = any;
-    export type RehydrateAction = {
-        type: 'redux-persist/es/REHYDRATE',
+    export type RehydrateAction<Payload = any> = {
+        type: "redux-persist/es/REHYDRATE",
         key: string,
-        payload?: any,
+        payload?: Payload,
         err?: RehydrateErrorType,
     }
     export interface Persistoid {
@@ -70,7 +113,7 @@ declare module "redux-persist/es/types" {
         flush(): Promise<any>;
     }
     export type RegisterAction = {
-        type: 'redux-persist/es/REGISTER',
+        type: "redux-persist/es/REGISTER",
         key: string,
     }
     export type PersistorAction = RehydrateAction | RegisterAction
@@ -190,9 +233,9 @@ declare module "redux-persist/es/types" {
         iterate<T, U>(iteratee: (value: T, key: string, iterationNumber: number) => U, callback?: (err: any, result: U) => void): Promise<U>;
     }
     export interface Storage {
-        getItem(key: string, callback?: (k: string) => any): any;
-        setItem(key: string, callback?: () => any): any;
-        remoteItem(key: string, callback?: () => any): any;
+        getItem(key: string, ...args: any[]): any;
+        setItem(key: string, value: any, ...args: any[]): any;
+        remoteItem(key: string, ...args: any[]): any;
     }
 }
 
@@ -216,6 +259,25 @@ declare module "redux-persist/es/createPersistoid" {
     import { PersistConfig, Persistoid } from "redux-persist/es/types";
     // createPersistoid
     export function createPersistoid(config: PersistConfig): Persistoid;
+}
+
+declare module "redux-persist/es/createTransform" {
+    import { PersistConfig } from "redux-persist/es/types";
+
+    export type TransformIn<S, R> = (state: S, key: string) => R;
+    export type TransformOut<R, S> = (raw: R, key: string) => S;
+
+    export interface Transform<S, R> {
+        in: TransformIn<S, R>;
+        out: TransformOut<R, S>;
+        config?: PersistConfig;
+    }
+
+    export function createTransform<S, R>(
+        inbound: TransformIn<S, R>,
+        outbound: TransformOut<R, S>,
+        config?: Pick<PersistConfig, "whitelist" | "blacklist">
+    ): Transform<S, R>;
 }
 
 declare module "redux-persist/es/createWebStorage" {
@@ -307,8 +369,8 @@ declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
         storage?: any;
         keyPrefix?: string;
         transforms?: Array<Transform<any, any>>;
-        blacklist?: Array<string>;
-        whitelist?: Array<string>;
+        blacklist?: string[];
+        whitelist?: string[];
     }
 
     export function getStoredState(v4Config: V4Config): (config: PersistConfig) => Promise<any | void>;
