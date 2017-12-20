@@ -9,14 +9,14 @@ export default function createMigrate(
   config?: { debug: boolean }
 ) {
   let { debug } = config || {}
-  return function(
+  return async function(
     state: PersistedState,
     currentVersion: number
   ): Promise<PersistedState> {
     if (!state) {
       if (process.env.NODE_ENV !== 'production' && debug)
         console.log('redux-persist: no inbound state, skipping migration')
-      return Promise.resolve(undefined)
+      return undefined
     }
 
     let inboundVersion: number =
@@ -26,12 +26,12 @@ export default function createMigrate(
     if (inboundVersion === currentVersion) {
       if (process.env.NODE_ENV !== 'production' && debug)
         console.log('redux-persist: versions match, noop migration')
-      return Promise.resolve(state)
+      return state
     }
     if (inboundVersion > currentVersion) {
       if (process.env.NODE_ENV !== 'production')
         console.error('redux-persist: downgrading version is not supported')
-      return Promise.resolve(state)
+      return state
     }
 
     let migrationKeys = Object.keys(migrations)
@@ -41,18 +41,18 @@ export default function createMigrate(
 
     if (process.env.NODE_ENV !== 'production' && debug)
       console.log('redux-persist: migrationKeys', migrationKeys)
-    try {
-      let migratedState = migrationKeys.reduce((state, versionKey) => {
+
+    let migratedState = await migrationKeys.reduce(
+      async (state, versionKey) => {
         if (process.env.NODE_ENV !== 'production' && debug)
           console.log(
             'redux-persist: running migration for versionKey',
             versionKey
           )
-        return migrations[versionKey](state)
-      }, state)
-      return Promise.resolve(migratedState)
-    } catch (err) {
-      return Promise.reject(err)
-    }
+        return await migrations[versionKey](await state)
+      },
+      state
+    )
+    return migratedState
   }
 }
