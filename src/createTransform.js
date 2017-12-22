@@ -7,9 +7,9 @@ type TransformConfig = {
 
 export default function createTransform(
   // @NOTE inbound: transform state coming from redux on its way to being serialized and stored
-  inbound: Function,
+  inbound: ?Function,
   // @NOTE outbound: transform state coming from storage, on its way to be rehydrated into redux
-  outbound: Function,
+  outbound: ?Function,
   config: TransformConfig = {}
 ) {
   let whitelist = config.whitelist || null

@@ -4,6 +4,7 @@
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "repository": "rt2zz/redux-persist",
   "files": [
     "es",
     "src",

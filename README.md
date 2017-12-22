@@ -23,12 +23,14 @@ Once your store is created, pass it to the `persistStore` function, which ensure
 import { createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 import rootReducer from './reducers'; // the value from combineReducers
 
 const persistConfig = {
   key: 'root',
-  storage: storage
+  storage: storage,
+  stateReconciler: autoMergeLevel2
 };
 
 const persistReducer = persistReducer(persistConfig, rootReducer);
