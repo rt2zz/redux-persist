@@ -51,7 +51,7 @@ class App extends Component {
 Additional Usage Examples:
 1. [Nested Persists](#nested-persists)
 3. Code Splitting [coming soon]
-4. Hot Module Reloading [coming soon]
+4. [Hot Module Replacement](#hot-module-replacement)
 
 ## v5 Breaking Changes
 There are three important breaking changes.
@@ -178,6 +178,70 @@ const fooConfig = {
 let reducer = combineReducer({
   foo: persistReducer(fooConfig, fooReducer)
 })
+```
+
+## Hot Module Replacement
+
+Hot Module Replacement (HRM) is a wonderful feature that is really useful in development environment. This allows you to update the code of your application without reloading the app and resetting the redux state.
+
+You can configure your reducers to be automatically replaced by Webpack HMR on change. With the following setup, if you add or remove a reducer, that reducer will be automatically injected by Hot Reloading if enable in your app.
+
+**app/redux/index.js**
+```js
+import { combineReducers } from 'redux'
+import { persistReducer } from 'redux-persist'
+import ReduxPersistConfig from 'app/config/reduxPersist' // Whatever path
+import configureStore from './configureStore'
+
+/* ------------- Assemble The reducers ------------- */
+export const reducers = combineReducers({
+  nav: require('./reducers/navigation').reducer,
+  user: require('./reducers/user').reducer
+})
+
+export default () => {
+  const storeTools = configureStore(reducers)
+
+  if (module.hot) {
+    module.hot.accept(() => {
+      // This fetch the new state of the above reducers.
+      const nextRootReducer = require('./').reducers
+      storeTools.store.replaceReducer(
+        persistReducer(ReduxPersistConfig, nextRootReducer)
+      )
+    })
+  }
+
+  return storeTools
+}
+```
+
+**app/redux/configureStore.js**
+```js
+import { createStore, applyMiddleware, compose } from 'redux'
+import { persistStore, persistReducer } from 'redux-persist'
+import ReduxPersistConfig from '../config/reduxPersist' // Whatever path
+import ScreenTracking from './middlewares/screenTrackingMiddleware'
+
+// Store factory function
+export default rootReducer => {
+  /* ------------- redux Configuration ------------- */
+
+  const middleware = []
+  const enhancers = []
+
+  const persistedReducers = persistReducer(ReduxPersistConfig, rootReducer)
+
+  /* ------------- Analytics Middleware ------------- */
+
+  middleware.push(ScreenTracking)
+
+  /* ------------- Assemble Middleware ------------- */
+
+  enhancers.push(applyMiddleware(...middleware))
+
+  return { persistor: persistStore(store), store: createStore(persistedReducers, compose(...enhancers)) }
+}
 ```
 
 ## Experimental v4 to v5 State Migration
