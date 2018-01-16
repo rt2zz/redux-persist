@@ -10,7 +10,6 @@ Redux Persist takes your redux state object and saves it to persisted storage. O
 [v4](https://github.com/rt2zz/redux-persist/tree/v4.8.2) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
 
 ## Quickstart
-##### Install package
 `npm install --save redux-persist`
 \- OR -
 `yarn add redux-persist`
@@ -86,6 +85,17 @@ This acts just like autoMergeLevel1, except it shallow merges two levels
    - **INITIAL STATE**: `{ foo: initialFoo, bar: initialBar }`
    - **RECONCILED STATE**: `{ foo: mergedFoo, bar: initialBar }`
 
+#### Example
+```js
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/hardSet'
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  stateReconciler: hardSet,
+}
+```
+
 ## Blacklist & Whitelist
 By Example:
 ```js
@@ -103,6 +113,8 @@ const persistConfig = {
   whitelist: ['navigation'] // only navigation will be persisted
 };
 ```
+
+#### Nested Blacklist / Whitelist
 The blacklist and whitelist only work one level deep. However persisted reducers can be nested.For example, if you want to blacklist `state.auth.somethingTemporary`:
 ```js
 import { combineReducers } from 'redux'
