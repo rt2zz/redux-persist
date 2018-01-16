@@ -35,7 +35,7 @@ export default function persistReducer<State: Object, Action: Object>(
     if (!config.key) throw new Error('key is required in persistor config')
     if (!config.storage)
       throw new Error(
-        "redux-persist: config.storage is required. Try using `import storageLocal from 'redux-persist/es/storages/local'"
+        "redux-persist: config.storage is required. Try using one of the provided storage engines `import storageLocal from 'redux-persist/es/storage/local'"
       )
   }
 
