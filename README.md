@@ -1,167 +1,160 @@
 # Redux Persist
+
 Persist and rehydrate a redux store.
 
-Redux Persist is [performant](#why-redux-persist), easy to [implement](#usage), and easy to [extend](./docs/ecosystem.md).
+[![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist) [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist) [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 
-`npm i redux-persist`
+Redux Persist takes your redux state object and saves it to persisted storage. On app launch, it retrieves this persisted state and saves it back to redux.
 
-[![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist)
-[![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
-[![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
+**Note:** These instructions are for redux-persist v5. For a list of breaking changes between v4 and v5, see our [migration guide](./docs/MigrationGuide-v5.md).
+[v4](https://github.com/rt2zz/redux-persist/tree/v4.8.2) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
 
-**Note:** These docs apply to redux-persist v5. [v4](https://github.com/rt2zz/redux-persist/tree/v4.8.2) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
+## Quickstart
+##### Install package
+`npm install --save redux-persist`
+\- OR -
+`yarn add redux-persist`
 
-## Usage
-[API Docs](./docs/api.md)
+##### Implementation
+When creating your redux store, pass your [createStore](https://redux.js.org/docs/api/createStore.html) function a PersistReducer that wraps your app's root reducer.
+Once your store is created, pass it to the `persistStore` function, which ensures your redux state is saved to persisted storage whenever it changes.
+
 ```js
-import { persistStore, persistCombineReducers } from 'redux-persist'
-import storage from 'redux-persist/lib/storage' // default: localStorage if web, AsyncStorage if react-native
-import reducers from './reducers' // where reducers is an object of reducers
+import { createStore } from 'redux';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
-const config = {
+import rootReducer from './reducers'; // the value from combineReducers
+
+const persistConfig = {
   key: 'root',
-  storage,
-}
+  storage: storage,
+  stateReconciler: autoMergeLevel2
+};
 
-const reducer = persistCombineReducers(config, reducers)
-
-function configureStore () {
-  // ...
-  let store = createStore(reducer)
-  let persistor = persistStore(store)
-
-  return { persistor, store }
-}
+const persistReducer = persistReducer(persistConfig, rootReducer);
+export const store = createStore(persistReducer);
+export const persistor = persistStore(store);
 ```
 
-Additionally if you are using react, it is recommended you use the provided [PersistGate](./docs/PersistGate.md) component for integration. This will take care of delaying the rendering of the app until rehydration is complete.
+If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux.
+
 ```js
-class App extends Component {
-  //...
-  render() {
-    return (
-      <PersistGate persistor={persistor}>
-        {/* rest of app */}
+import React from 'react';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/lib/integration/react';
+
+// import the two exports from the last code snippet.
+import { persistor, store } from './store';
+
+// import your necessary custom components.
+import { RootComponent, LoadingView } from './components';
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      // the loading and persistor props are both required!
+      <PersistGate loading={<LoadingView />} persistor={persistor}>
+        <RootComponent />
       </PersistGate>
-    )
-  }
-}
+    </Provider>
+  );
+};
+
+export default App;
 ```
 
-Additional Usage Examples:
-1. [Nested Persists](#nested-persists)
-3. Code Splitting [coming soon]
-4. Hot Module Reloading [coming soon]
+## Customizing what is persisted
+If you don't want to persist a part of your state, you could put it in the blacklist. The blacklist is added into the config object that we used when setting up our PersistReducer.
 
-## v5 Breaking Changes
-There are three important breaking changes.
-1. api has changed as described in the [migration](#migration-from-v4-to-v5) section below.
-2. state with cycles is no longer serialized using `json-stringify-safe`, and will instead noop.
-3. state methods can no longer be overridden which means all top level state needs to be plain objects. `redux-persist-transform-immutable` will continue to operate as before as it works on substate, not top level state.
+```js
+const persistConfig = {
+  key: 'root',
+  storage: storage,
+  blacklist: ['navigation']
+};
 
-## Migration from v4 to v5
-**WARNING** v4 stored state is not compatible with v5. If you upgrade a v4 application, your users will lose their stored state upon upgrade. You can try the (highly) experimental [v4 -> v5 state migration](#experimental-v4-to-v5-state-migration) if you please. Feedback appreciated.
-
-Standard Usage:
-- remove **autoRehydrate**
-- changes to **persistStore**:
-  - 1. remove config argument (or replace with an null if you are using a callback)
-  - 2. remove all arguments from the callback. If you need state you can call `store.getState()`
-  - 3. all constants (ex: `REHYDRATE`, `PURGE`) has moved from `redux-persist/constants` to the root module.
-- replace `combineReducers` with **persistCombineReducers**
-  - e.g. `let reducer = persistCombineReducers(config, reducers)`
-- changes to **config**:
-  - `key` is now required. Can be set to anything, e.g. 'primary'
-  - `storage` is now required. For default storage: `import storage from 'redux-persist/lib/storage'`
-
-```diff
--import { REHYDRATE, PURGE } from 'redux-persist/constants'
--import { combineReducers } from 'redux'
-+import { REHYDRATE, PURGE, persistCombineReducers } from 'redux-persist'
-+import storage from 'redux-persist/lib/storage' // or whatever storage you are using
-
- const config = {
-+  key: 'primary',
-+  storage
- }
-
--let reducer = combineReducers(reducers)
-+let reducer = persistCombineReducers(config, reducers)
-
- const store = createStore(
-   reducer,
-   undefined,
-   compose(
-     applyMiddleware(...),
--    autoRehydrate()
-   )
- )
-
- const callback = ()
-
- persistStore(
-   store,
--  config,
-+  null,
-   (
--     err, restoredState
-   ) => {
-+     store.getState() // if you want to get restoredState
-   }
- )
+const persistReducer = persistReducer(persistConfig, rootReducer);
+export const store = createStore(persistReducer);
+export const persistor = persistStore(store);
 ```
 
-Recommended Additions
-- use new **PersistGate** to delay rendering until rehydration is complete
-  - `import { PersistGate } from 'redux-persist/lib/integration/react'`
-- set `config.debug = true` to get useful logging
+The blacklist takes an array of strings. Each string must match a part of state that is managed by the reducer you pass to `persistReducer`. For the example above, if `rootReducer` was created via the [combineReducers](https://redux.js.org/docs/api/combineReducers.html) function, we would expect ‘navigation’ to appear there, like so.
 
-If your implementatation uses getStoredState + createPersistor see [alternate migration](./docs/v5-migration-alternate.md)
+`combineReducers({ auth: AuthReducer, navigation: NavReducer, notes: NotesReducer });`
 
-## Why v5
-Long story short, the changes are required in order to support new use cases
-- code splitting reducers
-- easier to ship persist support inside of other libs (e.g. redux-offline)
-- ability to colocate persistence rules with the reducer it pertains to
-- first class migration support
-- enable PersistGate react component which blocks rendering until persistence is complete (and enables similar patterns for integration)
-- possible to nest persistence
-- gaurantee consistent state atoms
-- better debugability and extensibility
+The whitelist is set up in the same way as the blacklist, except that it defines the parts of state that you do want to persist.
+
+```js
+const persistConfig = {
+  key: 'root',
+  storage: storage,
+  whitelist: ['auth', 'notes']
+};
+```
+
+What if you wanted to blacklist a nested property though?
+For example, let's say your state object has an auth key and that you want to persist `auth.currentUser` but NOT `auth.isLoggingIn`.
+
+To do this, wrap your AuthReducer with a PersistReducer, and then blacklist the `isLoggingIn` key. This allows you to co-locate your persistence rules with the reducer it pertains to.
+
+```js
+// AuthReducer.js
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+
+const INITIAL_STATE = {
+  currentUser: null,
+  isLoggingIn: false
+};
+
+const AuthReducer = (state = INITIAL_STATE, action) => {
+  // reducer implementation
+};
+
+const persistConfig = {
+  key: 'auth',
+  storage: storage,
+  blacklist: ['isLoggingIn']
+};
+
+export default persistReducer(persistConfig, AuthReducer);
+```
+
+If you prefer to have all your persistence rules in one place, instead of co-located with their associated reducer, consider putting it all with your `combineReducers` function:
+
+```js
+import { combineReducers } from 'redux';
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+import { authReducer, navReducer, notesReducer } from './reducers'
+
+const rootPersistConfig = {
+  key: 'root',
+  storage: storage,
+  blacklist: ['navigation']
+};
+
+const authPersistConfig = {
+  key: 'auth',
+  storage: storage,
+  blacklist: ['isLoggingIn']
+};
+
+const rootReducer = combineReducers({
+  auth: persistReducer(authPersistConfig, authReducer),
+  navigation: navReducer,
+  notes: notesReducer
+});
+
+export default persistReducer(rootPersistConfig, rootReducer);
+```
 
 ## Migrations
 `persistReducer` has a general purpose "migrate" config which will be called after getting stored state but before actually reconciling with the reducer. It can be any function which takes state as an argument and returns a promise to return a new state object.
 
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
-
-## Nested Persists
-Persistence can now be nested, allowing for multiple persistoids with differing configuration to easily coexist.
-```js
-import { combineReducers } from 'redux'
-import { persistReducer } from 'redux-persist'
-import session from 'redux-persist/lib/storage/session'
-import localForage from 'localforage'
-
-import { fooReducer, barReducer } from './reducers'
-
-// foo state to be stored in localForage, but lets not persist someEmphemeralKey
-const fooPersistConfig = {
-  key: 'foo',
-  storage: localForage,
-  blacklist: ['someEphemeralKey'],
-}
-
-// bar state should only last for the tab session
-const barPersistConfig = {
-  key: 'bar',
-  storage: session,
-}
-
-let rootReducer = combineReducers({
-  foo: persistReducer(fooPersistConfig, fooReducer),
-  bar: persistReducer(barPersistConfig, barReducer),
-})
-```
 
 Additionally depending on the mount point of persistReducer, you may not want to reconcile state at all.
 ```js
@@ -180,19 +173,44 @@ let reducer = combineReducer({
 })
 ```
 
-## Experimental v4 to v5 State Migration
-- **warning: this method is completely untested**
-- v5 getStoredState is not compatible with v4, so by default v5 will cause all of the persisted state from v4 to disappear on first run
-- v5 ships with an experimental v4 -> v5 migration that works by overriding the default getStoredState implementation
-**Warning** this is completely untested, please try and report back with any issues.
+## Advanced Customization
+### Transforms
+
+Transforms allow you to customize the state object that gets persisted and rehydrated.
+
+​When the state object gets persisted, it first gets serialized with `JSON.stringify()`. If parts of your state object are not mappable to JSON objects, the serialization process may transform these parts of your state in unexpected ways. For example, the javascript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type does not exist in JSON. When you try to serialize a Set via `JSON.stringify()​`, it gets converted to an empty object. Probably not what you want.
+
+Below is a Transform that successfully persists a Set​ property, which simply converts it to an array and back. In this way, the Set gets converted to an Array, which is a recognized data structure in JSON. When pulled out of the persisted store, the array gets converted back to a Set before being saved to the redux store.
+
 ```js
-import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigratev4'
-// ...
-persistReducer({
-  // ...
-  getStoredState: getStoredStateMigrateV4(yourOldV4Config)
-}, baseReducer)
+const myTransform = createTransform(
+  // transform state on its way to being serialized and persisted.
+  (inboundState, key) => {
+    // convert mySet to an Array.
+    return { ...inboundState, mySet: [...inboundState.mySet] };
+  },
+  // transform state being rehydrated
+  (outboundState, key) => {
+    // convert mySet back to a Set.
+    return { ...outboundState, mySet: new Set(outboundState.mySet) };
+  },
+  // define which reducers this transform gets called for.
+  { whitelist: ['someReducer'] }
+);
 ```
+
+The createTransform function takes three parameters.
+1. A function that gets called right before state is persisted.
+2. A function that gets called right before state is rehydrated.
+3. A config object.
+
+There are several libraries that tackle some of the common implementations for transforms.
+- [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
+- [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
+- [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
+- [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
+- [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
+- [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
 
 ## Storage Engines
 - **localStorage** `import storage from 'redux-persist/lib/storage'`
@@ -206,28 +224,3 @@ persistReducer({
 - **[redux-persist-fs-storage](https://github.com/leethree/redux-persist-fs-storage)** react-native-fs engine
 - **[redux-persist-cookie-storage](https://github.com/abersager/redux-persist-cookie-storage)** Cookie storage engine, works in browser and Node.js, for universal / isomorphic apps
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
-
-
-## Transforms
-Transforms allow for arbitrary state transforms before saving and during rehydration.
-- [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
-- [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
-- [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
-- [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
-- [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
-- [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
-- custom transforms:
-```js
-import { createTransform, persistReducer } from 'redux-persist'
-
-let myTransform = createTransform(
-  // transform state coming from redux on its way to being serialized and stored
-  (state, key) => specialSerialize(state, key),
-  // transform state coming from storage, on its way to be rehydrated into redux
-  (state, key) => specialDeserialize(state, key),
-  // configuration options
-  {whitelist: ['specialKey']}
-)
-
-const reducer = persistReducer({transforms: [myTransform]}, baseReducer)
-```
