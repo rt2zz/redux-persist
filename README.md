@@ -43,15 +43,15 @@ export default () => {
 If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux.
 
 ```js
-import React from 'react';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/lib/integration/react';
+import React from 'react'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/lib/integration/react'
 
-import configureStore from './store/configureStore
+import configureStore from './store/configureStore'
 let { store, persistor } = configureStore()
 
 // import your necessary custom components.
-import { RootComponent } from './components';
+import { RootComponent } from './components'
 
 const App = () => {
   return (
@@ -63,7 +63,7 @@ const App = () => {
   );
 };
 
-export default App;
+export default App
 ```
 
 ## State Reconciler
@@ -127,20 +127,20 @@ const rootPersistConfig = {
   key: 'root',
   storage: storage,
   blacklist: ['auth']
-};
+}
 
 const authPersistConfig = {
   key: 'auth',
   storage: storage,
   blacklist: ['somethingTemporary']
-};
+}
 
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   other: otherReducer,
-});
+})
 
-export default persistReducer(rootPersistConfig, rootReducer);
+export default persistReducer(rootPersistConfig, rootReducer)
 ```
 
 ## Migrations
@@ -152,9 +152,17 @@ Redux Persist ships with `createMigrate`, which helps create a synchronous migra
 
 Transforms allow you to customize the state object that gets persisted and rehydrated.
 
-​When the state object gets persisted, it first gets serialized with `JSON.stringify()`. If parts of your state object are not mappable to JSON objects, the serialization process may transform these parts of your state in unexpected ways. For example, the javascript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type does not exist in JSON. When you try to serialize a Set via `JSON.stringify()​`, it gets converted to an empty object. Probably not what you want.
+There are several libraries that tackle some of the common implementations for transforms.
+- [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
+- [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
+- [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
+- [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
+- [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
+- [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
 
-Below is a Transform that successfully persists a Set​ property, which simply converts it to an array and back. In this way, the Set gets converted to an Array, which is a recognized data structure in JSON. When pulled out of the persisted store, the array gets converted back to a Set before being saved to the redux store.
+When the state object gets persisted, it first gets serialized with `JSON.stringify()`. If parts of your state object are not mappable to JSON objects, the serialization process may transform these parts of your state in unexpected ways. For example, the javascript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type does not exist in JSON. When you try to serialize a Set via `JSON.stringify()`, it gets converted to an empty object. Probably not what you want.
+
+Below is a Transform that successfully persists a Set property, which simply converts it to an array and back. In this way, the Set gets converted to an Array, which is a recognized data structure in JSON. When pulled out of the persisted store, the array gets converted back to a Set before being saved to the redux store.
 
 ```js
 const myTransform = createTransform(
@@ -177,14 +185,6 @@ The createTransform function takes three parameters.
 1. A function that gets called right before state is persisted.
 2. A function that gets called right before state is rehydrated.
 3. A config object.
-
-There are several libraries that tackle some of the common implementations for transforms.
-- [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
-- [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
-- [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
-- [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
-- [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
-- [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
 
 ## Storage Engines
 - **localStorage** `import storage from 'redux-persist/lib/storage'`
