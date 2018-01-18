@@ -79,7 +79,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }
 
   function passWhitelistBlacklist(key) {
-    if (whitelist && whitelist.indexOf(key) === -1) return false
+    if (whitelist && whitelist.indexOf(key) === -1 && key !== '_persist') return false
     if (blacklist && blacklist.indexOf(key) !== -1) return false
     return true
   }
