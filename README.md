@@ -56,7 +56,7 @@ import { RootComponent } from './components'
 const App = () => {
   return (
     <Provider store={store}>
-      <PersistGate loading="loading..." persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
         <RootComponent />
       </PersistGate>
     </Provider>
@@ -65,6 +65,8 @@ const App = () => {
 
 export default App
 ```
+
+**NOTE** loading is set to null for simplicity, but in practice should be any react instance, e.g. `loading={<SomeLoadingIcon />}`
 
 ## State Reconciler
 State reconcilers define how incoming persisted state is merged in with existing default state. It is critical to choose the right state reconciler for your state shape. There are three options that ship out of the box, lets look at how each operates:
