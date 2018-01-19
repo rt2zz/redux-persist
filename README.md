@@ -46,6 +46,7 @@ If you are using react, wrap your root component with [PersistGate](./docs/Persi
 import React from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
+import { View, Text } from 'react-native'
 
 import configureStore from './store/configureStore'
 let { store, persistor } = configureStore()
@@ -53,10 +54,18 @@ let { store, persistor } = configureStore()
 // import your necessary custom components.
 import { RootComponent } from './components'
 
+const Loading = () => {
+    return (
+        <View>
+            <Text>Loading...</Text>
+        </View>
+    );
+}
+
 const App = () => {
   return (
     <Provider store={store}>
-      <PersistGate loading="loading..." persistor={persistor}>
+      <PersistGate loading={Loading} persistor={persistor}>
         <RootComponent />
       </PersistGate>
     </Provider>
