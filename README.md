@@ -89,7 +89,7 @@ This acts just like autoMergeLevel1, except it shallow merges two levels
 
 #### Example
 ```js
-import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/hardSet'
+import hardSet from 'redux-persist/lib/stateReconciler/hardSet'
 
 const persistConfig = {
   key: 'root',
