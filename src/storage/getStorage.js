@@ -1,6 +1,7 @@
 // @flow
 
 import type { Storage } from '../types'
+import createMemoryStorage from '../../tests/utils/memoryStorage'
 
 function noop() {}
 let noopStorage = {
@@ -43,6 +44,8 @@ export default function getStorage(type: string): Storage {
       console.error(
         `redux-persist failed to create sync storage. falling back to memory storage.`
       )
+    } else if (process.env.NODE_ENV === 'test') {
+      return createMemoryStorage()
     }
     return noopStorage
   }
