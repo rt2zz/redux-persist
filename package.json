@@ -39,6 +39,7 @@
     ],
     "babel": "inherit"
   },
+  "types": "src/index.d.ts",
   "devDependencies": {
     "ava": "^0.19.1",
     "babel-cli": "^6.26.0",
