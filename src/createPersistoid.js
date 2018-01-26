@@ -10,9 +10,9 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   const whitelist: ?Array<string> = config.whitelist || null
   const transforms = config.transforms || []
   const throttle = config.throttle || 0
-  const storageKey = `${config.keyPrefix !== undefined
-    ? config.keyPrefix
-    : KEY_PREFIX}${config.key}`
+  const storageKey = `${
+    config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  }${config.key}`
   const storage = config.storage
   const serialize = config.serialize === false ? x => x : defaultSerialize
 
@@ -50,7 +50,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
     let key = keysToProcess.shift()
     let endState = transforms.reduce((subState, transformer) => {
-      return transformer.in(subState, key)
+      return transformer.in(subState, key, lastState)
     }, lastState[key])
     if (typeof endState !== 'undefined') stagedWrite(key, endState)
   }
@@ -79,7 +79,8 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }
 
   function passWhitelistBlacklist(key) {
-    if (whitelist && whitelist.indexOf(key) === -1 && key !== '_persist') return false
+    if (whitelist && whitelist.indexOf(key) === -1 && key !== '_persist')
+      return false
     if (blacklist && blacklist.indexOf(key) !== -1) return false
     return true
   }
