@@ -10,7 +10,7 @@ import { createStore } from 'redux'
 import getStoredState from '../src/getStoredState'
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
-import createMemoryStorage from './utils/memoryStorage'
+import { createMemoryStorage } from 'storage-memory'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 
