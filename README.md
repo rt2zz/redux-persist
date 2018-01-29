@@ -7,7 +7,7 @@ Persist and rehydrate a redux store.
 Redux Persist takes your redux state object and saves it to persisted storage. On app launch, it retrieves this persisted state and saves it back to redux.
 
 **Note:** These instructions are for redux-persist v5. For a list of breaking changes between v4 and v5, see our [migration guide](./docs/MigrationGuide-v5.md).
-[v4](https://github.com/rt2zz/redux-persist/tree/v4.8.2) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
+[v4](https://github.com/rt2zz/redux-persist/tree/v4) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
 
 ## Quickstart
 `npm install --save redux-persist`
