@@ -141,7 +141,7 @@ export default function persistReducer<State: Object, Action: Object>(
 
     // if we have not already updated state, straight passthrough
     const reducedState = baseReducer(restState, action)
-    if (reducedState === state) return reducedState
+    if (reducedState === restState) return state
 
     // otherwise, pull off _persist, run the reducer, and update the persistoid
     // @TODO more performant workaround for combineReducers warning
