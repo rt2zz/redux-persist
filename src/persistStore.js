@@ -4,6 +4,7 @@ import type {
   Persistor,
   PersistConfig,
   PersistorOptions,
+  PersistorState,
   MigrationManifest,
   RehydrateAction,
   RehydrateErrorType,
@@ -18,7 +19,7 @@ type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
 type BoostrappedCb = () => any
 
-const initialState = {
+const initialState: PersistorState = {
   registry: [],
   bootstrapped: false,
 }
@@ -62,38 +63,37 @@ export default function persistStore(
     })
   }
   let boostrappedCb = cb || false
-  let persistor: Persistor = createStore(
-    persistorReducer,
-    undefined,
-    options.enhancer
-  )
 
-  persistor.purge = () => {
-    let results = []
-    store.dispatch({
-      type: PURGE,
-      result: purgeResult => {
-        results.push(purgeResult)
-      },
-    })
-    return Promise.all(results)
-  }
-
-  persistor.flush = () => {
-    let results = []
-    store.dispatch({
-      type: FLUSH,
-      result: flushResult => {
-        results.push(flushResult)
-      },
-    })
-    return Promise.all(results)
-  }
-
-  persistor.pause = () => {
-    store.dispatch({
-      type: PAUSE,
-    })
+  let persistor: Persistor = {
+    ...createStore(persistorReducer, initialState, options.enhancer),
+    purge: () => {
+      let results = []
+      store.dispatch({
+        type: PURGE,
+        result: purgeResult => {
+          results.push(purgeResult)
+        },
+      })
+      return Promise.all(results)
+    },
+    flush: () => {
+      let results = []
+      store.dispatch({
+        type: FLUSH,
+        result: flushResult => {
+          results.push(flushResult)
+        },
+      })
+      return Promise.all(results)
+    },
+    pause: () => {
+      store.dispatch({
+        type: PAUSE,
+      })
+    },
+    persist: () => {
+      store.dispatch({ type: PERSIST, register, rehydrate })
+    },
   }
 
   let register = (key: string) => {
@@ -117,10 +117,6 @@ export default function persistStore(
       boostrappedCb()
       boostrappedCb = false
     }
-  }
-
-  persistor.persist = () => {
-    store.dispatch({ type: PERSIST, register, rehydrate })
   }
 
   persistor.persist()
