@@ -152,7 +152,7 @@ function getStoredStateV4(v4Config: V4Config) {
       try {
         let data = serialized ? deserializer(serialized) : undefined
         state = transforms.reduceRight((subState, transformer) => {
-          return transformer.out(subState, key)
+          return transformer.out(subState, key, {})
         }, data)
       } catch (err) {
         if (process.env.NODE_ENV !== 'production')

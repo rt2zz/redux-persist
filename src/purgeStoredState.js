@@ -6,9 +6,9 @@ import { KEY_PREFIX } from './constants'
 
 export default function purgeStoredState(config: PersistConfig) {
   const storage = config.storage
-  const storageKey = `${config.keyPrefix !== undefined
-    ? config.keyPrefix
-    : KEY_PREFIX}${config.key}`
+  const storageKey = `${
+    config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  }${config.key}`
   return storage.removeItem(storageKey, warnIfRemoveError)
 }
 

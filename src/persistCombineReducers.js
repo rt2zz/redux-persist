@@ -17,6 +17,9 @@ export default function persistCombineReducers(
   config: PersistConfig,
   reducers: Reducers
 ): Reducer {
-  config.stateReconciler = config.stateReconciler === undefined ? autoMergeLevel2 : config.stateReconciler
+  config.stateReconciler =
+    config.stateReconciler === undefined
+      ? autoMergeLevel2
+      : config.stateReconciler
   return persistReducer(config, combineReducers(reducers))
 }
