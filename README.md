@@ -12,8 +12,14 @@ Redux Persist takes your redux state object and saves it to persisted storage. O
 ## Quickstart
 `npm install redux-persist`
 
-#### Usage
-Basic implementation involves adding `persistReducer` and `persistStore` to your setup. **IMPORTANT** Every app needs to decide how many levels of state they want to "merge". The default is 1 level. Please read through the [state reconciler docs](#state-reconciler) for more information.
+Usage Examples:
+1. [Basic Usage](#basic-usage)
+2. [Nested Persists](#nested-persists)
+3. [Hot Module Replacement](./docs/hot-module-replacement.md)
+4. Code Splitting [coming soon]
+
+#### Basic Usage
+Basic usage involves adding `persistReducer` and `persistStore` to your setup. **IMPORTANT** Every app needs to decide how many levels of state they want to "merge". The default is 1 level. Please read through the [state reconciler docs](#state-reconciler) for more information.
 
 ```js
 // configureStore.js
@@ -142,8 +148,8 @@ const persistConfig = {
 };
 ```
 
-#### Nested Blacklist / Whitelist
-The blacklist and whitelist only work one level deep. However persisted reducers can be nested.For example, if you want to blacklist `state.auth.somethingTemporary`:
+## Nested Persists
+Nested persist can be useful for a variety of reasons including different storage adapters, code splitting, or deep filtering. For example blacklist and whitelist only work one level deep, but we can use a nested persist to blacklist a deep value:
 ```js
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
