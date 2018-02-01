@@ -132,8 +132,9 @@ export default function persistReducer<State: Object, Action: Object>(
       if (action.key === config.key) {
         let reducedState = baseReducer(restState, action)
         let inboundState = action.payload
+        // only reconcile state if stateReconciler and inboundState are both defined
         let reconciledRest: State =
-          stateReconciler !== false
+          stateReconciler !== false && inboundState !== undefined
             ? stateReconciler(inboundState, state, reducedState, config)
             : reducedState
 
