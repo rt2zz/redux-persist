@@ -1,8 +1,6 @@
 es
 lib
 dist
-package-lock.json
-yarn.lock
 .watchmanconfig
 
 # Logs
