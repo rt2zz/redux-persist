@@ -1,6 +1,7 @@
 // @flow
 
 import type { Storage } from '../types'
+import createMemoryStorage from '../../tests/utils/memoryStorage'
 
 function noop() {}
 let noopStorage = {
@@ -23,7 +24,9 @@ function hasStorage(storageType) {
   } catch (e) {
     if (process.env.NODE_ENV !== 'production')
       console.warn(
-        `redux-persist ${storageType} test failed, persistence will be disabled.`
+        `redux-persist ${
+          storageType
+        } test failed, persistence will be disabled.`
       )
     return false
   }
@@ -34,10 +37,15 @@ export default function getStorage(type: string): Storage {
   const storageType = `${type}Storage`
   if (hasStorage(storageType)) return window[storageType]
   else {
-    if (process.env.NODE_ENV !== 'production') {
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      process.env.NODE_ENV !== 'test'
+    ) {
       console.error(
         `redux-persist failed to create sync storage. falling back to memory storage.`
       )
+    } else if (process.env.NODE_ENV === 'test') {
+      return createMemoryStorage()
     }
     return noopStorage
   }
