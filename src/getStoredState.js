@@ -8,9 +8,9 @@ export default function getStoredState(
   config: PersistConfig
 ): Promise<Object | void> {
   const transforms = config.transforms || []
-  const storageKey = `${config.keyPrefix !== undefined
-    ? config.keyPrefix
-    : KEY_PREFIX}${config.key}`
+  const storageKey = `${
+    config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
+  }${config.key}`
   const storage = config.storage
   const debug = config.debug
   const deserialize = config.serialize === false ? x => x : defaultDeserialize
@@ -22,7 +22,7 @@ export default function getStoredState(
         let rawState = deserialize(serialized)
         Object.keys(rawState).forEach(key => {
           state[key] = transforms.reduceRight((subState, transformer) => {
-            return transformer.out(subState, key)
+            return transformer.out(subState, key, rawState)
           }, deserialize(rawState[key]))
         })
         return state

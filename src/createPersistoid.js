@@ -50,7 +50,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
     let key = keysToProcess.shift()
     let endState = transforms.reduce((subState, transformer) => {
-      return transformer.in(subState, key)
+      return transformer.in(subState, key, lastState)
     }, lastState[key])
     if (typeof endState !== 'undefined') stagedWrite(key, endState)
   }
