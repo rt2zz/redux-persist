@@ -55,6 +55,7 @@ export default function persistReducer<State: Object, Action: Object>(
       _persistoid &&
       !_paused &&
       _persistoid.update(state)
+    return state
   }
 
   return (state: State, action: Action) => {
@@ -139,8 +140,7 @@ export default function persistReducer<State: Object, Action: Object>(
           ...reconciledRest,
           _persist: { ..._persist, rehydrated: true },
         }
-        conditionalUpdate(newState)
-        return newState
+        return conditionalUpdate(newState)
       }
     }
 
@@ -154,7 +154,6 @@ export default function persistReducer<State: Object, Action: Object>(
       _persist,
     }
     // update the persistoid only if we are already rehydrated and are not paused
-    conditionalUpdate(newState)
-    return newState
+    return conditionalUpdate(newState)
   }
 }
