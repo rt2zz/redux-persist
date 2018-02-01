@@ -50,6 +50,13 @@ export default function persistReducer<State: Object, Action: Object>(
   let _persistoid = null
   let _purge = false
   let _paused = true
+  const conditionalUpdate = state => {
+    state._persist.rehydrated &&
+      _persistoid &&
+      !_paused &&
+      _persistoid.update(state)
+    return state
+  }
 
   return (state: State, action: Action) => {
     let { _persist, ...rest } = state || {}
@@ -129,10 +136,11 @@ export default function persistReducer<State: Object, Action: Object>(
             ? stateReconciler(inboundState, state, reducedState, config)
             : reducedState
 
-        return {
+        let newState = {
           ...reconciledRest,
           _persist: { ..._persist, rehydrated: true },
         }
+        return conditionalUpdate(newState)
       }
     }
 
@@ -146,10 +154,6 @@ export default function persistReducer<State: Object, Action: Object>(
       _persist,
     }
     // update the persistoid only if we are already rehydrated and are not paused
-    _persist.rehydrated &&
-      _persistoid &&
-      !_paused &&
-      _persistoid.update(newState)
-    return newState
+    return conditionalUpdate(newState)
   }
 }
