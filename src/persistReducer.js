@@ -51,6 +51,7 @@ export default function persistReducer<State: Object, Action: Object>(
   let _purge = false
   let _paused = true
   const conditionalUpdate = state => {
+    // update the persistoid only if we are rehydrated and not paused
     state._persist.rehydrated &&
       _persistoid &&
       !_paused &&
@@ -147,13 +148,13 @@ export default function persistReducer<State: Object, Action: Object>(
     // if we have not already handled PERSIST, straight passthrough
     if (!_persist) return baseReducer(state, action)
 
-    // otherwise, pull off _persist, run the reducer, and update the persistoid
-    // @TODO more performant workaround for combineReducers warning
-    let newState = {
-      ...baseReducer(restState, action),
-      _persist,
+    // run base reducer:
+    // is state modified ? return original : return updated
+    let newState = baseReducer(restState, action)
+    if (newState === restState) return state
+    else {
+      newState._persist = _persist
+      return conditionalUpdate(newState)
     }
-    // update the persistoid only if we are already rehydrated and are not paused
-    return conditionalUpdate(newState)
   }
 }
