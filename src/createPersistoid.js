@@ -4,6 +4,8 @@ import { KEY_PREFIX, REHYDRATE } from './constants'
 
 import type { Persistoid, PersistConfig, Transform } from './types'
 
+type IntervalID = any // @TODO remove once flow < 0.63 support is no longer required.
+
 export default function createPersistoid(config: PersistConfig): Persistoid {
   // defaults
   const blacklist: ?Array<string> = config.blacklist || null

@@ -64,8 +64,32 @@ export default function persistStore(
   }
   let boostrappedCb = cb || false
 
+  let _pStore = createStore(persistorReducer, initialState, options.enhancer)
+  let register = (key: string) => {
+    _pStore.dispatch({
+      type: REGISTER,
+      key,
+    })
+  }
+
+  let rehydrate = (key: string, payload: Object, err: any) => {
+    let rehydrateAction = {
+      type: REHYDRATE,
+      payload,
+      err,
+      key,
+    }
+    // dispatch to `store` to rehydrate and `persistor` to track result
+    store.dispatch(rehydrateAction)
+    _pStore.dispatch(rehydrateAction)
+    if (boostrappedCb && persistor.getState().bootstrapped) {
+      boostrappedCb()
+      boostrappedCb = false
+    }
+  }
+
   let persistor: Persistor = {
-    ...createStore(persistorReducer, initialState, options.enhancer),
+    ..._pStore,
     purge: () => {
       let results = []
       store.dispatch({
@@ -94,29 +118,6 @@ export default function persistStore(
     persist: () => {
       store.dispatch({ type: PERSIST, register, rehydrate })
     },
-  }
-
-  let register = (key: string) => {
-    persistor.dispatch({
-      type: REGISTER,
-      key,
-    })
-  }
-
-  let rehydrate = (key: string, payload: Object, err: any) => {
-    let rehydrateAction = {
-      type: REHYDRATE,
-      payload,
-      err,
-      key,
-    }
-    // dispatch to `store` to rehydrate and `persistor` to track result
-    store.dispatch(rehydrateAction)
-    persistor.dispatch(rehydrateAction)
-    if (boostrappedCb && persistor.getState().bootstrapped) {
-      boostrappedCb()
-      boostrappedCb = false
-    }
   }
 
   persistor.persist()
