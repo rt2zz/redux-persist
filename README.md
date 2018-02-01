@@ -10,11 +10,9 @@ Redux Persist takes your redux state object and saves it to persisted storage. O
 [v4](https://github.com/rt2zz/redux-persist/tree/v4) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
 
 ## Quickstart
-`npm install --save redux-persist`
-\- OR -
-`yarn add redux-persist`
+`npm install redux-persist`
 
-##### Implementation
+#### Usage
 Basic implementation involves adding `persistReducer` and `persistStore` to your setup. **IMPORTANT** Every app needs to decide how many levels of state they want to "merge". The default is 1 level. Please read through the [state reconciler docs](#state-reconciler) for more information.
 
 ```js
@@ -40,7 +38,7 @@ export default () => {
 }
 ```
 
-If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux.
+If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux. **NOTE** the `PersistGate` loading prop can be null, or any react instance, e.g. `loading={<Loading />}`
 
 ```js
 import React from 'react'
@@ -66,8 +64,36 @@ const App = () => {
 export default App
 ```
 
-**NOTE** loading is set to null for simplicity, but in practice should be any react instance, e.g. `loading={<SomeLoadingIcon />}`
+## API
+[Full API](./docs/api.md)
 
+#### `persistReducer(config, reducer)`
+  - arguments
+    - [**config**](https://github.com/rt2zz/redux-persist/blob/master/src/types.js#L13-L27) *object*
+      - required config: `key, storage`
+      - notable other config: `whitelist, blacklist, version, stateReconciler, debug`
+    - **reducer** *function*
+      - any reducer will work, typically this would be the top level reducer returned by `combineReducers`
+  - returns an enhanced reducer
+  
+#### `persistStore(store, [config, callback])`
+  - arguments
+    - **config** *persist config* The store to be persisted.
+    - **config** *object* (typically null)
+    - **callback** *function* will be called after rehydration is finished.
+  - returns **persistor** object
+
+#### `persistor object`
+  - the persistor object is returned by persistStore with the following methods:
+    - `.purge(keys)`
+      - purges state from disk and returns a promise
+    - `flush()`
+      - immediately writes all pending state to disk and returns a promise
+    - `pause()`
+      - pauses persistence
+    - `persist()`
+      - resumes persistence
+  
 ## State Reconciler
 State reconcilers define how incoming persisted state is merged in with existing default state. It is critical to choose the right state reconciler for your state shape. There are three options that ship out of the box, lets look at how each operates:
 
