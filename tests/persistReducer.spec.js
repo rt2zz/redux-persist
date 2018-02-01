@@ -7,7 +7,7 @@ import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 
 import persistReducer from '../src/persistReducer'
-import createWebStorage from '../src/storage/createWebStorage'
+import { createMemoryStorage } from 'storage-memory'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 
@@ -16,7 +16,7 @@ let reducer = () => ({})
 const config = {
   key: 'persist-reducer-test',
   version: 1,
-  storage: createWebStorage('local')
+  storage: createMemoryStorage()
 }
 
 test('persistedReducer does not automatically set _persist state', t => {
@@ -31,7 +31,6 @@ test('persistedReducer does returns versioned, rehydrate tracked _persist state 
   let register = sinon.spy()
   let rehydrate = sinon.spy()
   let state = persistedReducer({}, { type: PERSIST, register, rehydrate })
-  console.log('state', state)
   t.deepEqual({ version: 1, rehydrated: false}, state._persist)
 })
 

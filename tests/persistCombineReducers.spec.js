@@ -1,13 +1,13 @@
 // @flow
 
 import persistCombineReducers from '../src/persistCombineReducers'
-import createWebStorage from '../src/storage/createWebStorage'
+import { createMemoryStorage } from 'storage-memory'
 
 import test from 'ava'
 
 const config = {
   key: 'TestConfig',
-  storage: createWebStorage('local')
+  storage: createMemoryStorage()
 }
 
 test('persistCombineReducers returns a function', t => {
