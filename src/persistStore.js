@@ -62,7 +62,11 @@ export default function persistStore(
     })
   }
   let boostrappedCb = cb || false
-  let persistor = createStore(persistorReducer, undefined, options.enhancer)
+  let persistor: Persistor = createStore(
+    persistorReducer,
+    undefined,
+    options.enhancer
+  )
 
   persistor.purge = () => {
     let results = []

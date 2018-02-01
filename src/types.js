@@ -1,4 +1,5 @@
 // @flow
+import { REHYDRATE, REGISTER } from './constants'
 
 export type PersistState = {
   version: number,
@@ -48,7 +49,7 @@ export type Transform = {
 export type RehydrateErrorType = any
 
 export type RehydrateAction = {
-  type: 'redux-persist/REHYDRATE',
+  type: typeof REHYDRATE,
   key: string,
   payload: ?Object,
   err: ?RehydrateErrorType,
@@ -60,7 +61,7 @@ export type Persistoid = {
 }
 
 type RegisterAction = {
-  type: 'redux-persist/REGISTER',
+  type: typeof REGISTER,
   key: string,
 }
 
@@ -74,6 +75,8 @@ type PersistorState = {
 type PersistorSubscribeCallback = () => any
 
 export type Persistor = {
+  pause: () => void,
+  persist: () => void,
   purge: () => Promise<any>,
   flush: () => Promise<any>,
   +dispatch: PersistorAction => PersistorAction,
