@@ -58,7 +58,7 @@ The Persistor is a redux store unto itself, plus
   whitelist?: Array<string>, // only persist these keys
   migrate?: (Object, number) => Promise<Object>,
   transforms?: Array<Transform>,
-  throttle?: number,
+  throttle?: number, // ms to throttle state writes
   keyPrefix?: string, // will be prefixed to the storage key
   debug?: boolean, // true -> verbose logs
   stateReconciler?: false | StateReconciler, // false -> do not automatically reconcile state
