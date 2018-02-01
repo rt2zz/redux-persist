@@ -67,7 +67,7 @@ type RegisterAction = {
 
 type PersistorAction = RehydrateAction | RegisterAction
 
-type PersistorState = {
+export type PersistorState = {
   registry: Array<string>,
   bootstrapped: boolean,
 }

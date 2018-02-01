@@ -4,6 +4,7 @@ import type {
   Persistor,
   PersistConfig,
   PersistorOptions,
+  PersistorState,
   MigrationManifest,
   RehydrateAction,
   RehydrateErrorType,
@@ -18,7 +19,7 @@ type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
 type BoostrappedCb = () => any
 
-const initialState = {
+const initialState: PersistorState = {
   registry: [],
   bootstrapped: false,
 }
@@ -64,7 +65,7 @@ export default function persistStore(
   let boostrappedCb = cb || false
 
   let persistor: Persistor = {
-    ...createStore(persistorReducer, undefined, options.enhancer),
+    ...createStore(persistorReducer, initialState, options.enhancer),
     purge: () => {
       let results = []
       store.dispatch({
