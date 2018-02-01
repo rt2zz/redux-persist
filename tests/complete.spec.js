@@ -9,7 +9,7 @@ import { combineReducers, createStore } from 'redux'
 
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
-import createWebStorage from '../src/storage/createWebStorage'
+import { createMemoryStorage } from 'storage-memory'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 
@@ -17,7 +17,7 @@ let reducer = () => ({})
 const config = {
   key: 'persist-reducer-test',
   version: 1,
-  storage: createWebStorage('local'),
+  storage: createMemoryStorage(),
   debug: true,
 }
 
