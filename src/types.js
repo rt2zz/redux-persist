@@ -28,6 +28,7 @@ export type PersistConfig = {
 
 export type PersistorOptions = {
   enhancer?: Function,
+  timeout?: number,
 }
 
 export type Storage = {

@@ -12,6 +12,7 @@
     "lib"
   ],
   "scripts": {
+    "ava": "BABEL_ENV=commonjs ava",
     "build": "npm run flow-copy && npm run build:commonjs && npm run build:es",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",

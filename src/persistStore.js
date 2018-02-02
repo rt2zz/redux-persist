@@ -44,6 +44,7 @@ export default function persistStore(
   cb?: BoostrappedCb
 ): Persistor {
   let options: Object = persistorOptions || {}
+  let { timeout } = options
 
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
   if (process.env.NODE_ENV !== 'production') {
@@ -63,6 +64,7 @@ export default function persistStore(
     })
   }
   let boostrappedCb = cb || false
+  let _timedOut = true
 
   let _pStore = createStore(persistorReducer, initialState, options.enhancer)
   let register = (key: string) => {
@@ -72,7 +74,17 @@ export default function persistStore(
     })
   }
 
-  let rehydrate = (key: string, payload: Object, err: any) => {
+  let rehydrate = (key: string, payload?: Object, err: any) => {
+    // noop if timed out
+    if (_timedOut) {
+      if (process.env.NODE_ENV !== 'production')
+        console.error(
+          `redux-persist: rehydrate for "${key}" called after timeout.`,
+          payload,
+          err
+        )
+      return
+    }
     let rehydrateAction = {
       type: REHYDRATE,
       payload,
@@ -116,6 +128,19 @@ export default function persistStore(
       })
     },
     persist: () => {
+      // if timeout is exceeded, flush all pending keys with an error rehydrate
+      _timedOut = false
+      if (timeout)
+        setTimeout(() => {
+          let { registry } = persistor.getState()
+          let TimeoutError = new Error(
+            `redux-persist: persist timeout with [${registry.join(
+              ', '
+            )}] keys outstanding.`
+          )
+          registry.forEach(k => rehydrate(k, undefined, TimeoutError))
+          _timedOut = true
+        }, timeout)
       store.dispatch({ type: PERSIST, register, rehydrate })
     },
   }
