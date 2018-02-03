@@ -12,13 +12,18 @@
     "lib"
   ],
   "scripts": {
-    "build": "npm run flow-copy && npm run build:commonjs && npm run build:es",
+    "ava": "BABEL_ENV=commonjs ava",
+    "build": "npm run flow-copy && npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
+    "build:umd": "cross-env BABEL_ENV=es NODE_ENV=development rollup -c -i src/index.js -o dist/redux-persist.js",
+    "build:umd:min": "cross-env BABEL_ENV=es NODE_ENV=production rollup -c -i src/index.js -o dist/redux-persist.min.js",
     "clean": "rimraf es && rimraf lib",
     "flow-copy": "flow-copy-source src es && flow-copy-source src lib",
     "precommit": "lint-staged",
-    "prepublishOnly": "npm run clean && npm run build",
+    "prepublishOnly": "npm run clean && npm run build && npm run stats:update-libsize",
+    "stats:size": "node ./scripts/size-estimator.js",
+    "stats:update-libsize": "npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md && git commit --amend -C HEAD",
     "test": "flow && BABEL_ENV=commonjs ava"
   },
   "lint-staged": {
@@ -44,6 +49,7 @@
     "ava": "^0.25.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.1",
+    "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
@@ -64,6 +70,11 @@
     "redux": "^3.6.0",
     "redux-mock-store": "^1.5.1",
     "rimraf": "^2.6.1",
+    "rollup": "^0.55.3",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-node-resolve": "^3.0.2",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-uglify": "^3.0.0",
     "sinon": "^4.2.2",
     "storage-memory": "0.0.2"
   },
