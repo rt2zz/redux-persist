@@ -1,0 +1,7 @@
+{
+    "name": "redux-persist/react",
+    "private": true,
+    "main": "../lib/react",
+    "module": "../es/react",
+    "jsnext:main": "../es/react"
+  }
