@@ -1,0 +1,7 @@
+{
+  "name": "redux-persist/storage/session",
+  "private": true,
+  "main": "../../lib/storage/session",
+  "module": "../../es/storage/session",
+  "jsnext:main": "../../es/storage/session"
+}

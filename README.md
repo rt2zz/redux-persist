@@ -4,11 +4,6 @@ Persist and rehydrate a redux store.
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist) [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist) [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 
-Redux Persist takes your redux state object and saves it to persisted storage. On app launch, it retrieves this persisted state and saves it back to redux.
-
-**Note:** These instructions are for redux-persist v5. For a list of breaking changes between v4 and v5, see our [migration guide](./docs/MigrationGuide-v5.md).
-[v4](https://github.com/rt2zz/redux-persist/tree/v4) will be supported for the forseeable future, and if it works well for your use case you are encouraged to stay on v4.
-
 ## Quickstart
 `npm install redux-persist`
 
@@ -26,13 +21,13 @@ Basic usage involves adding `persistReducer` and `persistStore` to your setup. *
 
 import { createStore } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/storage' // defaults to localStorage for web and AsyncStorage for react-native
 
 import rootReducer from './reducers'
 
 const persistConfig = {
   key: 'root',
-  storage: storage,
+  storage,
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -47,15 +42,9 @@ export default () => {
 If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux. **NOTE** the `PersistGate` loading prop can be null, or any react instance, e.g. `loading={<Loading />}`
 
 ```js
-import React from 'react'
-import { Provider } from 'react-redux'
-import { PersistGate } from 'redux-persist/lib/integration/react'
+import { PersistGate } from 'redux-persist/integration/react'
 
-import configureStore from './store/configureStore'
-let { store, persistor } = configureStore()
-
-// import your necessary custom components.
-import { RootComponent } from './components'
+// ... normal setup, create store and persistor, import components etc.
 
 const App = () => {
   return (
@@ -66,8 +55,6 @@ const App = () => {
     </Provider>
   );
 };
-
-export default App
 ```
 
 ## API
@@ -91,7 +78,7 @@ export default App
 
 #### `persistor object`
   - the persistor object is returned by persistStore with the following methods:
-    - `.purge(keys)`
+    - `.purge()`
       - purges state from disk and returns a promise
     - `flush()`
       - immediately writes all pending state to disk and returns a promise
@@ -113,7 +100,7 @@ This will auto merge one level deep. Auto merge means if the some piece of subst
    - **INCOMING STATE**: `{ foo: incomingFoo }`
    - **INITIAL STATE**: `{ foo: initialFoo, bar: initialBar }`
    - **RECONCILED STATE**: `{ foo: incomingFoo, bar: initialBar }`
-3. autoMergeLevel2
+3. autoMergeLevel2 (`import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'`)
 This acts just like autoMergeLevel1, except it shallow merges two levels
    - **INCOMING STATE**: `{ foo: incomingFoo }`
    - **INITIAL STATE**: `{ foo: initialFoo, bar: initialBar }`
@@ -153,7 +140,7 @@ Nested persist can be useful for a variety of reasons including different storag
 ```js
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/storage'
 
 import { authReducer, otherReducer } from './reducers'
 
@@ -221,9 +208,9 @@ The createTransform function takes three parameters.
 3. A config object.
 
 ## Storage Engines
-- **localStorage** `import storage from 'redux-persist/lib/storage'`
-- **sessionStorage** `import sessionStorage from 'redux-persist/lib/storage/session'`
-- **AsyncStorage** react-native `import storage from 'redux-persist/lib/storage'`
+- **localStorage** `import storage from 'redux-persist/storage/local'`
+- **sessionStorage** `import storageSession from 'redux-persist/storage/session'`
+- **AsyncStorage** react-native `import { AsyncStorage } from 'react-native'`
 - **[localForage](https://github.com/mozilla/localForage)** recommended for web
 - **[electron storage](https://github.com/psperber/redux-persist-electron-storage)** Electron support via [electron store](https://github.com/sindresorhus/electron-store)
 - **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** react-native, to mitigate storage size limitations in android ([#199](https://github.com/rt2zz/redux-persist/issues/199), [#284](https://github.com/rt2zz/redux-persist/issues/284))
