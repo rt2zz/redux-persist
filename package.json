@@ -27,7 +27,7 @@
   },
   "lint-staged": {
     "src/**/*.js": [
-      "prettier --no-semi --single-quote --trailing-comma --parser=flow --write",
+      "prettier --write",
       "git add"
     ]
   },
