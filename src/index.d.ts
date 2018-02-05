@@ -14,11 +14,11 @@ declare module "redux-persist" {
 }
 
 declare module "redux-persist/lib/storage" {
-    export * from "redux-persist/es/storage";   
+    export { default } from "redux-persist/es/storage";
 }
 
 declare module "redux-persist/lib/storage/session" {
-    export * from "redux-persist/es/storage/session";
+    export { default } from "redux-persist/es/storage/session";
 }
 
 declare module "redux-persist/lib/constants" {
@@ -400,7 +400,7 @@ declare module "redux-persist/es/stateReconciler/hardSet" {
 
 declare module "redux-persist/es/storage" {
     import { WebStorage } from "redux-persist";
-    export let storage: WebStorage;
+    let storage: WebStorage;
     export default storage;
 }
 
