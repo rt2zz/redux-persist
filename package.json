@@ -9,7 +9,10 @@
   "files": [
     "es",
     "src",
-    "lib"
+    "lib",
+    "dist",
+    "integration",
+    "README.md"
   ],
   "scripts": {
     "ava": "BABEL_ENV=commonjs ava",
