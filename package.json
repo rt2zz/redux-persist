@@ -2,9 +2,9 @@
   "name": "redux-persist",
   "version": "5.6.12",
   "description": "persist and rehydrate redux stores",
-  "main": "lib/index.js",
+  "main": "index.js",
   "module": "es/index.js",
-  "types": "./src/index.d.ts",
+  "types": "src/index.d.ts",
   "repository": "rt2zz/redux-persist",
   "files": [
     "es",
@@ -14,19 +14,23 @@
     "integration",
     "README.md"
   ],
+  "directories": {
+    "dist": "dist"
+  },
   "scripts": {
     "ava": "BABEL_ENV=commonjs ava",
     "build": "npm run flow-copy && npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir dist",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "build:umd": "cross-env BABEL_ENV=es NODE_ENV=development rollup -c -i src/index.js -o dist/redux-persist.js",
     "build:umd:min": "cross-env BABEL_ENV=es NODE_ENV=production rollup -c -i src/index.js -o dist/redux-persist.min.js",
-    "clean": "rimraf es && rimraf lib",
-    "flow-copy": "flow-copy-source src es && flow-copy-source src lib",
+    "clean": "rimraf es && rimraf dist",
+    "flow-copy": "flow-copy-source src es && flow-copy-source src dist",
     "precommit": "lint-staged",
     "stats:size": "node ./scripts/size-estimator.js",
     "test": "flow && BABEL_ENV=commonjs ava",
-    "version": "npm run clean && npm run build && npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md"
+    "version": "npm run clean && npm run build && npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md",
+    "release": "npm run build && npm-packager publish"
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -48,6 +52,7 @@
     "babel": "inherit"
   },
   "devDependencies": {
+    "@straw-hat/npm-packager": "^1.0.0",
     "ava": "^0.25.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.1",
