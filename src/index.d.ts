@@ -269,7 +269,7 @@ declare module "redux-persist/es/types" {
     export interface Storage {
         getItem(key: string, ...args: any[]): any;
         setItem(key: string, value: any, ...args: any[]): any;
-        remoteItem(key: string, ...args: any[]): any;
+        removeItem(key: string, ...args: any[]): any;
     }
 }
 
