@@ -65,6 +65,32 @@ declare module "redux-persist/lib/purgeStoredState" {
     export * from "redux-persist/es/purgeStoredState";
 }
 
+declare module "redux-persist/integration/react" {
+    import { ReactNode, PureComponent } from "react";
+    import { Persistor, WebStorage } from "redux-persist";
+
+    /**
+     * Properties of @see PersistGate
+     */
+    export interface PersistGateProps {
+        persistor: Persistor;
+        onBeforeLift?: Function;
+        children?: ReactNode;
+        loading?: ReactNode;
+    }
+    /**
+     * State of @see PersistGate
+     */
+    export interface PersistorGateState { bootstrapped: boolean; }
+    /**
+     * Entry point of your react application to allow it persist a given store @see Persistor and its configuration. 
+     * @see Persistor
+     * @see PersistGateProps
+     * @see PersistGateState
+     */
+    export class PersistGate extends React.PureComponent<PersistGateProps, PersistorGateState> { }
+}
+
 declare module "redux-persist/es/constants" {
     /* constants */
     export const DEFAULT_VERSION: number;
@@ -342,32 +368,6 @@ declare module "redux-persist/es/purgeStoredState" {
      * @param config persist configuration
      */
     export function purgeStoredState(config: PersistConfig): any;
-}
-
-declare module "redux-persist/es/integration/react" {
-    import { ReactNode, PureComponent } from "react";
-    import { Persistor, WebStorage } from "redux-persist";
-
-    /**
-     * Properties of @see PersistGate
-     */
-    export interface PersistGateProps {
-        persistor: Persistor;
-        onBeforeLift?: Function;
-        children?: ReactNode;
-        loading?: ReactNode;
-    }
-    /**
-     * State of @see PersistGate
-     */
-    export interface PersistorGateState { bootstrapped: boolean; }
-    /**
-     * Entry point of your react application to allow it persist a given store @see Persistor and its configuration. 
-     * @see Persistor
-     * @see PersistGateProps
-     * @see PersistGateState
-     */
-    export class PersistGate extends React.PureComponent<PersistGateProps, PersistorGateState> { }
 }
 
 declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
