@@ -67,18 +67,31 @@ export default function persistReducer<State: Object, Action: Object>(
     let restState: State = rest
 
     if (action.type === PERSIST) {
-      let _timedOut = false
+      let _sealed = false
+      let _rehydrate = (payload, err) => {
+        // only rehydrate if we are not already sealed
+        !_sealed && action.rehydrate(config.key, payload, err)
+        if (process.env.NODE_ENV === 'production' && _sealed)
+          console.error(
+            `redux-persist: rehydrate for "${
+              config.key
+            }" called after timeout.`,
+            payload,
+            err
+          )
+      }
       timeout &&
         setTimeout(() => {
-          _timedOut = true
-
-          action.rehydrate(
-            config.key,
-            undefined,
-            new Error(
-              `redux-persist: persist timed out for persist key "${config.key}"`
+          !_sealed &&
+            _rehydrate(
+              undefined,
+              new Error(
+                `redux-persist: persist timed out for persist key "${
+                  config.key
+                }"`
+              )
             )
-          )
+          _sealed = true
         }, timeout)
 
       // @NOTE PERSIST resumes if paused.
@@ -104,17 +117,17 @@ export default function persistReducer<State: Object, Action: Object>(
           const migrate = config.migrate || ((s, v) => Promise.resolve(s))
           migrate(restoredState, version).then(
             migratedState => {
-              !_timedOut && action.rehydrate(config.key, migratedState)
+              _rehydrate(migratedState)
             },
             migrateErr => {
               if (process.env.NODE_ENV !== 'production' && migrateErr)
                 console.error('redux-persist: migration error', migrateErr)
-              !_timedOut && action.rehydrate(config.key, undefined, migrateErr)
+              _rehydrate(undefined, migrateErr)
             }
           )
         },
         err => {
-          !_timedOut && action.rehydrate(config.key, undefined, err)
+          _rehydrate(undefined, err)
         }
       )
 
