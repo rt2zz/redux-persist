@@ -292,7 +292,7 @@ declare module "redux-persist/es/createMigrate" {
 declare module "redux-persist/es/createPersistoid" {
     import { PersistConfig, Persistoid } from "redux-persist/es/types";
     // createPersistoid
-    export function createPersistoid(config: PersistConfig): Persistoid;
+    export default function createPersistoid(config: PersistConfig): Persistoid;
 }
 
 declare module "redux-persist/es/createTransform" {
@@ -307,7 +307,7 @@ declare module "redux-persist/es/createTransform" {
         config?: PersistConfig;
     }
 
-    export function createTransform<S, R>(
+    export default function createTransform<S, R>(
         inbound: TransformIn<S, R>,
         outbound: TransformOut<R, S>,
         config?: Pick<PersistConfig, "whitelist" | "blacklist">
@@ -316,12 +316,12 @@ declare module "redux-persist/es/createTransform" {
 
 declare module "redux-persist/es/createWebStorage" {
     import { WebStorage } from "redux-persist/es/types";
-    export function createWebStorage(type: string): WebStorage;
+    export default function createWebStorage(type: string): WebStorage;
 }
 
 declare module "redux-persist/es/getStoredState" {
     import { PersistConfig } from "redux-persist/es/types";
-    export function getStoredState(config: PersistConfig): Promise<any | void>;
+    export default function getStoredState(config: PersistConfig): Promise<any | void>;
 }
 
 declare module "redux-persist/es/persistCombineReducers" {
@@ -333,7 +333,7 @@ declare module "redux-persist/es/persistCombineReducers" {
      * @param reducers set of keyed functions mapping to the application state
      * @returns reducer
      */
-    export function persistCombineReducers<S>(config: PersistConfig, reducers: ReducersMapObject): Reducer<S & PersistedState>;
+    export default function persistCombineReducers<S>(config: PersistConfig, reducers: ReducersMapObject): Reducer<S & PersistedState>;
 }
 
 declare module "redux-persist/es/persistReducer" {
@@ -346,7 +346,7 @@ declare module "redux-persist/es/persistReducer" {
      * @param config persistence configuration
      * @param baseReducer reducer used to persist the state
      */
-    export function persistReducer<S, A>(config: PersistConfig, baseReducer: BaseReducer<S, A>): (s: S, a: A) => S & PersistPartial;
+    export default function persistReducer<S, A>(config: PersistConfig, baseReducer: BaseReducer<S, A>): (s: S, a: A) => S & PersistPartial;
 }
 declare module "redux-persist/es/persistStore" {
     import { PersistorOptions, Persistor } from "redux-persist/es/types";
@@ -358,7 +358,7 @@ declare module "redux-persist/es/persistStore" {
      * @param persistorOptions enhancers of the persistor
      * @param callback bootstrap callback of sort.
      */
-    export function persistStore(store: any, persistorOptions?: PersistorOptions, callback?: BoostrappedCallback): Persistor;
+    export default function persistStore(store: any, persistorOptions?: PersistorOptions, callback?: BoostrappedCallback): Persistor;
 }
 
 declare module "redux-persist/es/purgeStoredState" {
@@ -367,7 +367,7 @@ declare module "redux-persist/es/purgeStoredState" {
      * Removes stored state.
      * @param config persist configuration
      */
-    export function purgeStoredState(config: PersistConfig): any;
+    export default function purgeStoredState(config: PersistConfig): any;
 }
 
 declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
@@ -381,21 +381,21 @@ declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
         whitelist?: string[];
     }
 
-    export function getStoredState(v4Config: V4Config): (config: PersistConfig) => Promise<any | void>;
+    export default function getStoredState(v4Config: V4Config): (config: PersistConfig) => Promise<any | void>;
 }
 
 declare module "redux-persist/es/stateReconciler/autoMergeLevel1" {
     import { PersistConfig } from "redux-persist";
-    export function autoMergeLevel1<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
+    export default function autoMergeLevel1<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
 }
 
 declare module "redux-persist/es/stateReconciler/autoMergeLevel2" {
     import { PersistConfig } from "redux-persist";
-    export function autoMergeLevel2<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
+    export default function autoMergeLevel2<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
 }
 
 declare module "redux-persist/es/stateReconciler/hardSet" {
-    export function hardSet<S>(inboundState: S): S;
+    export default function hardSet<S>(inboundState: S): S;
 }
 
 declare module "redux-persist/es/storage" {
@@ -406,12 +406,12 @@ declare module "redux-persist/es/storage" {
 
 declare module "redux-persist/es/getStorage" {
     import { Storage } from "redux-persist";
-    export function getStorage(type: string): Storage;
+    export default function getStorage(type: string): Storage;
 }
 
 declare module "redux-persist/es/createWebStorage" {
     import { WebStorage } from "redux-persist";
-    export function createWebStorage(type: string): WebStorage;
+    export default function createWebStorage(type: string): WebStorage;
 }
 
 declare module "redux-persist/es/storage/session" {
