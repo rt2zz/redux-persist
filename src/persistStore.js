@@ -63,8 +63,11 @@ export default function persistStore(
   }
   let boostrappedCb = cb || false
 
-  let enhancer = options ? options.enhancer : undefined
-  let _pStore = createStore(persistorReducer, initialState, enhancer)
+  let _pStore = createStore(
+    persistorReducer,
+    initialState,
+    options ? options.enhancer : undefined
+  )
   let register = (key: string) => {
     _pStore.dispatch({
       type: REGISTER,
