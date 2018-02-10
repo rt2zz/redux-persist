@@ -40,7 +40,7 @@ const persistorReducer = (state = initialState, action) => {
 
 export default function persistStore(
   store: Object,
-  options?: ?PersistorOptions = {},
+  options?: ?PersistorOptions,
   cb?: BoostrappedCb
 ): Persistor {
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
