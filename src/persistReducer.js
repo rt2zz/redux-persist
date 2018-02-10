@@ -21,6 +21,7 @@ import defaultGetStoredState from './getStoredState'
 import purgeStoredState from './purgeStoredState'
 
 type PersistPartial = { _persist: PersistState }
+const DEFAULT_TIMEOUT = 5000
 /*
   @TODO add validation / handling for:
   - persisting a reducer which has nested _persist
@@ -47,6 +48,8 @@ export default function persistReducer<State: Object, Action: Object>(
       ? autoMergeLevel1
       : config.stateReconciler
   const getStoredState = config.getStoredState || defaultGetStoredState
+  const timeout =
+    config.timeout !== undefined ? config.timeout : DEFAULT_TIMEOUT
   let _persistoid = null
   let _purge = false
   let _paused = true
@@ -64,6 +67,20 @@ export default function persistReducer<State: Object, Action: Object>(
     let restState: State = rest
 
     if (action.type === PERSIST) {
+      let _timedOut = false
+      timeout &&
+        setTimeout(() => {
+          _timedOut = true
+
+          action.rehydrate(
+            config.key,
+            undefined,
+            new Error(
+              `redux-persist: persist timed out for persist key "${config.key}"`
+            )
+          )
+        }, timeout)
+
       // @NOTE PERSIST resumes if paused.
       _paused = false
 
@@ -87,17 +104,17 @@ export default function persistReducer<State: Object, Action: Object>(
           const migrate = config.migrate || ((s, v) => Promise.resolve(s))
           migrate(restoredState, version).then(
             migratedState => {
-              action.rehydrate(config.key, migratedState)
+              !_timedOut && action.rehydrate(config.key, migratedState)
             },
             migrateErr => {
               if (process.env.NODE_ENV !== 'production' && migrateErr)
                 console.error('redux-persist: migration error', migrateErr)
-              action.rehydrate(config.key, undefined, migrateErr)
+              !_timedOut && action.rehydrate(config.key, undefined, migrateErr)
             }
           )
         },
         err => {
-          action.rehydrate(config.key, undefined, err)
+          !_timedOut && action.rehydrate(config.key, undefined, err)
         }
       )
 
