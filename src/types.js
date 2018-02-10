@@ -24,6 +24,7 @@ export type PersistConfig = {
   getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
   debug?: boolean,
   serialize?: boolean,
+  timeout?: number,
 }
 
 export type PersistorOptions = {
