@@ -386,16 +386,16 @@ declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
 
 declare module "redux-persist/es/stateReconciler/autoMergeLevel1" {
     import { PersistConfig } from "redux-persist";
-    export function autoMergeLevel1<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
+    export default function autoMergeLevel1<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
 }
 
 declare module "redux-persist/es/stateReconciler/autoMergeLevel2" {
     import { PersistConfig } from "redux-persist";
-    export function autoMergeLevel2<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
+    export default function autoMergeLevel2<S>(inboundState: S, originalState: S, reducedState: S, { debug }: PersistConfig): S;
 }
 
 declare module "redux-persist/es/stateReconciler/hardSet" {
-    export function hardSet<S>(inboundState: S): S;
+    export default function hardSet<S>(inboundState: S): S;
 }
 
 declare module "redux-persist/es/storage" {
