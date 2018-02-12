@@ -69,12 +69,7 @@ export default function persistReducer<State: Object, Action: Object>(
     if (action.type === PERSIST) {
       let _sealed = false
       let _rehydrate = (payload, err) => {
-        // only rehydrate if we are not already sealed
-        if (!_sealed) {
-          action.rehydrate(config.key, payload, err)
-          _sealed = true
-        }
-
+        // dev warning if we are already sealed
         if (process.env.NODE_ENV !== 'production' && _sealed)
           console.error(
             `redux-persist: rehydrate for "${
@@ -83,6 +78,12 @@ export default function persistReducer<State: Object, Action: Object>(
             payload,
             err
           )
+
+        // only rehydrate if we are not already sealed
+        if (!_sealed) {
+          action.rehydrate(config.key, payload, err)
+          _sealed = true
+        }
       }
       timeout &&
         setTimeout(() => {
