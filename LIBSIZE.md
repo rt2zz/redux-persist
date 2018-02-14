@@ -10,3 +10,4 @@ The following is a history of size estimates in bytes. This is calculated as a r
 **v5.7.0**: 4893 Bytes  
 **v5.7.1**: 4894 Bytes  
 **v5.7.2**: 4894 Bytes  
+**v5.8.0**: 4894 Bytes  
