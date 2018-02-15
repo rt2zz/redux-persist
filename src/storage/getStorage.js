@@ -10,12 +10,12 @@ let noopStorage = {
 }
 
 function hasStorage(storageType) {
-  if (typeof window !== 'object' || !(storageType in window)) {
+  if (typeof self !== 'object' || !(storageType in self)) {
     return false
   }
 
   try {
-    let storage = window[storageType]
+    let storage = self[storageType]
     const testKey = `redux-persist ${storageType} test`
     storage.setItem(testKey, 'test')
     storage.getItem(testKey)
@@ -32,7 +32,7 @@ function hasStorage(storageType) {
 
 export default function getStorage(type: string): Storage {
   const storageType = `${type}Storage`
-  if (hasStorage(storageType)) return window[storageType]
+  if (hasStorage(storageType)) return self[storageType]
   else {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
