@@ -24,12 +24,12 @@ export default function getStoredState(v4Config: V4Config) {
 const KEY_PREFIX = 'reduxPersist:'
 
 function hasLocalStorage() {
-  if (typeof window !== 'object' || !('localStorage' in window)) {
+  if (typeof self !== 'object' || !('localStorage' in self)) {
     return false
   }
 
   try {
-    let storage = window.localStorage
+    let storage = self.localStorage
     const testKey = `redux-persist localStorage test`
     storage.setItem(testKey, 'test')
     storage.getItem(testKey)
@@ -55,7 +55,7 @@ const noStorage = {
 }
 const createAsyncLocalStorage = () => {
   if (!hasLocalStorage()) return noStorage
-  let localStorage = window.localStorage
+  let localStorage = self.localStorage
   return {
     getAllKeys: function(cb) {
       try {
