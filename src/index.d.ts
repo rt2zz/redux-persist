@@ -108,7 +108,7 @@ declare module "redux-persist/es/types" {
     import { Transform } from "redux-persist/es/createTransform"
     /* types */
     export interface PersistState { version: number; rehydrated: boolean; }
-    export type PersistedState = { _persist: PersistState } | void;
+    export interface PersistedState { _persist?: PersistState }
 
     export interface PersistConfig {
         version?: number;
