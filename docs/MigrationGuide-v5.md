@@ -82,7 +82,7 @@ Long story short, the changes are required in order to support new use cases
 - v5 ships with an experimental v4 -> v5 migration that works by overriding the default getStoredState implementation
 **Warning** this is completely untested, please try and report back with any issues.
 ```js
-import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigratev4'
+import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4'
 // ...
 persistReducer({
   // ...
