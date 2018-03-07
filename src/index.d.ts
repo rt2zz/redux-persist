@@ -161,6 +161,8 @@ declare module "redux-persist/es/types" {
      * pending state serialization and immediately write to disk
      */
     export interface Persistor {
+        pause(): void;
+        persist(): void;
         purge(): Promise<any>;
         flush(): Promise<any>;
         dispatch(action: PersistorAction): PersistorAction;
