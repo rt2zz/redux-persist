@@ -23,6 +23,7 @@ test('register method adds a key to the registry', t => {
   let persistor = persistStore(store)
   let actions = store.getActions()
   let persistAction  =_.find(actions, { type: PERSIST })
+  // $FlowIgnore
   persistAction.register('canary')
   t.deepEqual(persistor.getState().registry, ['canary'])
 })
@@ -32,8 +33,9 @@ test('rehydrate method fires with the expected shape', t => {
   let persistor = persistStore(store)
   let actions = store.getActions()
   let persistAction  =_.find(actions, { type: PERSIST })
+  // $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
-  let rehydrateAction  =_.find(actions, { type: REHYDRATE })
+  let rehydrateAction =_.find(actions, { type: REHYDRATE })
   t.deepEqual(rehydrateAction, { type: REHYDRATE, key: 'canary', payload: { foo: 'bar' }, err: null })
 })
 
@@ -41,13 +43,13 @@ test('rehydrate method removes provided key from registry', t => {
   let store = mockStore()
   let persistor = persistStore(store)
   let actions = store.getActions()
-  let persistAction  =_.find(actions, { type: PERSIST })
+  let persistAction =_.find(actions, { type: PERSIST })
 
-  // register canary
+  // register canary $FlowIgnore
   persistAction.register('canary')
   t.deepEqual(persistor.getState().registry, ['canary'])
 
-  // rehydrate canary
+  // rehydrate canary $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
   t.deepEqual(persistor.getState().registry, [])
 })
@@ -58,12 +60,13 @@ test('rehydrate method removes exactly one of provided key from registry', t => 
   let actions = store.getActions()
   let persistAction  =_.find(actions, { type: PERSIST })
 
-  // register canary twice
+  // register canary twice $FlowIgnore
   persistAction.register('canary')
+  // $FlowIgnore
   persistAction.register('canary')
   t.deepEqual(persistor.getState().registry, ['canary', 'canary'])
 
-  // rehydrate canary
+  // rehydrate canary $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
   t.deepEqual(persistor.getState().registry, ['canary'])
 })
@@ -74,8 +77,10 @@ test('once registry is cleared for first time, persistor is flagged as bootstrap
   let actions = store.getActions()
   let persistAction  =_.find(actions, { type: PERSIST })
 
+  // $FlowIgnore
   persistAction.register('canary')
   t.false(persistor.getState().bootstrapped)
+  // $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
   t.true(persistor.getState().bootstrapped)
 })
@@ -86,12 +91,14 @@ test('once persistor is flagged as bootstrapped, further registry changes do not
   let actions = store.getActions()
   let persistAction  =_.find(actions, { type: PERSIST })
 
+  // $FlowIgnore
   persistAction.register('canary')
   t.false(persistor.getState().bootstrapped)
+  // $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
   t.true(persistor.getState().bootstrapped)
 
-  // add canary back, registry is updated but bootstrapped remains true
+  // add canary back, registry is updated but bootstrapped remains true $FlowIgnore
   persistAction.register('canary')
   t.deepEqual(persistor.getState().registry, ['canary'])
   t.true(persistor.getState().bootstrapped)
@@ -104,12 +111,15 @@ test('persistStore calls bootstrapped callback (at most once) if provided', t =>
   let actions = store.getActions()
   let persistAction  =_.find(actions, { type: PERSIST })
   
+  // $FlowIgnore
   persistAction.register('canary')
+  // $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
   t.is(bootstrappedCb.callCount, 1)
 
-  // further rehydrates do not trigger the cb
+  // further rehydrates do not trigger the cb $FlowIgnore
   persistAction.register('canary')
+  // $FlowIgnore
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
   t.is(bootstrappedCb.callCount, 1)
 })
