@@ -27,12 +27,19 @@ const initialState: PersistorState = {
 const persistorReducer = (state = initialState, action) => {
   switch (action.type) {
     case REGISTER:
-      return { ...state, registry: [...state.registry, action.key] }
+      return {
+        ...state,
+        registry: [...state.registry, action.key],
+      }
     case REHYDRATE:
       let firstIndex = state.registry.indexOf(action.key)
       let registry = [...state.registry]
       registry.splice(firstIndex, 1)
-      return { ...state, registry, bootstrapped: registry.length === 0 }
+      return {
+        ...state,
+        registry,
+        bootstrapped: registry.length === 0,
+      }
     default:
       return state
   }
@@ -91,8 +98,12 @@ export default function persistStore(
     }
   }
 
+  let { dispatch, getState, subscribe, ...rest } = _pStore
   let persistor: Persistor = {
-    ..._pStore,
+    ...rest,
+    dispatch,
+    getState,
+    subscribe,
     purge: () => {
       let results = []
       store.dispatch({
@@ -119,7 +130,11 @@ export default function persistStore(
       })
     },
     persist: () => {
-      store.dispatch({ type: PERSIST, register, rehydrate })
+      store.dispatch({
+        type: PERSIST,
+        register,
+        rehydrate,
+      })
     },
   }
 
