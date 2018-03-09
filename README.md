@@ -71,7 +71,7 @@ const App = () => {
   
 #### `persistStore(store, [config, callback])`
   - arguments
-    - **store** *persist config* The store to be persisted.
+    - **store** *redux store* The store to be persisted.
     - **config** *object* (typically null)
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
