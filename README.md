@@ -21,7 +21,7 @@ Basic usage involves adding `persistReducer` and `persistStore` to your setup. *
 
 import { createStore } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
+import storage from 'redux-persist/storage' // defaults to localStorage for web and AsyncStorage for react-native
 
 import rootReducer from './reducers'
 
@@ -42,7 +42,7 @@ export default () => {
 If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux. **NOTE** the `PersistGate` loading prop can be null, or any react instance, e.g. `loading={<Loading />}`
 
 ```js
-import { PersistGate } from 'redux-persist/integration/react'
+import { PersistGate } from 'redux-persist/react'
 
 // ... normal setup, create store and persistor, import components etc.
 
@@ -68,7 +68,7 @@ const App = () => {
     - **reducer** *function*
       - any reducer will work, typically this would be the top level reducer returned by `combineReducers`
   - returns an enhanced reducer
-  
+
 #### `persistStore(store, [config, callback])`
   - arguments
     - **store** *redux store* The store to be persisted.
@@ -86,11 +86,11 @@ const App = () => {
       - pauses persistence
     - `.persist()`
       - resumes persistence
-  
+
 ## State Reconciler
 State reconcilers define how incoming state is merged in with initial state. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, lets look at how each operates:
 
-1. **hardSet** (`import hardSet from 'redux-persist/lib/stateReconciler/hardSet'`)
+1. **hardSet** (`import {hardSet} from 'redux-persist'`)
 This will hard set incoming state. This can be desirable in some cases where persistReducer is nested deeper in your reducer tree, or if you do not rely on initialState in your reducer.
    - **incoming state**: `{ foo: incomingFoo }`
    - **initial state**: `{ foo: initialFoo, bar: initialBar }`
@@ -100,7 +100,7 @@ This will auto merge one level deep. Auto merge means if the some piece of subst
    - **incoming state**: `{ foo: incomingFoo }`
    - **initial state**: `{ foo: initialFoo, bar: initialBar }`
    - **reconciled state**: `{ foo: incomingFoo, bar: initialBar }` // note incomingFoo overwrites initialFoo
-3. **autoMergeLevel2** (`import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'`)
+3. **autoMergeLevel2** (`import {autoMergeLevel2} from 'redux-persist'`)
 This acts just like autoMergeLevel1, except it shallow merges two levels
    - **incoming state**: `{ foo: incomingFoo }`
    - **initial state**: `{ foo: initialFoo, bar: initialBar }`
@@ -108,7 +108,7 @@ This acts just like autoMergeLevel1, except it shallow merges two levels
 
 #### Example
 ```js
-import hardSet from 'redux-persist/lib/stateReconciler/hardSet'
+import {hardSet} from 'redux-persist'
 
 const persistConfig = {
   key: 'root',
@@ -145,7 +145,7 @@ Nested persist can be useful for including different storage adapters, code spli
 ```js
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/storage'
 
 import { authReducer, otherReducer } from './reducers'
 
