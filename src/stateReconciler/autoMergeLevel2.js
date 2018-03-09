@@ -32,7 +32,12 @@ export default function autoMergeLevel2<State: Object>(
       }
       if (isPlainEnoughObject(reducedState[key])) {
         // if object is plain enough shallow merge the new values (hence "Level2")
-        newState[key] = { ...newState[key], ...inboundState[key] }
+        Object.keys(inboundState[key]).forEach(prop => {
+          // if the newState doesn't have the stored prop, skip it
+          if(!newState[key].hasOwnProperty(prop)) return;
+          // Copy the new value from the inbound stored state
+          newState[key][prop] = inboundState[key][prop];
+        });
         return
       }
       // otherwise hard set
