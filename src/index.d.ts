@@ -67,7 +67,7 @@ declare module "redux-persist/lib/purgeStoredState" {
 
 declare module "redux-persist/integration/react" {
     import { ReactNode, PureComponent } from "react";
-    import { Persistor, WebStorage } from "redux-persist";
+    import { Persistor } from "redux-persist";
 
     /**
      * Properties of @see PersistGate
@@ -88,7 +88,7 @@ declare module "redux-persist/integration/react" {
      * @see PersistGateProps
      * @see PersistGateState
      */
-    export class PersistGate extends React.PureComponent<PersistGateProps, PersistorGateState> { }
+    export class PersistGate extends PureComponent<PersistGateProps, PersistorGateState> { }
 }
 
 declare module "redux-persist/es/constants" {
