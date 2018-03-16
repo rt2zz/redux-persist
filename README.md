@@ -174,6 +174,8 @@ export default persistReducer(rootPersistConfig, rootReducer)
 
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
 
+Check this [article](https://medium.freecodecamp.org/how-to-use-redux-persist-when-migrating-your-states-a5dee16b5ead) which explains how to perform custom migrations.
+
 ## Transforms
 Transforms allow you to customize the state object that gets persisted and rehydrated.
 
