@@ -353,14 +353,14 @@ declare module "redux-persist/es/persistReducer" {
 declare module "redux-persist/es/persistStore" {
     import { PersistorOptions, Persistor } from "redux-persist/es/types";
     // persistStore
-    export type BoostrappedCallback = () => any;
+    export type BootstrappedCallback = () => any;
     /**
      * Creates a persistor for a given store.
      * @param store store to be persisted (or match an existent storage)
      * @param persistorOptions enhancers of the persistor
      * @param callback bootstrap callback of sort.
      */
-    export function persistStore(store: any, persistorOptions?: PersistorOptions, callback?: BoostrappedCallback): Persistor;
+    export function persistStore(store: any, persistorOptions?: PersistorOptions, callback?: BootstrappedCallback): Persistor;
 }
 
 declare module "redux-persist/es/purgeStoredState" {
