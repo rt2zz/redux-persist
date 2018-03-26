@@ -342,7 +342,7 @@ declare module "redux-persist/es/persistReducer" {
     import { PersistState, PersistConfig } from "redux-persist/es/types";
     // persistReducer
     export interface PersistPartial { _persist: PersistState }
-    export type BaseReducer<S, A> = (state: S | void, action: A) => S;
+    export type BaseReducer<S, A> = (state: S, action: A) => S;
     /**
      * It provides a way of combining the reducers, replacing redux's @see combineReducers
      * @param config persistence configuration
