@@ -28,7 +28,6 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   const update = (state: Object) => {
     // add any changed keys to the queue
     Object.keys(state).forEach(key => {
-      let subState = state[key]
       if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
       if (lastState[key] === state[key]) return // value unchanged? noop
       if (keysToProcess.indexOf(key) !== -1) return // is key already queued? noop
