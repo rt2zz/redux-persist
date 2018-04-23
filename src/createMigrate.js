@@ -6,9 +6,9 @@ import type { PersistedState, MigrationManifest } from './types'
 
 export default function createMigrate(
   migrations: MigrationManifest,
-  config?: { debug: boolean }
+  config?: { debug: boolean, semver: boolean }
 ) {
-  let { debug } = config || {}
+  let { debug, semver } = config || {}
   return function(
     state: PersistedState,
     currentVersion: number
@@ -35,9 +35,9 @@ export default function createMigrate(
     }
 
     let migrationKeys = Object.keys(migrations)
-      .map(ver => parseInt(ver))
+      .map(ver => semver ? ver : parseInt(ver))
       .filter(key => currentVersion >= key && key > inboundVersion)
-      .sort((a, b) => a - b)
+      .sort((a, b) => a < b ? -1 : 1)
 
     if (process.env.NODE_ENV !== 'production' && debug)
       console.log('redux-persist: migrationKeys', migrationKeys)
