@@ -21,11 +21,31 @@ const migrations = {
   }
 }
 
+// Optional downgradeMigrations
+const downgradeMigrations = {
+  0: (state) => {
+    // Since in version 1 the old state of version 0 was lost,
+    // use the default values for the state
+    const defaultState = getDefaultState()
+    return {
+      ...defaultState,
+      device: state.device   
+    }
+  },
+  -1: (state) => {
+    // migration to intial state version, 
+    // assuming the state structure didn't chnage between -1 and 0
+    return {
+      ...state
+    }
+  }
+}
+
 const persistConfig = {
   key: 'primary',
   version: 1,
   storage,
-  migrate: createMigrate(migrations, { debug: false }),
+  migrate: createMigrate(migrations, downgradeMigrations, { debug: false }),
 }
 
 const finalReducer = persistReducer(persistConfig, reducer)
