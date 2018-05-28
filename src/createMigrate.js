@@ -42,11 +42,13 @@ export default function createMigrate(
         )
         return Promise.resolve(state)
       }
+      // When downgrading we want to sort the migration functions in descending order
       migrationKeys = Object.keys(downgradeMigrations)
         .map(ver => parseInt(ver))
         .filter(key => inboundVersion >= key && key > currentVersion)
         .sort((a, b) => b - a)
     } else {
+      // When upgrading the applying order is instead ascending
       migrationKeys = Object.keys(migrations)
         .map(ver => parseInt(ver))
         .filter(key => currentVersion >= key && key > inboundVersion)
