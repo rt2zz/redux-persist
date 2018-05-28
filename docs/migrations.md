@@ -34,7 +34,7 @@ const downgradeMigrations = {
   },
   -1: (state) => {
     // migration to intial state version, 
-    // assuming the state structure didn't chnage between -1 and 0
+    // assuming the state structure didn't change between -1 and 0
     return {
       ...state
     }
