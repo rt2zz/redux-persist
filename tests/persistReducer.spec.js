@@ -7,16 +7,33 @@ import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 
 import persistReducer from '../src/persistReducer'
+import createMigrate from '../src/createMigrate'
 import { createMemoryStorage } from 'storage-memory'
 import { PERSIST, REHYDRATE } from '../src/constants'
+import type { MigrationManifest } from '../src/types'
 import sleep from './utils/sleep'
 
 let mockStore = configureStore([])
 let reducer = () => ({})
+
+const migrations: MigrationManifest = {
+  [0]: (state) => {
+    return {
+      ...state
+    }
+  },
+  [1]: (state) => {
+    return {
+      ...state
+    }
+  }
+}
+
 const config = {
   key: 'persist-reducer-test',
   version: 1,
-  storage: createMemoryStorage()
+  storage: createMemoryStorage(),
+  migrate: createMigrate(migrations)
 }
 
 test('persistedReducer does not automatically set _persist state', t => {

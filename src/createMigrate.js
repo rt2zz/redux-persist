@@ -6,8 +6,8 @@ import type { PersistedState, MigrationManifest } from './types'
 
 export default function createMigrate(
   migrations: MigrationManifest,
-  downgradeMigrations?: MigrationManifest,
-  config?: { debug: boolean }
+  config?: { debug: boolean },
+  downgradeMigrations?: MigrationManifest
 ) {
   let { debug } = config || {}
   return function(

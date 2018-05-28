@@ -45,7 +45,7 @@ const persistConfig = {
   key: 'primary',
   version: 1,
   storage,
-  migrate: createMigrate(migrations, downgradeMigrations, { debug: false }),
+  migrate: createMigrate(migrations, { debug: false }, downgradeMigrations),
 }
 
 const finalReducer = persistReducer(persistConfig, reducer)
