@@ -343,13 +343,12 @@ declare module "redux-persist/es/persistReducer" {
     import { Reducer, Action } from "redux";
     // persistReducer
     export interface PersistPartial { _persist: PersistState }
-    export type BaseReducer<S, A extends Action> = Reducer<S, A>;
     /**
      * It provides a way of combining the reducers, replacing redux's @see combineReducers
      * @param config persistence configuration
      * @param baseReducer reducer used to persist the state
      */
-    export function persistReducer<S, A extends Action>(config: PersistConfig, baseReducer: BaseReducer<S, A>): BaseReducer<S & PersistPartial, A>;
+    export function persistReducer<S, A extends Action>(config: PersistConfig, baseReducer: Reducer<S, A>): Reducer<S & PersistPartial, A>;
 }
 declare module "redux-persist/es/persistStore" {
     import { PersistorOptions, Persistor } from "redux-persist/es/types";
