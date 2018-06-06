@@ -15,11 +15,15 @@ type Reducer = (state: Object, action: Object) => Object
 // combineReducers + persistReducer with stateReconciler defaulted to autoMergeLevel2
 export default function persistCombineReducers(
   config: PersistConfig,
-  reducers: Reducers
+  reducers: Reducers,
+  customCombineReducersMethod?: Function
 ): Reducer {
   config.stateReconciler =
     config.stateReconciler === undefined
       ? autoMergeLevel2
       : config.stateReconciler
-  return persistReducer(config, combineReducers(reducers))
+  const combineReducersHandler = (customCombineReducersMethod) ?
+    customCombineReducersMethod :
+    combineReducers;
+  return persistReducer(config, combineReducersHandler(reducers))
 }
