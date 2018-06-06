@@ -34,6 +34,14 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       keysToProcess.push(key) // add key to queue
     })
 
+    //if any key is missing in the new state which was present in the lastState,
+    //add it for processing too
+    Object.keys(lastState).forEach(key => {
+      if (state[key] === undefined) {
+        keysToProcess.push(key)
+      }
+    })
+
     // start the time iterator if not running (read: throttle)
     if (timeIterator === null) {
       timeIterator = setInterval(processNextKey, throttle)
