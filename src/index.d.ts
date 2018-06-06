@@ -130,6 +130,7 @@ declare module "redux-persist/es/types" {
         getStoredState?: (config: PersistConfig) => Promise<PersistedState>;
         debug?: boolean;
         serialize?: boolean;
+        timeout?: number;
     }
     export interface PersistorOptions { enhancer?: StoreEnhancer<any> }
     export interface MigrationManifest {
