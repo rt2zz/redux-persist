@@ -83,7 +83,7 @@ declare module "redux-persist/integration/react" {
      */
     export interface PersistorGateState { bootstrapped: boolean; }
     /**
-     * Entry point of your react application to allow it persist a given store @see Persistor and its configuration. 
+     * Entry point of your react application to allow it persist a given store @see Persistor and its configuration.
      * @see Persistor
      * @see PersistGateProps
      * @see PersistGateState
@@ -186,7 +186,7 @@ declare module "redux-persist/es/types" {
     }
     /**
      * User for local storage in react-native.
-     * 
+     *
      * AsyncStorage is a simple, unencrypted, asynchronous, persistent, key-value storage
      * system that is global to the app.  It should be used instead of LocalStorage.
      *
@@ -254,7 +254,7 @@ declare module "redux-persist/es/types" {
     /**
      * LocalForage: Offline storage, improved. Wraps IndexedDB, WebSQL or localStorage using a simple
      * but powerful API.
-     * 
+     *
      * The type definition was obtained from:
      * @see https://github.com/localForage/localForage/blob/master/typings/localforage.d.ts
      */
@@ -340,15 +340,15 @@ declare module "redux-persist/es/persistCombineReducers" {
 
 declare module "redux-persist/es/persistReducer" {
     import { PersistState, PersistConfig } from "redux-persist/es/types";
+    import { Reducer, Action } from "redux";
     // persistReducer
     export interface PersistPartial { _persist: PersistState }
-    export type BaseReducer<S, A> = (state: S | void, action: A) => S;
     /**
      * It provides a way of combining the reducers, replacing redux's @see combineReducers
      * @param config persistence configuration
      * @param baseReducer reducer used to persist the state
      */
-    export function persistReducer<S, A>(config: PersistConfig, baseReducer: BaseReducer<S, A>): (s: S, a: A) => S & PersistPartial;
+    export function persistReducer<S, A extends Action>(config: PersistConfig, baseReducer: Reducer<S, A>): Reducer<S & PersistPartial, A>;
 }
 declare module "redux-persist/es/persistStore" {
     import { PersistorOptions, Persistor } from "redux-persist/es/types";
