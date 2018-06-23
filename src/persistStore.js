@@ -11,7 +11,7 @@ import type {
 } from './types'
 
 import { createStore } from 'redux'
-import persistReducer from './persistReducer'
+// import persistReducer from './persistReducer'
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
