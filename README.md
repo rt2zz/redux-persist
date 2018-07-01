@@ -179,6 +179,7 @@ Transforms allow you to customize the state object that gets persisted and rehyd
 
 There are several libraries that tackle some of the common implementations for transforms.
 - [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
+- [seamless-immutable](https://github.com/hilkeheremans/redux-persist-seamless-immutable) - support seamless-immutable reducers
 - [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
 - [encrypt](https://github.com/maxdeviant/redux-persist-transform-encrypt) - encrypt your serialized state with AES
 - [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
