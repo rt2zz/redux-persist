@@ -81,7 +81,8 @@
     "storage-memory": "0.0.2"
   },
   "peerDependencies": {
-    "redux": ">3.0.0"
+    "redux": ">3.0.0",
+    "react": ">=15.3.0"
   },
   "dependencies": {}
 }
