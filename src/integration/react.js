@@ -24,7 +24,7 @@ export class PersistGate extends PureComponent<Props, State> {
   }
   _unsubscribe: ?Function
 
-  componentDidMount() {
+  componentWillMount() {
     this._unsubscribe = this.props.persistor.subscribe(
       this.handlePersistorState
     )
