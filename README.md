@@ -212,7 +212,7 @@ The createTransform function takes three parameters.
 3. Config.
 
 ## Storage Engines
-- **localStorage** `import storage from 'redux-persist/lib/storage'`
+- **localStorage** for web or **AsyncStorage** for React Native `import storage from 'redux-persist/lib/storage'`
 - **sessionStorage** `import storageSession from 'redux-persist/lib/storage/session'`
 - **AsyncStorage** react-native `import { AsyncStorage } from 'react-native'`
 - **[localForage](https://github.com/mozilla/localForage)** recommended for web
