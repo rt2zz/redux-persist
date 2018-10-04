@@ -36,7 +36,7 @@ export default function getStorage(type: string): Storage {
   else {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
-        `redux-persist failed to create sync storage. falling back to memory storage.`
+        `redux-persist failed to create sync storage. falling back to noop storage.`
       )
     }
     return noopStorage
