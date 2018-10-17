@@ -60,6 +60,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.24.1",
     "cross-env": "^5.0.1",
+    "dtslint": "^0.3.0",
     "eslint": "^4.16.0",
     "eslint-plugin-flowtype": "^2.42.0",
     "eslint-plugin-import": "^2.2.0",
