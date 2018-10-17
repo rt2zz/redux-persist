@@ -4,7 +4,7 @@
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "types": "./src/index.d.ts",
+  "types": "./types/index.d.ts",
   "repository": "rt2zz/redux-persist",
   "files": [
     "es",
@@ -26,6 +26,7 @@
     "precommit": "lint-staged",
     "stats:size": "node ./scripts/size-estimator.js",
     "test": "flow && cross-env BABEL_ENV=commonjs ava",
+    "test:typescript": "dtslint types",
     "version": "npm run clean && npm run build && npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md"
   },
   "lint-staged": {
@@ -48,6 +49,7 @@
     "babel": "inherit"
   },
   "devDependencies": {
+    "@types/react": "^16.4.18",
     "ava": "^0.25.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.1",
