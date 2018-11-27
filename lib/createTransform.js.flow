@@ -22,11 +22,11 @@ export default function createTransform(
   }
 
   return {
-    in: (state: Object | string, key: string, fullState: Object | string) =>
+    in: (state: Object, key: string, fullState: Object) =>
       !whitelistBlacklistCheck(key) && inbound
         ? inbound(state, key, fullState)
         : state,
-    out: (state: Object | string, key: string, fullState: Object | string) =>
+    out: (state: Object, key: string, fullState: Object) =>
       !whitelistBlacklistCheck(key) && outbound
         ? outbound(state, key, fullState)
         : state,
