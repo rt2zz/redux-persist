@@ -88,7 +88,7 @@ const App = () => {
       - resumes persistence
 
 ## State Reconciler
-State reconcilers define how incoming state is merged in with initial state. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, lets look at how each operates:
+State reconcilers define how incoming state is merged in with initial state. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, let's look at how each operates:
 
 1. **hardSet** (`import hardSet from 'redux-persist/lib/stateReconciler/hardSet'`)
 This will hard set incoming state. This can be desirable in some cases where persistReducer is nested deeper in your reducer tree, or if you do not rely on initialState in your reducer.
@@ -118,9 +118,9 @@ const persistConfig = {
 ```
 
 ## React Integration
-Redux persist ships with react integration as a conveinence. The `PersistGate` component is the recommended way to delay rendering until persistence is complete. It works in one of two modes:
+Redux persist ships with react integration as a convenience. The `PersistGate` component is the recommended way to delay rendering until persistence is complete. It works in one of two modes:
 1. `loading` prop: The provided loading value will be rendered until persistence is complete at which point children will be rendered.
-2. function childen: The function will be invoked with a single `bootstrapped` argument. When bootstrapped is true, persistence is complete and it is safe to render the full app. This can be useful for adding transition animations.
+2. function children: The function will be invoked with a single `bootstrapped` argument. When bootstrapped is true, persistence is complete and it is safe to render the full app. This can be useful for adding transition animations.
 
 ## Blacklist & Whitelist
 By Example:
