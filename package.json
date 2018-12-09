@@ -4,7 +4,7 @@
   "description": "persist and rehydrate redux stores",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "types": "./src/index.d.ts",
+  "types": "./types/index.d.ts",
   "repository": "rt2zz/redux-persist",
   "files": [
     "es",
@@ -26,6 +26,7 @@
     "precommit": "lint-staged",
     "stats:size": "node ./scripts/size-estimator.js",
     "test": "flow && cross-env BABEL_ENV=commonjs ava",
+    "test:typescript": "dtslint types",
     "version": "npm run clean && npm run build && npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md"
   },
   "lint-staged": {
@@ -48,6 +49,7 @@
     "babel": "inherit"
   },
   "devDependencies": {
+    "@types/react": "^16.4.18",
     "ava": "^0.25.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.1",
@@ -60,6 +62,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.24.1",
     "cross-env": "^5.0.1",
+    "dtslint": "^0.3.0",
     "eslint": "^4.16.0",
     "eslint-plugin-flowtype": "^2.42.0",
     "eslint-plugin-import": "^2.2.0",
@@ -69,7 +72,7 @@
     "lint-staged": "^6.1.0",
     "lodash": "^4.17.4",
     "prettier": "^1.10.2",
-    "redux": "^3.6.0",
+    "redux": "^4.0.1",
     "redux-mock-store": "^1.5.1",
     "rimraf": "^2.6.1",
     "rollup": "^0.55.3",
@@ -81,7 +84,7 @@
     "storage-memory": "0.0.2"
   },
   "peerDependencies": {
-    "redux": ">3.0.0"
+    "redux": ">4.0.0"
   },
   "dependencies": {}
 }
