@@ -37,7 +37,11 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     //if any key is missing in the new state which was present in the lastState,
     //add it for processing too
     Object.keys(lastState).forEach(key => {
-      if (state[key] === undefined) {
+      if (
+        state[key] === undefined &&
+        passWhitelistBlacklist(key) &&
+        keysToProcess.indexOf(key) === -1
+      ) {
         keysToProcess.push(key)
       }
     })
