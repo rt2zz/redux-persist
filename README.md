@@ -1,10 +1,9 @@
-[![#redux-persist on Discord](https://img.shields.io/discord/522120148597866496.svg)](https://discord.gg/ExrEvmv)
-
 # Redux Persist
 
 Persist and rehydrate a redux store.
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist) [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist) [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
+[![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv)
 
 ## Quickstart
 `npm install redux-persist`
