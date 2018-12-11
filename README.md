@@ -1,3 +1,5 @@
+[![#redux-persist on Discord](https://img.shields.io/discord/522120148597866496.svg)](https://discord.gg/ExrEvmv)
+
 # Redux Persist
 
 Persist and rehydrate a redux store.
