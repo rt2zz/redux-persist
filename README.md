@@ -228,3 +228,17 @@ The createTransform function takes three parameters.
 - **[redux-persist-webextension-storage](https://github.com/ssorallen/redux-persist-webextension-storage)** Storage engine for browser (Chrome, Firefox) web extension storage
 - **[@bankify/redux-persist-realm](https://github.com/bankifyio/redux-persist-realm)** Storage engine for Realm database, you will need to install Realm first
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
+
+## Community
+
+### Chat Room
+
+[![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv) #redux-persist channel in the [Reactiflux](https://www.reactiflux.com/) Discord
+
+### Blog articles from the community
+
+* [The Definitive Guide to Redux Persist: Persist your Redux state in between app launches with Redux Persist](https://blog.reactnativecoach.com/the-definitive-guide-to-redux-persist-84738167975) by Mark Newton
+* [Redux-persist: The Good Parts](https://codeburst.io/redux-persist-the-good-parts-adfab9f91c3b) by Feargal Walsh
+* [Redux: Persist Your State](https://medium.com/async-la/redux-persist-your-state-7ad346c4dd07) by Zack
+* [{Persist}ence is Key: Using Redux-Persist to Store Your State in LocalStorage](https://medium.com/@clrksanford/persist-ence-is-key-using-redux-persist-to-store-your-state-in-localstorage-ac6a000aee63) by Clark Sanford
+* [How to use Redux Persist when migrating your states](https://medium.freecodecamp.org/how-to-use-redux-persist-when-migrating-your-states-a5dee16b5ead) by Lusan Das
