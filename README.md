@@ -231,7 +231,9 @@ The createTransform function takes three parameters.
 
 ## Community
 
-[![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv) #redux-persist channel in the Reactiflux Discord
+### Chat Room
+
+[![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv) #redux-persist channel in the [Reactiflux](https://www.reactiflux.com/) Discord
 
 ### Blog articles from the community
 
