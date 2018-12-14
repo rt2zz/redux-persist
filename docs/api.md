@@ -63,8 +63,12 @@ The Persistor is a redux store unto itself, plus
   debug?: boolean, // true -> verbose logs
   stateReconciler?: false | StateReconciler, // false -> do not automatically reconcile state
   serialize?: boolean, // false -> do not call JSON.parse & stringify when setting & getting from storage
+  writeFailHandler?: Function, // will be called if the storage engine fails during setItem()
 }
 ```
+
+Persisting state involves calling setItem() on the storage engine. By default, this will fail silently if the storage/quota is exhausted.  
+Provide a writeFailHandler(error) function to be notified if this occurs.
 
 ### `type MigrationManifest`
 ```js
