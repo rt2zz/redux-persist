@@ -17,6 +17,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }${config.key}`
   const storage = config.storage
   const serialize = config.serialize === false ? x => x : defaultSerialize
+  const writeFailHandler = config.writeFailHandler || null
 
   // initialize stateful values
   let lastState = {}
@@ -107,6 +108,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
   function onWriteFail(err) {
     // @TODO add fail handlers (typically storage full)
+    if (writeFailHandler) writeFailHandler(err)
     if (err && process.env.NODE_ENV !== 'production') {
       console.error('Error storing data', err)
     }
