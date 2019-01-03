@@ -16,7 +16,10 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
   }${config.key}`
   const storage = config.storage
-  const serialize = config.serialize === false ? x => x : defaultSerialize
+  let serialize = config.serialize === false ? x => x : defaultSerialize
+  if (typeof config.serialize === 'function') {
+    serialize = config.serialize
+  }
   const writeFailHandler = config.writeFailHandler || null
 
   // initialize stateful values
