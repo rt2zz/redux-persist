@@ -12,6 +12,7 @@
     "lib",
     "dist",
     "integration",
+    "types",
     "README.md"
   ],
   "scripts": {
