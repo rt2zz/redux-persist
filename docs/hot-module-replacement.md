@@ -7,14 +7,15 @@ The key modification for using HMR with redux-persist, is the incoming hot reduc
 **configureStore.js**
 ```js
 import { persistReducer } from 'redux-persist'
+import rootReducer from './path/to/reducer'
 
 export default () => {
   // create store and persistor per normal...
 
   if (module.hot) {
-    module.hot.accept(() => {
+    module.hot.accept('./path/to/reducer', () => {
       // This fetch the new state of the above reducers.
-      const nextRootReducer = require('./path/to/reducer')
+      const nextRootReducer = require('./path/to/reducer').default
       store.replaceReducer(
         persistReducer(persistConfig, nextRootReducer)
       )
