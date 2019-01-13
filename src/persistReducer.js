@@ -187,9 +187,6 @@ export default function persistReducer<State: Object, Action: Object>(
     // is state modified ? return original : return updated
     let newState = baseReducer(restState, action)
     if (newState === restState) return state
-    else {
-      newState._persist = _persist
-      return conditionalUpdate(newState)
-    }
+    return conditionalUpdate({ ...newState, _persist })
   }
 }
