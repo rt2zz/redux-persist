@@ -205,6 +205,14 @@ const myTransform = createTransform(
   // define which reducers this transform gets called for.
   { whitelist: ['someReducer'] }
 );
+
+const persistConfig = {
+  // define created tranform in config
+  tranforms: [myTransform]
+  key: 'root',
+  storage,
+}
+
 ```
 
 The createTransform function takes three parameters.
