@@ -191,7 +191,9 @@ When the state object gets persisted, it first gets serialized with `JSON.string
 Below is a Transform that successfully persists a Set property, which simply converts it to an array and back. In this way, the Set gets converted to an Array, which is a recognized data structure in JSON. When pulled out of the persisted store, the array gets converted back to a Set before being saved to the redux store.
 
 ```js
-const myTransform = createTransform(
+import { createTransform } from 'redux-persist';
+
+const SetTransform = createTransform(
   // transform state on its way to being serialized and persisted.
   (inboundState, key) => {
     // convert mySet to an Array.
@@ -205,12 +207,27 @@ const myTransform = createTransform(
   // define which reducers this transform gets called for.
   { whitelist: ['someReducer'] }
 );
+
+export default SetTransform;
 ```
 
-The createTransform function takes three parameters.
-1. An "inbound" function that gets called right before state is persisted.
-2. An "outbound" function that gets called right before state is rehydrated.
-3. Config.
+The `createTransform` function takes three parameters.
+1. An "inbound" function that gets called right before state is persisted (optional).
+2. An "outbound" function that gets called right before state is rehydrated (optional).
+3. A config object that determines which keys in your state will be transformed (by default no keys are transformed).
+
+In order to take effect transforms need to be added to a `PersistReducer`’s config object.
+
+```
+import storage from 'redux-persist/lib/storage';
+import { SetTransform } from './transforms';
+
+const persistConfig = {
+  key: 'root',
+  storage: storage,
+  transforms: [SetTransform]
+};
+```
 
 ## Storage Engines
 - **localStorage** `import storage from 'redux-persist/lib/storage'`
