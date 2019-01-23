@@ -51,16 +51,27 @@ export class PersistGate extends PureComponent<Props, State> {
   }
 
   render() {
+    const { children, loading } = this.props
+
     if (process.env.NODE_ENV !== 'production') {
-      if (typeof this.props.children === 'function' && this.props.loading)
+      if (typeof children === 'function' && loading)
         console.error(
           'redux-persist: PersistGate expects either a function child or loading prop, but not both. The loading prop will be ignored.'
         )
     }
-    if (typeof this.props.children === 'function') {
-      return this.props.children(this.state.bootstrapped)
+    if (typeof children === 'function') {
+      return children(this.state.bootstrapped)
     }
 
-    return this.state.bootstrapped ? this.props.children : this.props.loading
+    if (this.state.bootstrapped) {
+      if (children) {
+        return children
+      }
+      return null
+    } else if (loading) {
+      return loading
+    } else {
+      return null
+    }
   }
 }
