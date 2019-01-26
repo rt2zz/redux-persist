@@ -43,9 +43,8 @@ If you are using react, wrap your root component with [PersistGate](./docs/Persi
 
 ```js
 import { PersistGate } from 'redux-persist/integration/react'
+import { store, persistor } from './configureStore'
 
-// ... normal setup, create store and persistor, import components etc.
-//example : import { store, persistor } from './configureStore'
 
 const App = () => {
   return (
