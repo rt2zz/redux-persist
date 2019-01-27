@@ -73,7 +73,9 @@ declare module "redux-persist/es/types" {
   }
 
   interface MigrationManifest {
-    [key: string]: (state: PersistedState) => PersistedState;
+    [key: string]:
+      | ((state: PersistedState) => PersistedState)
+      | ((state: PersistedState) => Promise<PersistedState>);
   }
 
   /**
