@@ -23,7 +23,8 @@ export type PersistConfig = {
   stateReconciler?: false | Function,
   getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
   debug?: boolean,
-  serialize?: boolean,
+  serialize?: boolean | Function,
+  deserialize?: boolean | Function,
   timeout?: number,
   writeFailHandler?: Function,
 }
