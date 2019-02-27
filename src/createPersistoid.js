@@ -137,5 +137,34 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
 // @NOTE in the future this may be exposed via config
 function defaultSerialize(data) {
+  // $FlowFixMe
+  if (process.env.NODE_ENV === 'development') {
+    const keys = []
+
+    const deepSearchDate = (parentKey, obj) => {
+      for (const [key, value] of Object.entries(obj)) {
+        const currentKey = `${parentKey}.${key}`
+
+        if (typeof value === 'object' && value !== null) {
+          deepSearchDate(currentKey, value)
+        }
+
+        if (value instanceof Date) {
+          keys.push(`\t${currentKey}: "${value}"`)
+        }
+      }
+    }
+
+    deepSearchDate('', data)
+
+    if (keys.length > 0) {
+      console.warn(
+        `redux-persist/createPersistoid: Data value(s) will serialize to string:\n{\n${keys
+          .slice(0, 9)
+          .join(',\n')}\n}`
+      )
+    }
+  }
+
   return JSON.stringify(data)
 }
