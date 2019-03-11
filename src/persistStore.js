@@ -17,7 +17,7 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
-type BoostrappedCb = () => any
+type BoostrappedCb = (store: Object) => any
 
 const initialState: PersistorState = {
   registry: [],
@@ -86,7 +86,7 @@ export default function persistStore(
     store.dispatch(rehydrateAction)
     _pStore.dispatch(rehydrateAction)
     if (boostrappedCb && persistor.getState().bootstrapped) {
-      boostrappedCb()
+      boostrappedCb(store)
       boostrappedCb = false
     }
   }
