@@ -24,6 +24,7 @@
     "build:umd:min": "cross-env BABEL_ENV=es NODE_ENV=production rollup -c -i src/index.js -o dist/redux-persist.min.js",
     "clean": "rimraf es && rimraf lib",
     "flow-copy": "flow-copy-source src es && flow-copy-source src lib",
+    "prepare": "npm run build",
     "precommit": "lint-staged",
     "stats:size": "node ./scripts/size-estimator.js",
     "test": "flow && cross-env BABEL_ENV=commonjs ava",
