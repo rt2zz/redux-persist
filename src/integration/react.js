@@ -38,8 +38,7 @@ export class PersistGate extends PureComponent<Props, State> {
     if (bootstrapped) {
       if (this.props.onBeforeLift) {
         Promise.resolve(this.props.onBeforeLift())
-          .then(() => this.setState({ bootstrapped: true }))
-          .catch(() => this.setState({ bootstrapped: true }))
+          .finally(() => this.setState({ bootstrapped: true }))
       } else {
         this.setState({ bootstrapped: true })
       }
