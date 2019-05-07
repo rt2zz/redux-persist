@@ -64,6 +64,7 @@ export default function persistReducer<State: Object, Action: Object>(
 
   return (state: State, action: Action) => {
     let { _persist, ...rest } = state || {}
+    // $FlowIgnore need to update State type
     let restState: State = rest
 
     if (action.type === PERSIST) {

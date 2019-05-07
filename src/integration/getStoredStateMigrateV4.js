@@ -6,6 +6,7 @@ import type { PersistConfig, Transform } from '../types'
 
 type V4Config = {
   storage?: Object,
+  serialize: boolean,
   keyPrefix?: string,
   transforms?: Array<Transform>,
   blacklist?: Array<string>,
