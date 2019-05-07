@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
     "@babel/plugin-transform-modules-commonjs": "^7.4.4",
@@ -76,9 +77,9 @@
     "redux-mock-store": "^1.5.1",
     "rimraf": "^2.6.1",
     "rollup": "^0.55.3",
-    "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-node-resolve": "^3.0.2",
-    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-uglify": "^3.0.0",
     "sinon": "^4.2.2",
     "storage-memory": "0.0.2"
