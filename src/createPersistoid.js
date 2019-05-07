@@ -48,7 +48,8 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       if (
         state[key] === undefined &&
         passWhitelistBlacklist(key) &&
-        keysToProcess.indexOf(key) === -1
+        keysToProcess.indexOf(key) === -1 &&
+        lastState[key] !== undefined
       ) {
         keysToProcess.push(key)
       }
