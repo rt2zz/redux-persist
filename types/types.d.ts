@@ -29,7 +29,7 @@ declare module "redux-persist/es/types" {
     storage: Storage;
     key: string;
     /**
-     * @depricated keyPrefix is going to be removed in v6.
+     * @deprecated keyPrefix is going to be removed in v6.
      */
     keyPrefix?: string;
     blacklist?: Array<string>;
