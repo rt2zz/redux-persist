@@ -17,12 +17,12 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   }${config.key}`
   const storage = config.storage
   let serialize
-  if (!config.serialize) {
-    serialize = defaultSerialize
+  if (config.serialize === false) {
+    serialize = x => x
   } else if (typeof config.serialize === 'function') {
     serialize = config.serialize
   } else {
-    serialize = x => x
+    serialize = defaultSerialize
   }
   const writeFailHandler = config.writeFailHandler || null
 
