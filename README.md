@@ -233,7 +233,7 @@ const persistConfig = {
 ## Storage Engines
 - **localStorage** `import storage from 'redux-persist/lib/storage'`
 - **sessionStorage** `import storageSession from 'redux-persist/lib/storage/session'`
-- **AsyncStorage** react-native `import { AsyncStorage } from '@react-native-community/async-storage'`
+- **AsyncStorage** react-native `import AsyncStorage from '@react-native-community/async-storage'`
 - **[localForage](https://github.com/mozilla/localForage)** recommended for web
 - **[electron storage](https://github.com/psperber/redux-persist-electron-storage)** Electron support via [electron store](https://github.com/sindresorhus/electron-store)
 - **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** react-native, to mitigate storage size limitations in android ([#199](https://github.com/rt2zz/redux-persist/issues/199), [#284](https://github.com/rt2zz/redux-persist/issues/284))
