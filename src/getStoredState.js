@@ -14,12 +14,12 @@ export default function getStoredState(
   const storage = config.storage
   const debug = config.debug
   let deserialize
-  if (!config.deserialize) {
-    deserialize = defaultDeserialize
+  if (config.deserialize === false) {
+    deserialize = x => x
   } else if (typeof config.deserialize === 'function') {
     deserialize = config.deserialize
   } else {
-    deserialize = x => x
+    deserialize = defaultDeserialize
   }
   return storage.getItem(storageKey).then(serialized => {
     if (!serialized) return undefined
