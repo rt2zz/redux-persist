@@ -12,7 +12,7 @@ Usage Examples:
 1. [Basic Usage](#basic-usage)
 2. [Nested Persists](#nested-persists)
 3. [Hot Module Replacement](./docs/hot-module-replacement.md)
-4. Code Splitting [coming soon]
+4. [Code Splitting](./docs/code-splitting.md)
 
 #### Basic Usage
 Basic usage involves adding `persistReducer` and `persistStore` to your setup. **IMPORTANT** Every app needs to decide how many levels of state they want to "merge". The default is 1 level. Please read through the [state reconciler docs](#state-reconciler) for more information.
