@@ -3,7 +3,6 @@
   "presets": [
     "@babel/preset-flow",
     ["@babel/preset-env", {
-      "useBuiltIns": "usage",
       "modules": false,
       "targets": {
         "browsers": ["last 2 versions"]
