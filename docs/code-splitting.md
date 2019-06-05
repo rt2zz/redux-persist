@@ -1,12 +1,12 @@
 ## Code splitting
 
-With code splitting, we can load only needed in given moment chunks of code used by an application.
+With code splitting, we can load only needed at a given moment chunks of code used by an application.
 
 We already used `replaceReducer` when we talked about HMR.
 
-This function is required to replace old reducer with newly created reducer which includes dynamically injected ones.
+This function is required to replace an old reducer with a newly created reducer that includes dynamically injected ones.
 
-Code splitting is described well at https://redux.js.org/recipes/code-splitting.
+Code splitting is described well at https://redux.js.org/recipes/code-splitting and http://nicolasgallagher.com/redux-modules-and-code-splitting/.
 
 **configureStore.js**
 ```js
@@ -36,9 +36,12 @@ export default () => {
       .filter(reducerKey => !Object.keys(staticReducers).includes(reducerKey))
       .forEach(reducerKey => {
         // Create empty reducers for keys that don't have loaded dynamic reducer yet
-        // They will be replaced be a real ones.
+        // They will be replaced by a real ones.
         store.asyncReducers[reducerKey] = (state = null) => state;
       });
+
+    store.replaceReducer(createReducer(store.asyncReducers));
+    store.persistor.persist();
   });
   store.persistor = persistor;
 
