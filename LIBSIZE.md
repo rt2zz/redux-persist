@@ -17,3 +17,4 @@ The following is a history of size estimates in bytes. This is calculated as a r
 **v6.0.0-pre1**: 17783 Bytes  
 **v6.0.0-pre2**: 11878 Bytes  
 **v6.0.0-pre2.0**: 11934 Bytes  
+**v6.0.0-pre2.1**: 5525 Bytes  
