@@ -186,6 +186,7 @@ There are several libraries that tackle some of the common implementations for t
 - [filter](https://github.com/edy/redux-persist-transform-filter) - store or load a subset of your state
 - [filter-immutable](https://github.com/actra-development/redux-persist-transform-filter-immutable) - store or load a subset of your state with support for immutablejs
 - [expire](https://github.com/gabceb/redux-persist-transform-expire) - expire a specific subset of your state based on a property
+- [expire-reducer](https://github.com/kamranahmedse/redux-persist-expire) - more flexible alternative to expire transformer above with more options
 
 When the state object gets persisted, it first gets serialized with `JSON.stringify()`. If parts of your state object are not mappable to JSON objects, the serialization process may transform these parts of your state in unexpected ways. For example, the javascript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type does not exist in JSON. When you try to serialize a Set via `JSON.stringify()`, it gets converted to an empty object. Probably not what you want.
 
