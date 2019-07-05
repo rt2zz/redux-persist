@@ -1,6 +1,5 @@
 declare module "redux-persist/es/types" {
   import { StoreEnhancer } from "redux";
-  import { REGISTER, REHYDRATE } from 'redux-persist/es/constants';
 
   interface PersistState {
     version: number;
@@ -102,7 +101,7 @@ declare module "redux-persist/es/types" {
   type RehydrateErrorType = any;
 
   interface RehydrateAction {
-    type: typeof REHYDRATE;
+    type: 'persist/REHYDRATE';
     key: string;
     payload?: object | null;
     err?: RehydrateErrorType | null;
@@ -114,7 +113,7 @@ declare module "redux-persist/es/types" {
   }
 
   interface RegisterAction {
-    type: typeof REGISTER;
+    type: 'persist/REGISTER';
     key: string;
   }
 
