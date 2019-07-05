@@ -31,6 +31,7 @@ export type PersistConfig = {
 
 export type PersistorOptions = {
   enhancer?: Function,
+  manualPersist?: boolean
 }
 
 export type Storage = {

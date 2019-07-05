@@ -65,7 +65,7 @@ export default function persistStore(
   let _pStore = createStore(
     persistorReducer,
     initialState,
-    options ? options.enhancer : undefined
+    options && options.enhancer ? options.enhancer : undefined
   )
   let register = (key: string) => {
     _pStore.dispatch({
@@ -122,7 +122,9 @@ export default function persistStore(
     },
   }
 
-  persistor.persist()
+  if (!(options && options.manualPersist)){
+    persistor.persist()
+  }
 
   return persistor
 }
