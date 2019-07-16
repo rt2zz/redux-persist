@@ -1,54 +1,110 @@
 ## Code splitting
 
-With code splitting, we can load only needed at a given moment chunks of code used by an application.
+With code splitting, we can load chunks of code needed only at a given moment.
 
 We already used `replaceReducer` when we talked about HMR.
 
-This function is required to replace an old reducer with a newly created reducer that includes dynamically injected ones.
+This function is required to replace an old reducer with a newly created that includes dynamically injected ones.
 
 Code splitting is described well at https://redux.js.org/recipes/code-splitting and http://nicolasgallagher.com/redux-modules-and-code-splitting/.
 
+The code below is basing on the react-boilerplate:
+
+**app.js**
+```js
+// ...
+
+getStoredState(persistConfig).then(initialState => {
+  const store = configureStore(initialState, history);
+
+  const render = (/* ... */) => {
+    ReactDOM.render(
+      <Provider store={store}>
+        ...
+          <PersistGate loading={/* ... */} persistor={store.persistor}>
+            <App />
+          </PersistGate>
+        ...
+      </Provider>,
+      MOUNT_NODE,
+    );
+  };
+
+  // ...
+  // render(...)
+});
+
+// ...
+```
+
+**reducers.js**
+```js
+// redux-persist config, staticReducers, staticReducersKeys
+
+export default function createReducer(injectedReducers = {}) {
+  const reducers = {
+    ...staticReducers,
+    ...injectedReducers,
+  };
+
+  return persistCombineReducers(rootPersistConfig, reducers);
+}
+
+// ...
+```
+
 **configureStore.js**
 ```js
-import { persistReducer } from 'redux-persist'
-import rootReducer from './path/to/reducer'
+// Imports
 
-// Static reducers...
-
-export default () => {
+export default function configureStore(initialState = {}, history) {
   // ...
 
+  const dumbReducers = Object.keys(initialState)
+    // We always have static reducers loaded
+    .filter(reducerKey => !staticReducersKeys.includes(reducerKey))
+    .reduce((result, reducerKey) => {
+      // Create empty reducers for keys that don't have loaded dynamic reducer yet
+      // They will be replaced by the real one
+      result[reducerKey] = (state = null) => state;
+
+      return result;
+    }, {});
+
   const store = createStore(
-    // createReducer returns static reducers combined with injected ones
-    createReducer({ /* here without async (dynamic) reducers */ }),
-    initialState,
-    composeEnhancers(...enhancers),
+    createReducer(dumbReducers),
+    {},
+    /* Enhancers */,
   );
 
-  // Async reducers registry (in react-boilerplate they are called injected reducers)
+  // ...
+
   // Here we track dynamically injected reducers
-  store.asyncReducers = {};
+  store.injectedReducers = { ...dumbReducers };
 
-  const persistor = persistStore(store, null, () => {
-    // Get persisted state
-    Object.keys(store.getState())
-      // We always have static reducers loaded
-      .filter(reducerKey => !Object.keys(staticReducers).includes(reducerKey))
-      .forEach(reducerKey => {
-        // Create empty reducers for keys that don't have loaded dynamic reducer yet
-        // They will be replaced by a real ones.
-        store.asyncReducers[reducerKey] = (state = null) => state;
-      });
+  // Saga registry
+  store.injectedSagas = {};
 
-    store.replaceReducer(createReducer(store.asyncReducers));
-    store.persistor.persist();
-  });
+  // redux-persist
+  const persistor = persistStore(store, null);
   store.persistor = persistor;
+  persistor.persist();
 
-  // Some method like injectReducer which adds async reducer to registry...
+  // ...
 
-  // HMR...
-
-  return { store, persistor }
+  return store;
 }
+```
+
+**reducerInjectors.js**
+```js
+// ...
+
+    store.replaceReducer(createReducer(store.injectedReducers));
+
+    if (store.dispatch) {
+      store.persistor.persist();
+    }
+
+// ...
 ```
