@@ -44,6 +44,7 @@ declare module "redux-persist/es/types" {
     debug?: boolean;
     serialize?: boolean;
     timeout?: number;
+    writeFailHandler?: (err: Error) => void;
   }
 
   interface PersistorOptions {
