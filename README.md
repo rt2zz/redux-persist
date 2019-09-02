@@ -5,6 +5,18 @@ Persist and rehydrate a redux store.
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist) [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist) [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 [![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv)
 
+## v6 upgrade
+**Web**: no breaking changes
+**React Native**: Users must now explicitly pass their storage engine in. e.g.
+```js
+import AsyncStorage from '@react-native-community/async-storage';
+
+const persistConfig = {
+  //...
+  storage: AsyncStorage
+}
+```
+
 ## Quickstart
 `npm install redux-persist`
 
