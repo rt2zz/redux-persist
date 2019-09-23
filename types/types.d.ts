@@ -42,7 +42,8 @@ declare module "redux-persist/es/types" {
      */
     getStoredState?: (config: PersistConfig<S, RS, HSS, ESS>) => Promise<PersistedState>;
     debug?: boolean;
-    serialize?: boolean;
+    serialize?: boolean | (data: any) => any;
+    deseriazlize?: boolean | (serialized: any) => any;
     timeout?: number;
     writeFailHandler?: (err: Error) => void;
   }
