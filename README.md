@@ -233,7 +233,7 @@ The `createTransform` function takes three parameters.
 
 In order to take effect transforms need to be added to a `PersistReducer`’s config object.
 
-```
+```js
 import storage from 'redux-persist/lib/storage';
 import { SetTransform } from './transforms';
 
