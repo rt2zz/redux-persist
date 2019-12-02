@@ -57,7 +57,9 @@ If you are using react, wrap your root component with [PersistGate](./docs/Persi
 ```js
 import { PersistGate } from 'redux-persist/integration/react'
 
-// ... normal setup, create store and persistor, import components etc.
+// configureStore.js returns a function, so, you must deconstruct store and persistor
+import configureStore from './configureStore.js';
+const { store, persistor } = configureStore();
 
 const App = () => {
   return (
