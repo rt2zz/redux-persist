@@ -9,6 +9,10 @@ Persist and rehydrate a redux store.
 **Web**: no breaking changes
 **React Native**: Users must now explicitly pass their storage engine in. e.g.
 ```js
+// If you are using a version of React Native that still includes AsyncStorage
+import { AsyncStorage } from 'react-native';
+
+// If your React Native version no longer includes AsyncStorage
 import AsyncStorage from '@react-native-community/async-storage';
 
 const persistConfig = {
