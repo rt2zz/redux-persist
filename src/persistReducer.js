@@ -66,7 +66,7 @@ export default function persistReducer<State: Object, Action: Object>(
     let { _persist, ...rest } = state || {}
     // $FlowIgnore need to update State type
     let restState: State = rest
-    let timer: number
+    let timer: TimeoutID
 
     if (action.type === PERSIST) {
       let _sealed = false
