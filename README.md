@@ -225,6 +225,7 @@ const SetTransform = createTransform(
 
 export default SetTransform;
 ```
+The 'inboundState' and 'outBoundState' parameters are not a partially parsed version of the global state. They represent the sub-state of the global state that belongs to the reducer 'key'. The value returned from the Transform will be the state associated with the reducer specified by 'key'. The Transform function is called for the state of every reducer specified in the 'whitelist'.
 
 The `createTransform` function takes three parameters.
 1. An "inbound" function that gets called right before state is persisted (optional).
