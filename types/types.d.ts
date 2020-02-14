@@ -72,8 +72,8 @@ declare module "redux-persist/es/types" {
     removeItem(key: string): Promise<void>;
   }
 
-  interface MigrationManifest {
-    [key: string]: (state: PersistedState) => PersistedState;
+  interface MigrationManifest<T extends {} = {}> {
+    [key: string]: (state: T) => T;
   }
 
   /**
