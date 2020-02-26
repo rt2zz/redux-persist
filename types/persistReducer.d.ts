@@ -3,7 +3,7 @@ declare module "redux-persist/es/persistReducer" {
   import { PersistState, PersistConfig } from "redux-persist/es/types";
 
   interface PersistPartial {
-    _persist: PersistState;
+    _persist?: PersistState;
   }
 
   /**
