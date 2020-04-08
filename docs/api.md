@@ -19,7 +19,7 @@ Where Reducer is any reducer `(state, action) => state` and PersistConfig is [de
 ```js
 persistStore(
   store: Store,
-  config?: { enhancer?: Function },
+  config?: PersistorOptions,
   callback?: () => {}
 ): Persistor
 ```
@@ -33,6 +33,16 @@ createMigrate(
   config?: { debug: boolean }
 )
 ```
+
+### `type PersistorOptions`
+```js
+{
+  enhancer?: StoreEnhancer<any>;
+  manualPersist?: boolean;
+}
+```
+
+`persistStore()` will initiate re-hydration unless `manualPersist` in persistor options is set to `true`.
 
 ### `type Persistor`
 ```js
