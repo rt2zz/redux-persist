@@ -6,8 +6,9 @@ Persist and rehydrate a redux store.
 [![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv)
 
 ## v6 upgrade
-**Web**: no breaking changes
-**React Native**: Users must now explicitly pass their storage engine in. e.g.
+- **Web**: no breaking changes
+
+- **React Native**: Users must now explicitly pass their storage engine in. e.g.
 ```js
 import AsyncStorage from '@react-native-community/async-storage';
 
