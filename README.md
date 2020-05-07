@@ -102,7 +102,7 @@ const App = () => {
       - resumes persistence
 
 ## State Reconciler
-State reconcilers define how incoming state which come from storage is merged in with initial state which come from your application. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, let's look at how each operates:
+State reconcilers define how incoming state which come from storage is merged in with initial state which come from your action. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, let's look at how each operates:
 
 1. **hardSet** (`import hardSet from 'redux-persist/lib/stateReconciler/hardSet'`)
 This will hard set incoming state. This can be desirable in some cases where persistReducer is nested deeper in your reducer tree, or if you do not rely on initialState in your reducer.
