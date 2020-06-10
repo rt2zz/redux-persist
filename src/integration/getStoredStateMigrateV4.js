@@ -9,8 +9,8 @@ type V4Config = {
   serialize: boolean,
   keyPrefix?: string,
   transforms?: Array<Transform>,
-  blacklist?: Array<string>,
-  whitelist?: Array<string>,
+  blockList?: Array<string>,
+  allowList?: Array<string>,
 }
 
 export default function getStoredState(v4Config: V4Config) {
@@ -103,8 +103,8 @@ function getStoredStateV4(v4Config: V4Config) {
       v4Config.serialize === false
         ? data => data
         : (serial: string) => JSON.parse(serial)
-    const blacklist = v4Config.blacklist || []
-    const whitelist = v4Config.whitelist || false
+    const blockList = v4Config.blockList || []
+    const allowList = v4Config.allowList || false
     const transforms = v4Config.transforms || []
     const keyPrefix =
       v4Config.keyPrefix !== undefined ? v4Config.keyPrefix : KEY_PREFIX
@@ -128,7 +128,7 @@ function getStoredStateV4(v4Config: V4Config) {
       let persistKeys = allKeys
         .filter(key => key.indexOf(keyPrefix) === 0)
         .map(key => key.slice(keyPrefix.length))
-      let keysToRestore = persistKeys.filter(passWhitelistBlacklist)
+      let keysToRestore = persistKeys.filter(passAllowListBlockList)
 
       let restoreCount = keysToRestore.length
       if (restoreCount === 0) resolve(undefined)
@@ -167,9 +167,9 @@ function getStoredStateV4(v4Config: V4Config) {
       return state
     }
 
-    function passWhitelistBlacklist(key) {
-      if (whitelist && whitelist.indexOf(key) === -1) return false
-      if (blacklist.indexOf(key) !== -1) return false
+    function passAllowListBlockList(key) {
+      if (allowList && allowList.indexOf(key) === -1) return false
+      if (blockList.indexOf(key) !== -1) return false
       return true
     }
 

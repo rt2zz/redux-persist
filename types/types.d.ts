@@ -31,8 +31,8 @@ declare module "redux-persist/es/types" {
      * @deprecated keyPrefix is going to be removed in v6.
      */
     keyPrefix?: string;
-    blacklist?: Array<string>;
-    whitelist?: Array<string>;
+    blockList?: Array<string>;
+    allowList?: Array<string>;
     transforms?: Array<Transform<HSS, ESS, S, RS>>;
     throttle?: number;
     migrate?: PersistMigrate;
