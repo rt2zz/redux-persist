@@ -5,15 +5,22 @@ Persist and rehydrate a redux store.
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist) [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist) [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 [![#redux-persist on Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/ExrEvmv)
 
-## v6 upgrade
-**Web**: no breaking changes
-**React Native**: Users must now explicitly pass their storage engine in. e.g.
-```js
-import AsyncStorage from '@react-native-community/async-storage';
+## v7 upgrade
+Users must now use non oppressive language in **persistConfig**.
+```diff
 
+// Blocklist
 const persistConfig = {
   //...
-  storage: AsyncStorage
+- blacklist: ['navigation'],
++ blocklist: ['navigation'],
+}
+
+// Allowlist
+const persistConfig = {
+  //...
+- whitelist: ['navigation'],
++ allowlist: ['navigation'],
 }
 ```
 
@@ -77,7 +84,7 @@ const App = () => {
   - arguments
     - [**config**](https://github.com/rt2zz/redux-persist/blob/master/src/types.js#L13-L27) *object*
       - required config: `key, storage`
-      - notable other config: `whitelist, blacklist, version, stateReconciler, debug`
+      - notable other config: `allowlist, blocklist, version, stateReconciler, debug`
     - **reducer** *function*
       - any reducer will work, typically this would be the top level reducer returned by `combineReducers`
   - returns an enhanced reducer
@@ -136,26 +143,26 @@ Redux persist ships with react integration as a convenience. The `PersistGate` c
 1. `loading` prop: The provided loading value will be rendered until persistence is complete at which point children will be rendered.
 2. function children: The function will be invoked with a single `bootstrapped` argument. When bootstrapped is true, persistence is complete and it is safe to render the full app. This can be useful for adding transition animations.
 
-## Blacklist & Whitelist
+## Blocklist & Allowlist
 By Example:
 ```js
-// BLACKLIST
+// BLOCKLIST
 const persistConfig = {
   key: 'root',
   storage: storage,
-  blacklist: ['navigation'] // navigation will not be persisted
+  blocklist: ['navigation'] // navigation will not be persisted
 };
 
-// WHITELIST
+// ALLOWLIST
 const persistConfig = {
   key: 'root',
   storage: storage,
-  whitelist: ['navigation'] // only navigation will be persisted
+  allowlist: ['navigation'] // only navigation will be persisted
 };
 ```
 
 ## Nested Persists
-Nested persist can be useful for including different storage adapters, code splitting, or deep filtering. For example while blacklist and whitelist only work one level deep, but we can use a nested persist to blacklist a deeper value:
+Nested persist can be useful for including different storage adapters, code splitting, or deep filtering. For example while blocklist and allowlist only work one level deep, but we can use a nested persist to blocklist a deeper value:
 ```js
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
@@ -166,13 +173,13 @@ import { authReducer, otherReducer } from './reducers'
 const rootPersistConfig = {
   key: 'root',
   storage: storage,
-  blacklist: ['auth']
+  blocklist: ['auth']
 }
 
 const authPersistConfig = {
   key: 'auth',
   storage: storage,
-  blacklist: ['somethingTemporary']
+  blocklist: ['somethingTemporary']
 }
 
 const rootReducer = combineReducers({
@@ -220,7 +227,7 @@ const SetTransform = createTransform(
     return { ...outboundState, mySet: new Set(outboundState.mySet) };
   },
   // define which reducers this transform gets called for.
-  { whitelist: ['someReducer'] }
+  { allowlist: ['someReducer'] }
 );
 
 export default SetTransform;
