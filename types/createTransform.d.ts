@@ -2,8 +2,8 @@ declare module "redux-persist/es/createTransform" {
   import { PersistConfig, Transform, TransformInbound, TransformOutbound } from "redux-persist/es/types";
 
   interface TransformConfig {
-    whitelist?: Array<string>;
-    blacklist?: Array<string>;
+    allowlist?: Array<string>;
+    blocklist?: Array<string>;
   }
 
   // tslint:disable-next-line: strict-export-declare-modifiers

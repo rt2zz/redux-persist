@@ -11,8 +11,8 @@ declare module "redux-persist/es/integration/getStoredStateMigrateV4" {
     storage?: V4Storage;
     keyPrefix?: string;
     transforms?: Array<Transform<any, any>>;
-    blacklist?: Array<string>;
-    whitelist?: Array<string>;
+    blocklist?: Array<string>;
+    allowlist?: Array<string>;
   }
 
   // tslint:disable-next-line: strict-export-declare-modifiers
