@@ -13,7 +13,19 @@ const migrations = {
       device: undefined   
     }
   },
-  1: (state) => {
+  // You can use also `async () => {}` function
+  // For example to move users to other storage
+  1: async ({ users, ...state }) => {
+    try {
+      await insertToOtherStorage(users)
+
+      return state
+    } catch (e) {
+      // Don't forget about exceptions
+      return state
+    }
+  },
+  2: (state) => {
     // migration to keep only device state
     return {
       device: state.device

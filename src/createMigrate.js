@@ -42,15 +42,16 @@ export default function createMigrate(
     if (process.env.NODE_ENV !== 'production' && debug)
       console.log('redux-persist: migrationKeys', migrationKeys)
     try {
-      let migratedState = migrationKeys.reduce((state, versionKey) => {
+      return migrationKeys.reduce((promiseState, versionKey) => {
         if (process.env.NODE_ENV !== 'production' && debug)
           console.log(
             'redux-persist: running migration for versionKey',
             versionKey
           )
-        return migrations[versionKey](state)
-      }, state)
-      return Promise.resolve(migratedState)
+        return promiseState.then(state =>
+          Promise.resolve(migrations[versionKey](state))
+        )
+      }, Promise.resolve(state))
     } catch (err) {
       return Promise.reject(err)
     }
