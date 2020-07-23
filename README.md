@@ -86,7 +86,7 @@ const App = () => {
   - arguments
     - **store** *redux store* The store to be persisted.
     - **config** *object* (typically null)
-      - If you want to avoid that the persistence starts immediately after calling `persistStore`, set the option manualPersist. Example: `{ manualPersist: true }` Persistence can then be started at any point with `peristor.persist()`. You usually want to do this if your storage is not ready when the `persistStore` call is made.
+      - If you want to avoid that the persistence starts immediately after calling `persistStore`, set the option manualPersist. Example: `{ manualPersist: true }` Persistence can then be started at any point with `persistor.persist()`. You usually want to do this if your storage is not ready when the `persistStore` call is made.
     - **callback** *function* will be called after rehydration is finished.
   - returns **persistor** object
 
