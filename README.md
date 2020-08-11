@@ -263,6 +263,21 @@ const persistConfig = {
 - **[redux-persist-pouchdb](https://github.com/yanick/redux-persist-pouchdb)** Storage engine for PouchDB.
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
 
+## Jest mocking
+If you're going to run tests using jest, then add the following to mock redux-persist library
+
+```js
+jest.mock("redux-persist/lib/createPersistoid", () =>
+    jest.fn(() => ({
+        update: jest.fn(),
+        flush: jest.fn(),
+    }))
+);
+```
+credit: @frankenthumbs
+
+issue: [#1235](https://github.com/rt2zz/redux-persist/issues/1235#issuecomment-671454538)
+
 ## Community
 
 ### Chat Room
