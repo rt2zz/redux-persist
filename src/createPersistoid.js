@@ -8,8 +8,8 @@ type IntervalID = any // @TODO remove once flow < 0.63 support is no longer requ
 
 export default function createPersistoid(config: PersistConfig): Persistoid {
   // defaults
-  const blacklist: ?Array<string> = config.blacklist || null
-  const whitelist: ?Array<string> = config.whitelist || null
+  const avoidlist: ?Array<string> = config.avoidlist || null
+  const allowedlist: ?Array<string> = config.allowedlist || null
   const transforms = config.transforms || []
   const throttle = config.throttle || 0
   const storageKey = `${
@@ -36,7 +36,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   const update = (state: Object) => {
     // add any changed keys to the queue
     Object.keys(state).forEach(key => {
-      if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
+      if (!passAllowedlistAvoidList(key)) return // is keyspace ignored? noop
       if (lastState[key] === state[key]) return // value unchanged? noop
       if (keysToProcess.indexOf(key) !== -1) return // is key already queued? noop
       keysToProcess.push(key) // add key to queue
@@ -47,7 +47,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     Object.keys(lastState).forEach(key => {
       if (
         state[key] === undefined &&
-        passWhitelistBlacklist(key) &&
+        passAllowedlistAvoidList(key) &&
         keysToProcess.indexOf(key) === -1 &&
         lastState[key] !== undefined
       ) {
@@ -107,10 +107,10 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       .catch(onWriteFail)
   }
 
-  function passWhitelistBlacklist(key) {
-    if (whitelist && whitelist.indexOf(key) === -1 && key !== '_persist')
+  function passAllowedlistAvoidList(key) {
+    if (allowedlist && allowedlist.indexOf(key) === -1 && key !== '_persist')
       return false
-    if (blacklist && blacklist.indexOf(key) !== -1) return false
+    if (avoidlist && avoidlist.indexOf(key) !== -1) return false
     return true
   }
 
