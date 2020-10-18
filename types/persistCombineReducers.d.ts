@@ -10,6 +10,8 @@ declare module "redux-persist/es/persistCombineReducers" {
    * @returns reducer
    */
   // tslint:disable-next-line: strict-export-declare-modifiers
+  export default function persistCombineReducers<S>(config: PersistConfig<S>, reducers: ReducersMapObject<S, any>): Reducer<S & PersistPartial, any>;
+  // tslint:disable-next-line: strict-export-declare-modifiers
   export default function persistCombineReducers<S, A extends Action = Action>(config: PersistConfig<S>, reducers: ReducersMapObject<S, A>): Reducer<S & PersistPartial, A>;
 }
 
