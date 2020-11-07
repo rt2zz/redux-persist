@@ -13,21 +13,15 @@ export default function getStoredState(
   }${config.key}`
   const storage = config.storage
   const debug = config.debug
-  let deserialize
-  if (config.deserialize === false) {
-    deserialize = x => x
-  } else if (typeof config.deserialize === 'function') {
-    deserialize = config.deserialize
-  } else {
-    deserialize = defaultDeserialize
-  }
-  return storage.getItem(storageKey).then(serialized => {
+  // config.serialize <=> config.deserialize
+  const deserialize = config.serialize ? defaultDeserialize : (x) => x
+  return storage.getItem(storageKey).then((serialized) => {
     if (!serialized) return undefined
     else {
       try {
         let state = {}
         let rawState = deserialize(serialized)
-        Object.keys(rawState).forEach(key => {
+        Object.keys(rawState).forEach((key) => {
           state[key] = transforms.reduceRight((subState, transformer) => {
             return transformer.out(subState, key, rawState)
           }, deserialize(rawState[key]))
