@@ -3,6 +3,7 @@
 type TransformConfig = {
   whitelist?: Array<string>,
   blacklist?: Array<string>,
+  ...
 }
 
 export default function createTransform(
