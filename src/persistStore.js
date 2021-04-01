@@ -46,8 +46,10 @@ export default function persistStore(
   if (process.env.NODE_ENV !== 'production') {
     let optionsToTest: Object = options || {}
     let bannedKeys = [
-      'blacklist',
-      'whitelist',
+      'blacklist', // Deprecated
+      'whitelist', // Deprecated
+      'blocklist',
+      'allowlist',
       'transforms',
       'storage',
       'keyPrefix',
@@ -122,7 +124,7 @@ export default function persistStore(
     },
   }
 
-  if (!(options && options.manualPersist)){
+  if (!(options && options.manualPersist)) {
     persistor.persist()
   }
 

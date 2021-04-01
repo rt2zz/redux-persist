@@ -7,9 +7,21 @@ import type { Persistoid, PersistConfig, Transform } from './types'
 type IntervalID = any // @TODO remove once flow < 0.63 support is no longer required.
 
 export default function createPersistoid(config: PersistConfig): Persistoid {
+  if (process.env.NODE_ENV !== 'production') {
+    if (config.whitelist) {
+      console.warn(
+        `redux-persist "whitelist" is deprecated and will be removed in the next major update. Use "allowlist" instead.`
+      )
+    }
+    if (config.blacklist) {
+      console.warn(
+        `redux-persist "blacklist" is deprecated and will be removed in the next major update. Use "blocklist" instead.`
+      )
+    }
+  }
   // defaults
-  const blacklist: ?Array<string> = config.blacklist || null
-  const whitelist: ?Array<string> = config.whitelist || null
+  const blocklist: ?Array<string> = config.blocklist || config.blacklist || null
+  const allowlist: ?Array<string> = config.allowlist || config.whitelist || null
   const transforms = config.transforms || []
   const throttle = config.throttle || 0
   const storageKey = `${
@@ -36,7 +48,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   const update = (state: Object) => {
     // add any changed keys to the queue
     Object.keys(state).forEach(key => {
-      if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
+      if (!passAllowlistBlocklist(key)) return // is keyspace ignored? noop
       if (lastState[key] === state[key]) return // value unchanged? noop
       if (keysToProcess.indexOf(key) !== -1) return // is key already queued? noop
       keysToProcess.push(key) // add key to queue
@@ -47,7 +59,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     Object.keys(lastState).forEach(key => {
       if (
         state[key] === undefined &&
-        passWhitelistBlacklist(key) &&
+        passAllowlistBlocklist(key) &&
         keysToProcess.indexOf(key) === -1 &&
         lastState[key] !== undefined
       ) {
@@ -107,10 +119,10 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
       .catch(onWriteFail)
   }
 
-  function passWhitelistBlacklist(key) {
-    if (whitelist && whitelist.indexOf(key) === -1 && key !== '_persist')
+  function passAllowlistBlocklist(key) {
+    if (allowlist && allowlist.indexOf(key) === -1 && key !== '_persist')
       return false
-    if (blacklist && blacklist.indexOf(key) !== -1) return false
+    if (blocklist && blocklist.indexOf(key) !== -1) return false
     return true
   }
 
