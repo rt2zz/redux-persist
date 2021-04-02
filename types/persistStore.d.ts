@@ -1,6 +1,6 @@
-declare module 'redux-persist/es/persistStore' {
-  import { Store, Action, AnyAction } from 'redux';
-  import { PersistorOptions, Persistor } from 'redux-persist/es/types';
+declare module "redux-persist/es/persistStore" {
+  import { Store, Action, AnyAction } from "redux";
+  import { PersistorOptions, Persistor } from "redux-persist/es/types";
 
   /**
    * @desc Creates a persistor for a given store.
@@ -16,7 +16,7 @@ declare module 'redux-persist/es/persistStore' {
   ): Persistor;
 }
 
-declare module 'redux-persist/lib/persistStore' {
-  export * from 'redux-persist/es/persistStore';
-  export { default } from 'redux-persist/es/persistStore';
+declare module "redux-persist/lib/persistStore" {
+  export * from "redux-persist/es/persistStore";
+  export { default } from "redux-persist/es/persistStore";
 }
