@@ -166,7 +166,7 @@ import { authReducer, otherReducer } from './reducers'
 const rootPersistConfig = {
   key: 'root',
   storage: storage,
-  blacklist: ['auth']
+  whitelist: ['auth']
 }
 
 const authPersistConfig = {
