@@ -1,7 +1,29 @@
 // @flow
-import React, { PureComponent } from 'react' // eslint-disable-line import/no-unresolved
+import React, { PureComponent, useEffect, useState } from 'react' // eslint-disable-line import/no-unresolved
 import type { Node } from 'react' // eslint-disable-line import/no-unresolved
 import type { Persistor } from '../types'
+
+export function usePersistGate(persistor: Persistor) {
+  const [bootstrapped, setBootstrapped] = useState(false)
+
+  useEffect(() => {
+    if (persistor.getState().bootstrapped) {
+      setBootstrapped(true)
+      return
+    }
+
+    const unsubscribe = persistor.subscribe(() => {
+      if (persistor.getState().bootstrapped) {
+        unsubscribe()
+        setBootstrapped(true)
+      }
+    })
+
+    return unsubscribe
+  }, [persistor])
+
+  return bootstrapped
+}
 
 type Props = {
   onBeforeLift?: Function,
@@ -37,8 +59,9 @@ export class PersistGate extends PureComponent<Props, State> {
     let { bootstrapped } = persistor.getState()
     if (bootstrapped) {
       if (this.props.onBeforeLift) {
-        Promise.resolve(this.props.onBeforeLift())
-          .finally(() => this.setState({ bootstrapped: true }))
+        Promise.resolve(this.props.onBeforeLift()).finally(() =>
+          this.setState({ bootstrapped: true })
+        )
       } else {
         this.setState({ bootstrapped: true })
       }
