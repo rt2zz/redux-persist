@@ -70,6 +70,28 @@ const App = () => {
 };
 ```
 
+Alternatively if you prefer to use react hooks you can use `usePersistGate` to conditionally render.
+
+```js
+import { usePersistGate } from 'redux-persist/integration/react'
+
+// ... normal setup, create store and persistor, import components etc.
+
+const App = () => {
+  const bootstrapped = usePersistGate(persistor);
+
+  if (!bootstrapped) {
+    return null;
+  }
+
+  return (
+    <Provider store={store}>
+      <RootComponent />
+    </Provider>
+  );
+};
+```
+
 ## API
 [Full API](./docs/api.md)
 
