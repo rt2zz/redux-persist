@@ -10,7 +10,7 @@ export default function purgeStoredState(config: PersistConfig<any>) {
   return storage.removeItem(storageKey, warnIfRemoveError)
 }
 
-function warnIfRemoveError(err) {
+function warnIfRemoveError(err: any) {
   if (err && process.env.NODE_ENV !== 'production') {
     console.error(
       'redux-persist/purgeStoredState: Error purging data stored state',

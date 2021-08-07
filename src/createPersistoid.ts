@@ -1,20 +1,21 @@
 import { KEY_PREFIX, REHYDRATE } from './constants'
 
 import type { Persistoid, PersistConfig, Transform } from './types'
+import { KeyAccessState } from './types'
 
 export default function createPersistoid(config: PersistConfig<any>): Persistoid {
   // defaults
-  const blacklist: string[] = config.blacklist || null
-  const whitelist: string[] = config.whitelist || null
+  const blacklist: string[] | null = config.blacklist || null
+  const whitelist: string[] | null = config.whitelist || null
   const transforms = config.transforms || []
   const throttle = config.throttle || 0
   const storageKey = `${
     config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
   }${config.key}`
   const storage = config.storage
-  let serialize
+  let serialize: Function
   if (config.serialize === false) {
-    serialize = x => x
+    serialize = (x: any) => x
   } else if (typeof config.serialize === 'function') {
     serialize = config.serialize
   } else {
@@ -23,13 +24,13 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
   const writeFailHandler = config.writeFailHandler || null
 
   // initialize stateful values
-  let lastState = {}
-  let stagedState = {}
-  let keysToProcess = []
-  let timeIterator = null
-  let writePromise = null
+  let lastState: KeyAccessState = {}
+  let stagedState: KeyAccessState = {}
+  let keysToProcess: string[] = []
+  let timeIterator: any = null
+  let writePromise: Promise<any> | null = null
 
-  const update = (state: Object) => {
+  const update = (state: KeyAccessState) => {
     // add any changed keys to the queue
     Object.keys(state).forEach(key => {
       if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
@@ -66,7 +67,10 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
       return
     }
 
-    let key = keysToProcess.shift()
+    let key: any = keysToProcess.shift()
+    if (key === undefined) {
+      return
+    }
     let endState = transforms.reduce((subState, transformer) => {
       return transformer.in(subState, key, lastState)
     }, lastState[key])
@@ -103,14 +107,14 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
       .catch(onWriteFail)
   }
 
-  function passWhitelistBlacklist(key) {
+  function passWhitelistBlacklist(key: string) {
     if (whitelist && whitelist.indexOf(key) === -1 && key !== '_persist')
       return false
     if (blacklist && blacklist.indexOf(key) !== -1) return false
     return true
   }
 
-  function onWriteFail(err) {
+  function onWriteFail(err: any) {
     // @TODO add fail handlers (typically storage full)
     if (writeFailHandler) writeFailHandler(err)
     if (err && process.env.NODE_ENV !== 'production') {
@@ -133,6 +137,6 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
 }
 
 // @NOTE in the future this may be exposed via config
-function defaultSerialize(data) {
+function defaultSerialize(data: any) {
   return JSON.stringify(data)
 }

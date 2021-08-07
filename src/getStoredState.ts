@@ -1,4 +1,4 @@
-import type { PersistConfig } from './types'
+import type { KeyAccessState, PersistConfig } from './types'
 
 import { KEY_PREFIX } from './constants'
 
@@ -11,19 +11,19 @@ export default function getStoredState(
   }${config.key}`
   const storage = config.storage
   const debug = config.debug
-  let deserialize
+  let deserialize: Function
   if (config.deserialize === false) {
-    deserialize = x => x
+    deserialize = (x: any) => x
   } else if (typeof config.deserialize === 'function') {
     deserialize = config.deserialize
   } else {
     deserialize = defaultDeserialize
   }
-  return storage.getItem(storageKey).then(serialized => {
+  return storage.getItem(storageKey).then((serialized: any) => {
     if (!serialized) return undefined
     else {
       try {
-        let state = {}
+        let state: KeyAccessState = {}
         let rawState = deserialize(serialized)
         Object.keys(rawState).forEach(key => {
           state[key] = transforms.reduceRight((subState, transformer) => {
@@ -43,6 +43,6 @@ export default function getStoredState(
   })
 }
 
-function defaultDeserialize(serial) {
+function defaultDeserialize(serial: string) {
   return JSON.parse(serial)
 }
