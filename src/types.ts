@@ -17,6 +17,10 @@ export type PersistMigrate =
 export type StateReconciler<S> =
   (inboundState: any, state: S, reducedState: S, config: PersistConfig<S>) => S;
 
+export interface KeyAccessState {
+  [key: string]: any;
+}
+
 /**
  * @desc
  * `HSS` means HydratedSubState

@@ -6,8 +6,9 @@
 */
 
 import type { PersistConfig } from '../types'
+import { KeyAccessState } from '../types'
 
-export default function autoMergeLevel2<S>(
+export default function autoMergeLevel2<S extends KeyAccessState>(
   inboundState: S,
   originalState: S,
   reducedState: S,
@@ -16,7 +17,8 @@ export default function autoMergeLevel2<S>(
   let newState = { ...reducedState }
   // only rehydrate if inboundState exists and is an object
   if (inboundState && typeof inboundState === 'object') {
-    Object.keys(inboundState).forEach(key => {
+    const keys: (keyof S)[] = Object.keys(inboundState)
+    keys.forEach(key => {
       // ignore _persist data
       if (key === '_persist') return
       // if reducer modifies substate, skip auto rehydration
@@ -53,6 +55,6 @@ export default function autoMergeLevel2<S>(
   return newState
 }
 
-function isPlainEnoughObject(o) {
+function isPlainEnoughObject(o: any) {
   return o !== null && !Array.isArray(o) && typeof o === 'object'
 }

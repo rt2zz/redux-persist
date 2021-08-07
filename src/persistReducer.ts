@@ -53,10 +53,10 @@ export default function persistReducer<S, A extends Action>(
   const getStoredState = config.getStoredState || defaultGetStoredState
   const timeout =
     config.timeout !== undefined ? config.timeout : DEFAULT_TIMEOUT
-  let _persistoid = null
+  let _persistoid: Persistoid | null = null
   let _purge = false
   let _paused = true
-  const conditionalUpdate = state => {
+  const conditionalUpdate = (state: any) => {
     // update the persistoid only if we are rehydrated and not paused
     state._persist.rehydrated &&
       _persistoid &&
@@ -71,7 +71,7 @@ export default function persistReducer<S, A extends Action>(
 
     if (action.type === PERSIST) {
       let _sealed = false
-      let _rehydrate = (payload, err) => {
+      let _rehydrate = (payload: any, err: any) => {
         // dev warning if we are already sealed
         if (process.env.NODE_ENV !== 'production' && _sealed)
           console.error(
