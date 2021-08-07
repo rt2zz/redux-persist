@@ -8,7 +8,7 @@ import type {
   RehydrateErrorType,
 } from './types'
 
-import { createStore, Store } from 'redux'
+import { AnyAction, createStore, Store } from 'redux'
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 
 type BoostrappedCb = () => any;
@@ -18,7 +18,7 @@ const initialState: PersistorState = {
   bootstrapped: false,
 }
 
-const persistorReducer = (state = initialState, action) => {
+const persistorReducer = (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case REGISTER:
       return { ...state, registry: [...state.registry, action.key] }
@@ -32,6 +32,10 @@ const persistorReducer = (state = initialState, action) => {
   }
 }
 
+interface OptionToTestObject {
+  [key: string]: any;
+}
+
 export default function persistStore(
   store: Store,
   options?: PersistorOptions,
@@ -39,7 +43,7 @@ export default function persistStore(
 ): Persistor {
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
   if (process.env.NODE_ENV !== 'production') {
-    let optionsToTest: Object = options || {}
+    let optionsToTest: OptionToTestObject = options || {}
     let bannedKeys = [
       'blacklist',
       'whitelist',
@@ -88,20 +92,20 @@ export default function persistStore(
   let persistor: Persistor = {
     ..._pStore,
     purge: () => {
-      let results = []
+      let results: Array<any> = []
       store.dispatch({
         type: PURGE,
-        result: purgeResult => {
+        result: (purgeResult: any) => {
           results.push(purgeResult)
         },
       })
       return Promise.all(results)
     },
     flush: () => {
-      let results = []
+      let results: Array<any> = []
       store.dispatch({
         type: FLUSH,
-        result: flushResult => {
+        result: (flushResult: any) => {
           results.push(flushResult)
         },
       })
