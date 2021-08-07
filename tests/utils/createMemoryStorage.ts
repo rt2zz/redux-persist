@@ -1,5 +1,9 @@
+interface StateObj {
+  [key: string]: any;
+}
+
 export function createMemoryStorage() {
-  let state = {}
+  let state: StateObj = {}
   return {
     getItem(key: string): Promise<string> {
       return Promise.resolve(state[key])

@@ -11,8 +11,8 @@ const config = {
   debug: true
 }
 
-let spy;
-let clock;
+let spy: sinon.SinonSpy;
+let clock: sinon.SinonFakeTimers;
 
 test.beforeEach(() => {
     spy = sinon.spy(memoryStorage, 'setItem')

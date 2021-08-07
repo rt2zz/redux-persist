@@ -38,7 +38,7 @@ test('persistStore timeout 0 never bootstraps', t => {
     let r1 = persistReducer({...config, storage: brokenStorage, timeout: 0}, reducer)
     const rootReducer = combineReducers({ r1 })
     const store = createStore(rootReducer)
-    const persistor = persistStore(store, null, () => {
+    const persistor = persistStore(store, undefined, () => {
       console.log('resolve')
       reject()     
     })
@@ -55,7 +55,7 @@ test('persistStore timeout forces bootstrap', t => {
     let r1 = persistReducer({...config, storage: brokenStorage}, reducer)
     const rootReducer = combineReducers({ r1 })
     const store = createStore(rootReducer)
-    const persistor = persistStore(store, null, () => {
+    const persistor = persistStore(store, undefined, () => {
       t.is(persistor.getState().bootstrapped, true)
       resolve()
     })
