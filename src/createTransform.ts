@@ -13,7 +13,7 @@ export default function createTransform(
   let whitelist = config.whitelist || null
   let blacklist = config.blacklist || null
 
-  function whitelistBlacklistCheck(key) {
+  function whitelistBlacklistCheck(key: string) {
     if (whitelist && whitelist.indexOf(key) === -1) return true
     if (blacklist && blacklist.indexOf(key) !== -1) return true
     return false

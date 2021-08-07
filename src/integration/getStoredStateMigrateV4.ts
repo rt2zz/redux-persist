@@ -1,6 +1,6 @@
 import getStoredStateV5 from '../getStoredState'
 
-import type { PersistConfig, Storage, Transform } from '../types'
+import type { KeyAccessState, PersistConfig, Storage, Transform } from '../types'
 
 type V4Config = {
   storage?: Storage,
@@ -57,7 +57,7 @@ const createAsyncLocalStorage = () => {
   if (!hasLocalStorage()) return noStorage
   let localStorage = self.localStorage
   return {
-    getAllKeys: function(cb) {
+    getAllKeys: function(cb: any) {
       try {
         var keys = []
         for (var i = 0; i < localStorage.length; i++) {
@@ -68,7 +68,7 @@ const createAsyncLocalStorage = () => {
         cb(e)
       }
     },
-    getItem(key, cb) {
+    getItem(key: string, cb: any) {
       try {
         var s = localStorage.getItem(key)
         cb(null, s)
@@ -76,7 +76,7 @@ const createAsyncLocalStorage = () => {
         cb(e)
       }
     },
-    setItem(key, string, cb) {
+    setItem(key: string, string: string, cb: any) {
       try {
         localStorage.setItem(key, string)
         cb(null)
@@ -84,7 +84,7 @@ const createAsyncLocalStorage = () => {
         cb(e)
       }
     },
-    removeItem(key, cb) {
+    removeItem(key: string, cb: any) {
       try {
         localStorage.removeItem(key)
         cb && cb(null)
@@ -101,7 +101,7 @@ function getStoredStateV4(v4Config: V4Config) {
     let storage = v4Config.storage || createAsyncLocalStorage()
     const deserializer =
       v4Config.serialize === false
-        ? data => data
+        ? (data: any) => data
         : (serial: string) => JSON.parse(serial)
     const blacklist = v4Config.blacklist || []
     const whitelist = v4Config.whitelist || false
@@ -113,10 +113,10 @@ function getStoredStateV4(v4Config: V4Config) {
     if (storage.keys && !storage.getAllKeys)
       storage = { ...storage, getAllKeys: storage.keys }
 
-    let restoredState = {}
+    let restoredState: KeyAccessState = {}
     let completionCount = 0
 
-    storage.getAllKeys((err: any, allKeys = []) => {
+    storage.getAllKeys((err: any, allKeys:string[] = []) => {
       if (err) {
         if (process.env.NODE_ENV !== 'production')
           console.warn(
@@ -133,7 +133,7 @@ function getStoredStateV4(v4Config: V4Config) {
       let restoreCount = keysToRestore.length
       if (restoreCount === 0) resolve(undefined)
       keysToRestore.forEach(key => {
-        storage.getItem(createStorageKey(key), (err, serialized) => {
+        storage.getItem(createStorageKey(key), (err: any, serialized: string) => {
           if (err && process.env.NODE_ENV !== 'production')
             console.warn(
               'redux-persist/getStoredState: Error restoring data for key:',
@@ -167,13 +167,13 @@ function getStoredStateV4(v4Config: V4Config) {
       return state
     }
 
-    function passWhitelistBlacklist(key) {
+    function passWhitelistBlacklist(key: string) {
       if (whitelist && whitelist.indexOf(key) === -1) return false
       if (blacklist.indexOf(key) !== -1) return false
       return true
     }
 
-    function createStorageKey(key) {
+    function createStorageKey(key: string) {
       return `${keyPrefix}${key}`
     }
   })

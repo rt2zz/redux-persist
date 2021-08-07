@@ -5,11 +5,11 @@ let noopStorage = {
   getItem: noop,
   setItem: noop,
   removeItem: noop,
-  keys: null,
+  keys: [],
   getAllKeys: noop,
 }
 
-function hasStorage(storageType) {
+function hasStorage(storageType: any) {
   if (typeof self !== 'object' || !(storageType in self)) {
     return false
   }
@@ -32,7 +32,7 @@ function hasStorage(storageType) {
 
 export default function getStorage(type: string): Storage {
   const storageType = `${type}Storage`
-  if (hasStorage(storageType)) return self[storageType]
+  if (hasStorage(storageType)) return (self as { [key: string]: any })[storageType]
   else {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
