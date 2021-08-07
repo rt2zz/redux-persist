@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 import { REHYDRATE, REGISTER } from './constants'
 
 import { StoreEnhancer } from "redux";
@@ -111,7 +113,7 @@ export interface Transform<HSS, ESS, S = any, RS = any> {
 export type RehydrateErrorType = any;
 
 export interface RehydrateAction {
-  type: 'persist/REHYDRATE';
+  type: typeof REHYDRATE;
   key: string;
   payload?: object | null;
   err?: RehydrateErrorType | null;
@@ -123,7 +125,7 @@ export interface Persistoid {
 }
 
 export interface RegisterAction {
-  type: 'persist/REGISTER';
+  type: typeof REGISTER;
   key: string;
 }
 
