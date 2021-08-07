@@ -1,5 +1,3 @@
-// @flow
-
 import persistCombineReducers from '../src/persistCombineReducers'
 import { createMemoryStorage } from 'storage-memory'
 

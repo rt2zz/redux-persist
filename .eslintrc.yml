@@ -12,11 +12,3 @@ globals:
 extends:
 - plugin:eslint-plugin-import/warnings
 - plugin:eslint-plugin-import/errors
-
-plugins:
-- flowtype
-
-rules:
-  flowtype/require-valid-file-annotation: [2, "always"]
-  flowtype/boolean-style: [2, "boolean"]
-  flowtype/use-flow-type: 2
