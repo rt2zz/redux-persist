@@ -7,14 +7,17 @@ import { createStore } from 'redux'
 import getStoredState from '../src/getStoredState'
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
-import { createMemoryStorage } from 'storage-memory'
+import createMemoryStorage from './utils/createMemoryStorage'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 
 const INCREMENT = 'INCREMENT'
 
-const initialState = { a: 0, b: 10, c: 100}
-let reducer = (state = initialState, { type }) => {
+interface StateObject {
+  [key: string]: any;
+}
+const initialState: StateObject = { a: 0, b: 10, c: 100}
+let reducer = (state = initialState, { type }: { type: any }) => {
   console.log('action', type)
   if (type === INCREMENT) {
     const result = state

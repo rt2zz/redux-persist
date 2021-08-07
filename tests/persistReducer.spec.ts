@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import configureStore from 'redux-mock-store'
 
 import persistReducer from '../src/persistReducer'
-import { createMemoryStorage } from 'storage-memory'
+import createMemoryStorage from './utils/createMemoryStorage'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 

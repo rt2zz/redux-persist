@@ -1,7 +1,6 @@
 import test from 'ava'
 import sinon from 'sinon'
-import { createMemoryStorage } from 'storage-memory'
-
+import createMemoryStorage from './utils/createMemoryStorage'
 import createPersistoid from '../src/createPersistoid'
 const memoryStorage = createMemoryStorage()
 

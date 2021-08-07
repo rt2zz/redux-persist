@@ -6,7 +6,7 @@ import { combineReducers, createStore } from 'redux'
 
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
-import { createMemoryStorage } from 'storage-memory'
+import createMemoryStorage from './utils/createMemoryStorage'
 import brokenStorage from './utils/brokenStorage'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'

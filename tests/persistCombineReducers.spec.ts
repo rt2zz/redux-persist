@@ -1,5 +1,5 @@
 import persistCombineReducers from '../src/persistCombineReducers'
-import { createMemoryStorage } from 'storage-memory'
+import createMemoryStorage from './utils/createMemoryStorage'
 
 import test from 'ava'
 
