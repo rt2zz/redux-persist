@@ -4,7 +4,7 @@ import { KEY_PREFIX } from './constants'
 
 export default function getStoredState(
   config: PersistConfig<any>
-): Promise<Object | void> {
+): Promise<any | void> {
   const transforms = config.transforms || []
   const storageKey = `${
     config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX

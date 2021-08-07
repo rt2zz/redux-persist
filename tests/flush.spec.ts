@@ -3,7 +3,6 @@
 import test from 'ava'
 import sinon from 'sinon'
 
-import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 import { createStore } from 'redux'
 
@@ -20,7 +19,11 @@ const initialState = { a: 0, b: 10, c: 100}
 let reducer = (state = initialState, { type }) => {
   console.log('action', type)
   if (type === INCREMENT) {
-    return _.mapValues(state, v => v + 1)
+    const result = state
+    Object.keys(state).forEach((key) => {
+      result[key] = state[key] + 1
+    })
+    return result
   }
   return state
 }

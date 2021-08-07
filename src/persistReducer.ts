@@ -1,5 +1,5 @@
 import {
-  Action, Reducer
+  Action, AnyAction, Reducer
 } from 'redux'
 
 import {
@@ -23,7 +23,7 @@ import createPersistoid from './createPersistoid'
 import defaultGetStoredState from './getStoredState'
 import purgeStoredState from './purgeStoredState'
 
-type PersistPartial = { _persist: PersistState }
+type PersistPartial = { _persist: PersistState } | any;
 const DEFAULT_TIMEOUT = 5000
 /*
   @TODO add validation / handling for:
@@ -33,7 +33,7 @@ const DEFAULT_TIMEOUT = 5000
 export default function persistReducer<S, A extends Action>(
   config: PersistConfig<S>,
   baseReducer: Reducer<S, A>
-): Reducer<S & PersistPartial, A> {
+): Reducer<S & PersistPartial, AnyAction> {
   if (process.env.NODE_ENV !== 'production') {
     if (!config) throw new Error('config is required for persistReducer')
     if (!config.key) throw new Error('key is required in persistor config')

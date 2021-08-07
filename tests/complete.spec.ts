@@ -1,10 +1,6 @@
-
-// @flow
-
 import test from 'ava'
 import sinon from 'sinon'
 
-import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 import { combineReducers, createStore } from 'redux'
 

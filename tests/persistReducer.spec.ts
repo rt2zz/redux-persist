@@ -1,9 +1,6 @@
-// @flow
-
 import test from 'ava'
 import sinon from 'sinon'
 
-import _ from 'lodash'
 import configureStore from 'redux-mock-store'
 
 import persistReducer from '../src/persistReducer'
@@ -21,7 +18,7 @@ const config = {
 
 test('persistedReducer does not automatically set _persist state', t => {
   let persistedReducer = persistReducer(config, reducer)
-  let state = persistedReducer({}, {})
+  let state = persistedReducer({}, {type: "UNDEFINED"})
   console.log('state', state)
   t.is(undefined, state._persist)
 })

@@ -1,5 +1,3 @@
-// @flow
-
 import test from 'ava'
 import sinon from 'sinon'
 import { createMemoryStorage } from 'storage-memory'
