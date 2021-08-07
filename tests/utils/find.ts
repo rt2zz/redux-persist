@@ -1,12 +1,8 @@
-interface Collection {
-  [key: string]: any;
-}
-
-export default (collection: Collection, predicate: any): any => {
-  const result: Collection = {}
-  Object.keys(collection).forEach(key => {
-    if (predicate[key] === collection[key]) {
-      result[key] = collection[key]
+export default (collection: Array<any>, predicate: any): any => {
+  let result = {}
+  collection.forEach((value: any) => {
+    if (value.type && value.type === predicate.type) {
+      result = value
     }
   })
   return result
