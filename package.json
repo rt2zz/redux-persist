@@ -23,7 +23,6 @@
     "precommit": "lint-staged",
     "stats:size": "node ./scripts/size-estimator.js",
     "test": "cross-env BABEL_ENV=commonjs ava",
-    "test:typescript": "dtslint types",
     "version": "npm run clean && npm run build && npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md"
   },
   "lint-staged": {
@@ -54,7 +53,6 @@
     "@typescript-eslint/parser": "^4.29.0",
     "ava": "^3.15.0",
     "cross-env": "^7.0.3",
-    "dtslint": "^4.1.3",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.23.4",
     "husky": "^7.0.1",
