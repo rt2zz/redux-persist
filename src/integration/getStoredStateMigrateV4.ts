@@ -28,7 +28,7 @@ function hasLocalStorage() {
   }
 
   try {
-    let storage = self.localStorage
+    const storage = self.localStorage
     const testKey = `redux-persist localStorage test`
     storage.setItem(testKey, 'test')
     storage.getItem(testKey)
@@ -43,7 +43,7 @@ function hasLocalStorage() {
   return true
 }
 
-let noop = (...args: any) => {
+const noop = (...args: any) => {
   /* noop */ return null
 }
 const noStorage = {
@@ -55,12 +55,12 @@ const noStorage = {
 }
 const createAsyncLocalStorage = () => {
   if (!hasLocalStorage()) return noStorage
-  let localStorage = self.localStorage
+  const localStorage = self.localStorage
   return {
     getAllKeys: function(cb: any) {
       try {
-        var keys = []
-        for (var i = 0; i < localStorage.length; i++) {
+        const keys = []
+        for (let i = 0; i < localStorage.length; i++) {
           keys.push(localStorage.key(i))
         }
         cb(null, keys)
@@ -70,7 +70,7 @@ const createAsyncLocalStorage = () => {
     },
     getItem(key: string, cb: any) {
       try {
-        var s = localStorage.getItem(key)
+        const s = localStorage.getItem(key)
         cb(null, s)
       } catch (e) {
         cb(e)
@@ -113,7 +113,7 @@ function getStoredStateV4(v4Config: V4Config) {
     if (storage.keys && !storage.getAllKeys)
       storage = { ...storage, getAllKeys: storage.keys }
 
-    let restoredState: KeyAccessState = {}
+    const restoredState: KeyAccessState = {}
     let completionCount = 0
 
     storage.getAllKeys((err: any, allKeys:string[] = []) => {
@@ -125,12 +125,12 @@ function getStoredStateV4(v4Config: V4Config) {
         return reject(err)
       }
 
-      let persistKeys = allKeys
+      const persistKeys = allKeys
         .filter(key => key.indexOf(keyPrefix) === 0)
         .map(key => key.slice(keyPrefix.length))
-      let keysToRestore = persistKeys.filter(passWhitelistBlacklist)
+      const keysToRestore = persistKeys.filter(passWhitelistBlacklist)
 
-      let restoreCount = keysToRestore.length
+      const restoreCount = keysToRestore.length
       if (restoreCount === 0) resolve(undefined)
       keysToRestore.forEach(key => {
         storage.getItem(createStorageKey(key), (err: any, serialized: string) => {
@@ -151,7 +151,7 @@ function getStoredStateV4(v4Config: V4Config) {
       let state = null
 
       try {
-        let data = serialized ? deserializer(serialized) : undefined
+        const data = serialized ? deserializer(serialized) : undefined
         state = transforms.reduceRight((subState, transformer) => {
           return transformer.out(subState, key, {})
         }, data)

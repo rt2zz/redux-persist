@@ -23,8 +23,8 @@ export default function getStoredState(
     if (!serialized) return undefined
     else {
       try {
-        let state: KeyAccessState = {}
-        let rawState = deserialize(serialized)
+        const state: KeyAccessState = {}
+        const rawState = deserialize(serialized)
         Object.keys(rawState).forEach(key => {
           state[key] = transforms.reduceRight((subState, transformer) => {
             return transformer.out(subState, key, rawState)

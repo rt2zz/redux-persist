@@ -13,7 +13,7 @@ export default function autoMergeLevel1<S extends KeyAccessState>(
   reducedState: S,
   { debug }: PersistConfig<S>
 ): S {
-  let newState = { ...reducedState }
+  const newState = { ...reducedState }
   // only rehydrate if inboundState exists and is an object
   if (inboundState && typeof inboundState === 'object') {
     const keys: (keyof S)[] = Object.keys(inboundState)

@@ -25,8 +25,8 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
 
   // initialize stateful values
   let lastState: KeyAccessState = {}
-  let stagedState: KeyAccessState = {}
-  let keysToProcess: string[] = []
+  const stagedState: KeyAccessState = {}
+  const keysToProcess: string[] = []
   let timeIterator: any = null
   let writePromise: Promise<any> | null = null
 
@@ -67,11 +67,11 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
       return
     }
 
-    let key: any = keysToProcess.shift()
+    const key: any = keysToProcess.shift()
     if (key === undefined) {
       return
     }
-    let endState = transforms.reduce((subState, transformer) => {
+    const endState = transforms.reduce((subState, transformer) => {
       return transformer.in(subState, key, lastState)
     }, lastState[key])
 

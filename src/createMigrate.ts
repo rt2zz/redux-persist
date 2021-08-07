@@ -6,7 +6,7 @@ export default function createMigrate(
   migrations: MigrationManifest,
   config?: { debug: boolean }
 ) {
-  let { debug } = config || {}
+  const { debug } = config || {}
   return function(
     state: PersistedState,
     currentVersion: number
@@ -17,7 +17,7 @@ export default function createMigrate(
       return Promise.resolve(undefined)
     }
 
-    let inboundVersion: number =
+    const inboundVersion: number =
       state._persist && state._persist.version !== undefined
         ? state._persist.version
         : DEFAULT_VERSION
@@ -32,7 +32,7 @@ export default function createMigrate(
       return Promise.resolve(state)
     }
 
-    let migrationKeys = Object.keys(migrations)
+    const migrationKeys = Object.keys(migrations)
       .map(ver => parseInt(ver))
       .filter(key => currentVersion >= key && key > inboundVersion)
       .sort((a, b) => a - b)
@@ -40,7 +40,7 @@ export default function createMigrate(
     if (process.env.NODE_ENV !== 'production' && debug)
       console.log('redux-persist: migrationKeys', migrationKeys)
     try {
-      let migratedState: any = migrationKeys.reduce((state: any, versionKey) => {
+      const migratedState: any = migrationKeys.reduce((state: any, versionKey) => {
         if (process.env.NODE_ENV !== 'production' && debug)
           console.log(
             'redux-persist: running migration for versionKey',

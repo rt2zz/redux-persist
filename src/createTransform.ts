@@ -10,8 +10,8 @@ export default function createTransform(
   outbound: Function,
   config: TransformConfig = {}
 ) {
-  let whitelist = config.whitelist || null
-  let blacklist = config.blacklist || null
+  const whitelist = config.whitelist || null
+  const blacklist = config.blacklist || null
 
   function whitelistBlacklistCheck(key: string) {
     if (whitelist && whitelist.indexOf(key) === -1) return true

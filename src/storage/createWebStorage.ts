@@ -1,7 +1,7 @@
 import getStorage from './getStorage'
 
 export default function createWebStorage(type: string) {
-  let storage = getStorage(type)
+  const storage = getStorage(type)
   return {
     getItem: (key: string): Promise<string> => {
       return new Promise((resolve, reject) => {

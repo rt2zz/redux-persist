@@ -23,8 +23,8 @@ const persistorReducer = (state = initialState, action: AnyAction) => {
     case REGISTER:
       return { ...state, registry: [...state.registry, action.key] }
     case REHYDRATE:
-      let firstIndex = state.registry.indexOf(action.key)
-      let registry = [...state.registry]
+      const firstIndex = state.registry.indexOf(action.key)
+      const registry = [...state.registry]
       registry.splice(firstIndex, 1)
       return { ...state, registry, bootstrapped: registry.length === 0 }
     default:
@@ -43,8 +43,8 @@ export default function persistStore(
 ): Persistor {
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
   if (process.env.NODE_ENV !== 'production') {
-    let optionsToTest: OptionToTestObject = options || {}
-    let bannedKeys = [
+    const optionsToTest: OptionToTestObject = options || {}
+    const bannedKeys = [
       'blacklist',
       'whitelist',
       'transforms',
@@ -53,7 +53,7 @@ export default function persistStore(
       'migrate',
     ]
     bannedKeys.forEach(k => {
-      if (!!optionsToTest[k])
+      if (optionsToTest[k])
         console.error(
           `redux-persist: invalid option passed to persistStore: "${k}". You may be incorrectly passing persistConfig into persistStore, whereas it should be passed into persistReducer.`
         )
@@ -61,20 +61,20 @@ export default function persistStore(
   }
   let boostrappedCb = cb || false
 
-  let _pStore = createStore(
+  const _pStore = createStore(
     persistorReducer,
     initialState,
     options && options.enhancer ? options.enhancer : undefined
   )
-  let register = (key: string) => {
+  const register = (key: string) => {
     _pStore.dispatch({
       type: REGISTER,
       key,
     })
   }
 
-  let rehydrate = (key: string, payload: Object, err: any) => {
-    let rehydrateAction = {
+  const rehydrate = (key: string, payload: Object, err: any) => {
+    const rehydrateAction = {
       type: REHYDRATE,
       payload,
       err,
@@ -89,10 +89,10 @@ export default function persistStore(
     }
   }
 
-  let persistor: Persistor = {
+  const persistor: Persistor = {
     ..._pStore,
     purge: () => {
-      let results: Array<any> = []
+      const results: Array<any> = []
       store.dispatch({
         type: PURGE,
         result: (purgeResult: any) => {
@@ -102,7 +102,7 @@ export default function persistStore(
       return Promise.all(results)
     },
     flush: () => {
-      let results: Array<any> = []
+      const results: Array<any> = []
       store.dispatch({
         type: FLUSH,
         result: (flushResult: any) => {

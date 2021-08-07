@@ -66,12 +66,12 @@ export default function persistReducer<S, A extends Action>(
   }
 
   return (state: any, action: any) => {
-    let { _persist, ...rest } = state || {}
-    let restState: S = rest
+    const { _persist, ...rest } = state || {}
+    const restState: S = rest
 
     if (action.type === PERSIST) {
       let _sealed = false
-      let _rehydrate = (payload: any, err?: Error) => {
+      const _rehydrate = (payload: any, err?: Error) => {
         // dev warning if we are already sealed
         if (process.env.NODE_ENV !== 'production' && _sealed)
           console.error(
@@ -177,15 +177,15 @@ export default function persistReducer<S, A extends Action>(
 
       // @NOTE if key does not match, will continue to default else below
       if (action.key === config.key) {
-        let reducedState = baseReducer(restState, action)
-        let inboundState = action.payload
+        const reducedState = baseReducer(restState, action)
+        const inboundState = action.payload
         // only reconcile state if stateReconciler and inboundState are both defined
-        let reconciledRest: S =
+        const reconciledRest: S =
           stateReconciler !== false && inboundState !== undefined
             ? stateReconciler(inboundState, state, reducedState, config)
             : reducedState
 
-        let newState = {
+        const newState = {
           ...reconciledRest,
           _persist: { ..._persist, rehydrated: true },
         }
@@ -198,7 +198,7 @@ export default function persistReducer<S, A extends Action>(
 
     // run base reducer:
     // is state modified ? return original : return updated
-    let newState = baseReducer(restState, action)
+    const newState = baseReducer(restState, action)
     if (newState === restState) return state
     return conditionalUpdate({ ...newState, _persist })
   }
