@@ -19,6 +19,7 @@ export function createMemoryStorage() {
     getAllKeys(): Promise<Array<string>> {
       return Promise.resolve(Object.keys(state))
     },
+    keys: Object.keys(state)
   }
 }
 

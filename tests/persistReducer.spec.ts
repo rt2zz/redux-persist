@@ -36,7 +36,7 @@ test('persistedReducer calls register and rehydrate after PERSIST', async (t) =>
   let register = sinon.spy()
   let rehydrate = sinon.spy()
   let state = persistedReducer({}, { type: PERSIST, register, rehydrate })
-  await sleep(1)
+  await sleep(5000)
   t.is(register.callCount, 1)
   t.is(rehydrate.callCount, 1)
 })

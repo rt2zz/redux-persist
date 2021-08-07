@@ -71,7 +71,7 @@ export default function persistReducer<S, A extends Action>(
 
     if (action.type === PERSIST) {
       let _sealed = false
-      let _rehydrate = (payload: any, err: any) => {
+      let _rehydrate = (payload: any, err?: Error) => {
         // dev warning if we are already sealed
         if (process.env.NODE_ENV !== 'production' && _sealed)
           console.error(
@@ -133,7 +133,7 @@ export default function persistReducer<S, A extends Action>(
             const migrate = config.migrate || ((s, v) => Promise.resolve(s))
             migrate(restoredState as any, version).then(
               migratedState => {
-                _rehydrate(migratedState, undefined)
+                _rehydrate(migratedState)
               },
               migrateErr => {
                 if (process.env.NODE_ENV !== 'production' && migrateErr)
