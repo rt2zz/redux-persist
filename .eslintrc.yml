@@ -1,6 +1,6 @@
 ---
 
-parser: babel-eslint
+parser: '@typescript-eslint/parser'
 
 globals:
   it: true
@@ -9,6 +9,9 @@ globals:
   test: true
   jest: true
 
+plugins:
+- '@typescript-eslint'
+
 extends:
-- plugin:eslint-plugin-import/warnings
-- plugin:eslint-plugin-import/errors
+- eslint:recommended
+- plugin:@typescript-eslint/recommended
