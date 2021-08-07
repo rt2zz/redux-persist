@@ -11,7 +11,7 @@ import brokenStorage from './utils/brokenStorage'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import sleep from './utils/sleep'
 
-let reducer = () => ({})
+const reducer = () => ({})
 const config = {
   key: 'persist-reducer-test',
   version: 1,
@@ -22,8 +22,8 @@ const config = {
 
 test('multiple persistReducers work together', t => {
   return new Promise((resolve, reject) => {
-    let r1 = persistReducer(config, reducer)
-    let r2 = persistReducer(config, reducer)
+    const r1 = persistReducer(config, reducer)
+    const r2 = persistReducer(config, reducer)
     const rootReducer = combineReducers({ r1, r2 })
     const store = createStore(rootReducer)
     const persistor = persistStore(store, {}, () => {
@@ -35,7 +35,7 @@ test('multiple persistReducers work together', t => {
 
 test('persistStore timeout 0 never bootstraps', t => {
   return new Promise((resolve, reject) => {
-    let r1 = persistReducer({...config, storage: brokenStorage, timeout: 0}, reducer)
+    const r1 = persistReducer({...config, storage: brokenStorage, timeout: 0}, reducer)
     const rootReducer = combineReducers({ r1 })
     const store = createStore(rootReducer)
     const persistor = persistStore(store, undefined, () => {
@@ -52,7 +52,7 @@ test('persistStore timeout 0 never bootstraps', t => {
 
 test('persistStore timeout forces bootstrap', t => {
   return new Promise((resolve, reject) => {
-    let r1 = persistReducer({...config, storage: brokenStorage}, reducer)
+    const r1 = persistReducer({...config, storage: brokenStorage}, reducer)
     const rootReducer = combineReducers({ r1 })
     const store = createStore(rootReducer)
     const persistor = persistStore(store, undefined, () => {

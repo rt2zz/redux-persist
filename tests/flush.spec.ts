@@ -17,7 +17,7 @@ interface StateObject {
   [key: string]: any;
 }
 const initialState: StateObject = { a: 0, b: 10, c: 100}
-let reducer = (state = initialState, { type }: { type: any }) => {
+const reducer = (state = initialState, { type }: { type: any }) => {
   console.log('action', type)
   if (type === INCREMENT) {
     const result = state
@@ -41,15 +41,15 @@ const config = {
 
 test('state before flush is not updated, after flush is', t => {
   return new Promise((resolve, reject) => {
-    let rootReducer = persistReducer(config, reducer)
+    const rootReducer = persistReducer(config, reducer)
     const store = createStore(rootReducer)
     const persistor = persistStore(store, {}, async () => {
       store.dispatch({ type: INCREMENT })
       const state = store.getState()
-      let storedPreFlush = await getStoredState(config)
+      const storedPreFlush = await getStoredState(config)
       t.not(storedPreFlush && storedPreFlush.c, state.c)
       await persistor.flush()
-      let storedPostFlush = await getStoredState(config)
+      const storedPostFlush = await getStoredState(config)
       resolve(t.is(storedPostFlush && storedPostFlush.c, state.c))
     })
   })

@@ -9,7 +9,7 @@ const config = {
 }
 
 test('persistCombineReducers returns a function', t => {
-  let reducer = persistCombineReducers(config, {
+  const reducer = persistCombineReducers(config, {
     foo: () => ({})
   })
 

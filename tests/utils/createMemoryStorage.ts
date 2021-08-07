@@ -3,7 +3,7 @@ interface StateObj {
 }
 
 export function createMemoryStorage() {
-  let state: StateObj = {}
+  const state: StateObj = {}
   return {
     getItem(key: string): Promise<string> {
       return Promise.resolve(state[key])

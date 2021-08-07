@@ -7,40 +7,40 @@ import persistStore from '../src/persistStore'
 import { PERSIST, REHYDRATE } from '../src/constants'
 import find from './utils/find'
 
-let mockStore = configureStore([])
+const mockStore = configureStore([])
 
 test('persistStore dispatches PERSIST action', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
   t.truthy(persistAction)
 })
 
 test('register method adds a key to the registry', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
   persistAction.register('canary')
   t.deepEqual(persistor.getState().registry, ['canary'])
 })
 
 test('rehydrate method fires with the expected shape', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
-  let rehydrateAction = find(actions, { type: REHYDRATE })
+  const rehydrateAction = find(actions, { type: REHYDRATE })
   t.deepEqual(rehydrateAction, { type: REHYDRATE, key: 'canary', payload: { foo: 'bar' }, err: null })
 })
 
 test('rehydrate method removes provided key from registry', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
 
   // register canary
   persistAction.register('canary')
@@ -52,10 +52,10 @@ test('rehydrate method removes provided key from registry', t => {
 })
 
 test('rehydrate method removes exactly one of provided key from registry', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
 
   // register canary twice
   persistAction.register('canary')
@@ -68,10 +68,10 @@ test('rehydrate method removes exactly one of provided key from registry', t => 
 })
 
 test('once registry is cleared for first time, persistor is flagged as bootstrapped', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
 
   persistAction.register('canary')
   t.false(persistor.getState().bootstrapped)
@@ -80,10 +80,10 @@ test('once registry is cleared for first time, persistor is flagged as bootstrap
 })
 
 test('once persistor is flagged as bootstrapped, further registry changes do not affect this value', t => {
-  let store = mockStore()
-  let persistor = persistStore(store)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const persistor = persistStore(store)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
 
   persistAction.register('canary')
   t.false(persistor.getState().bootstrapped)
@@ -97,11 +97,11 @@ test('once persistor is flagged as bootstrapped, further registry changes do not
 })
 
 test('persistStore calls bootstrapped callback (at most once) if provided', t => {
-  let store = mockStore()
-  let bootstrappedCb = sinon.spy()  
-  let persistor = persistStore(store, {}, bootstrappedCb)
-  let actions = store.getActions()
-  let persistAction = find(actions, { type: PERSIST })
+  const store = mockStore()
+  const bootstrappedCb = sinon.spy()  
+  const persistor = persistStore(store, {}, bootstrappedCb)
+  const actions = store.getActions()
+  const persistAction = find(actions, { type: PERSIST })
   
   persistAction.register('canary')
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
