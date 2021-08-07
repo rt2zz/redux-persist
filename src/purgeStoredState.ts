@@ -1,10 +1,8 @@
-// @flow
-
 import type { PersistConfig } from './types'
 
 import { KEY_PREFIX } from './constants'
 
-export default function purgeStoredState(config: PersistConfig) {
+export default function purgeStoredState(config: PersistConfig<any>) {
   const storage = config.storage
   const storageKey = `${
     config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX

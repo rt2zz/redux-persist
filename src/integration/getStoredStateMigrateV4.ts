@@ -1,20 +1,18 @@
-// @flow
-
 import getStoredStateV5 from '../getStoredState'
 
-import type { PersistConfig, Transform } from '../types'
+import type { PersistConfig, Storage, Transform } from '../types'
 
 type V4Config = {
-  storage?: Object,
+  storage?: Storage,
   serialize: boolean,
   keyPrefix?: string,
-  transforms?: Array<Transform>,
+  transforms?: Array<Transform<any, any>>,
   blacklist?: Array<string>,
   whitelist?: Array<string>,
 }
 
 export default function getStoredState(v4Config: V4Config) {
-  return function(v5Config: PersistConfig) {
+  return function(v5Config: PersistConfig<any>) {
     return getStoredStateV5(v5Config).then(state => {
       if (state) return state
       else return getStoredStateV4(v4Config)
@@ -53,6 +51,7 @@ const noStorage = {
   setItem: noop,
   removeItem: noop,
   getAllKeys: noop,
+  keys: []
 }
 const createAsyncLocalStorage = () => {
   if (!hasLocalStorage()) return noStorage
@@ -93,6 +92,7 @@ const createAsyncLocalStorage = () => {
         cb(e)
       }
     },
+    keys: localStorage.keys
   }
 }
 
@@ -116,7 +116,7 @@ function getStoredStateV4(v4Config: V4Config) {
     let restoredState = {}
     let completionCount = 0
 
-    storage.getAllKeys((err, allKeys = []) => {
+    storage.getAllKeys((err: any, allKeys = []) => {
       if (err) {
         if (process.env.NODE_ENV !== 'production')
           console.warn(
@@ -147,7 +147,7 @@ function getStoredStateV4(v4Config: V4Config) {
       })
     })
 
-    function rehydrate(key: string, serialized: ?string) {
+    function rehydrate(key: string, serialized: string) {
       let state = null
 
       try {

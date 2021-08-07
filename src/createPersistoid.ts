@@ -1,15 +1,11 @@
-// @flow
-
 import { KEY_PREFIX, REHYDRATE } from './constants'
 
 import type { Persistoid, PersistConfig, Transform } from './types'
 
-type IntervalID = any // @TODO remove once flow < 0.63 support is no longer required.
-
-export default function createPersistoid(config: PersistConfig): Persistoid {
+export default function createPersistoid(config: PersistConfig<any>): Persistoid {
   // defaults
-  const blacklist: ?Array<string> = config.blacklist || null
-  const whitelist: ?Array<string> = config.whitelist || null
+  const blacklist: string[] = config.blacklist || null
+  const whitelist: string[] = config.whitelist || null
   const transforms = config.transforms || []
   const throttle = config.throttle || 0
   const storageKey = `${
@@ -30,7 +26,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
   let lastState = {}
   let stagedState = {}
   let keysToProcess = []
-  let timeIterator: ?IntervalID = null
+  let timeIterator = null
   let writePromise = null
 
   const update = (state: Object) => {

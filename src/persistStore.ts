@@ -1,5 +1,3 @@
-// @flow
-
 import type {
   Persistor,
   PersistConfig,
@@ -10,13 +8,10 @@ import type {
   RehydrateErrorType,
 } from './types'
 
-import { createStore } from 'redux'
+import { createStore, Store } from 'redux'
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 
-type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
-type Persist = <R>(PersistConfig, MigrationManifest) => R => R
-type CreatePersistor = Object => void
-type BoostrappedCb = () => any
+type BoostrappedCb = () => any;
 
 const initialState: PersistorState = {
   registry: [],
@@ -38,8 +33,8 @@ const persistorReducer = (state = initialState, action) => {
 }
 
 export default function persistStore(
-  store: Object,
-  options?: ?PersistorOptions,
+  store: Store,
+  options?: PersistorOptions,
   cb?: BoostrappedCb
 ): Persistor {
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
@@ -84,7 +79,7 @@ export default function persistStore(
     // dispatch to `store` to rehydrate and `persistor` to track result
     store.dispatch(rehydrateAction)
     _pStore.dispatch(rehydrateAction)
-    if (boostrappedCb && persistor.getState().bootstrapped) {
+    if (typeof boostrappedCb === "function" && persistor.getState().bootstrapped) {
       boostrappedCb()
       boostrappedCb = false
     }

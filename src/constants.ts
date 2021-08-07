@@ -1,5 +1,3 @@
-// @flow
-
 export const KEY_PREFIX = 'persist:'
 export const FLUSH = 'persist/FLUSH'
 export const REHYDRATE = 'persist/REHYDRATE'

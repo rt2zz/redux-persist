@@ -1,5 +1,3 @@
-// @flow
-
 import type { Storage } from '../types'
 
 function noop() {}
@@ -7,6 +5,8 @@ let noopStorage = {
   getItem: noop,
   setItem: noop,
   removeItem: noop,
+  keys: null,
+  getAllKeys: noop,
 }
 
 function hasStorage(storageType) {
@@ -15,7 +15,7 @@ function hasStorage(storageType) {
   }
 
   try {
-    let storage = self[storageType]
+    let storage = self[storageType] as unknown as Storage
     const testKey = `redux-persist ${storageType} test`
     storage.setItem(testKey, 'test')
     storage.getItem(testKey)

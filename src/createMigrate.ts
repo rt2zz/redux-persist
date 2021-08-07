@@ -1,5 +1,3 @@
-// @flow
-
 import { DEFAULT_VERSION } from './constants'
 
 import type { PersistedState, MigrationManifest } from './types'

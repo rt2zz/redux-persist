@@ -1,4 +1,7 @@
-// @flow
+import {
+  Action, Reducer
+} from 'redux'
+
 import {
   FLUSH,
   PAUSE,
@@ -27,10 +30,10 @@ const DEFAULT_TIMEOUT = 5000
   - persisting a reducer which has nested _persist
   - handling actions that fire before reydrate is called
 */
-export default function persistReducer<State: Object, Action: Object>(
-  config: PersistConfig,
-  baseReducer: (State, Action) => State
-): (State, Action) => State & PersistPartial {
+export default function persistReducer<S, A extends Action>(
+  config: PersistConfig<S>,
+  baseReducer: Reducer<S, A>
+): Reducer<S & PersistPartial, A> {
   if (process.env.NODE_ENV !== 'production') {
     if (!config) throw new Error('config is required for persistReducer')
     if (!config.key) throw new Error('key is required in persistor config')
@@ -62,10 +65,10 @@ export default function persistReducer<State: Object, Action: Object>(
     return state
   }
 
-  return (state: State, action: Action) => {
+  return (state: any, action: any) => {
     let { _persist, ...rest } = state || {}
     // $FlowIgnore need to update State type
-    let restState: State = rest
+    let restState: S = rest
 
     if (action.type === PERSIST) {
       let _sealed = false
@@ -127,17 +130,19 @@ export default function persistReducer<State: Object, Action: Object>(
 
       getStoredState(config).then(
         restoredState => {
-          const migrate = config.migrate || ((s, v) => Promise.resolve(s))
-          migrate(restoredState, version).then(
-            migratedState => {
-              _rehydrate(migratedState)
-            },
-            migrateErr => {
-              if (process.env.NODE_ENV !== 'production' && migrateErr)
-                console.error('redux-persist: migration error', migrateErr)
-              _rehydrate(undefined, migrateErr)
-            }
-          )
+          if (restoredState) {
+            const migrate = config.migrate || ((s, v) => Promise.resolve(s))
+            migrate(restoredState as any, version).then(
+              migratedState => {
+                _rehydrate(migratedState, undefined)
+              },
+              migrateErr => {
+                if (process.env.NODE_ENV !== 'production' && migrateErr)
+                  console.error('redux-persist: migration error', migrateErr)
+                _rehydrate(undefined, migrateErr)
+              }
+            )
+          }
         },
         err => {
           _rehydrate(undefined, err)
@@ -176,7 +181,7 @@ export default function persistReducer<State: Object, Action: Object>(
         let reducedState = baseReducer(restState, action)
         let inboundState = action.payload
         // only reconcile state if stateReconciler and inboundState are both defined
-        let reconciledRest: State =
+        let reconciledRest: S =
           stateReconciler !== false && inboundState !== undefined
             ? stateReconciler(inboundState, state, reducedState, config)
             : reducedState

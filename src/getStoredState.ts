@@ -1,11 +1,9 @@
-// @flow
-
 import type { PersistConfig } from './types'
 
 import { KEY_PREFIX } from './constants'
 
 export default function getStoredState(
-  config: PersistConfig
+  config: PersistConfig<any>
 ): Promise<Object | void> {
   const transforms = config.transforms || []
   const storageKey = `${

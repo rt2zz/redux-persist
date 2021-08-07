@@ -1,4 +1,3 @@
-// @flow
 import getStorage from './getStorage'
 
 export default function createWebStorage(type: string) {

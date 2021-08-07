@@ -1,12 +1,10 @@
-// @flow
-import React, { PureComponent } from 'react' // eslint-disable-line import/no-unresolved
-import type { Node } from 'react' // eslint-disable-line import/no-unresolved
+import React, { PureComponent, ReactNode } from 'react' // eslint-disable-line import/no-unresolved
 import type { Persistor } from '../types'
 
 type Props = {
   onBeforeLift?: Function,
-  children: Node | Function,
-  loading: Node,
+  children: ReactNode | Function,
+  loading: ReactNode,
   persistor: Persistor,
 }
 
@@ -23,7 +21,7 @@ export class PersistGate extends PureComponent<Props, State> {
   state = {
     bootstrapped: false,
   }
-  _unsubscribe: ?Function
+  _unsubscribe?: Function
 
   componentDidMount() {
     this._unsubscribe = this.props.persistor.subscribe(

@@ -1,5 +1,3 @@
-// @flow
-
 export { default as persistReducer } from './persistReducer'
 export { default as persistCombineReducers } from './persistCombineReducers'
 export { default as persistStore } from './persistStore'
