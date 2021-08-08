@@ -4,7 +4,6 @@ import pluginTypescript from "@rollup/plugin-typescript"
 import { babel as pluginBabel } from "@rollup/plugin-babel"
 import { terser as pluginTerser } from "rollup-plugin-terser"
 import multi from '@rollup/plugin-multi-entry'
-import replace from '@rollup/plugin-replace'
 
 const moduleName = 'ReduxPersist'
 
@@ -32,6 +31,9 @@ const config = [
         sourcemap: 'inline',
         // copyright
         banner,
+        globals: {
+          react: 'react'
+        }
       },
       // minify
       {
@@ -39,6 +41,9 @@ const config = [
         file: pkg.browser.replace('.js', '.min.js'),
         format: 'iife',
         banner,
+        globals: {
+          react: 'react'
+        },
         plugins: [
           pluginTerser(),
         ],
@@ -61,9 +66,6 @@ const config = [
       }),
       pluginNodeResolve({
         browser: true
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production')
       }),
     ]
   },
@@ -92,9 +94,6 @@ const config = [
       pluginBabel({
         babelHelpers: "bundled",
         configFile: path.resolve(__dirname, ".babelrc.js")
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production')
       }),
     ]
   },
