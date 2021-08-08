@@ -3,6 +3,7 @@ import pluginCommonjs from "@rollup/plugin-commonjs"
 import pluginTypescript from "@rollup/plugin-typescript"
 import { babel as pluginBabel } from "@rollup/plugin-babel"
 import { terser as pluginTerser } from "rollup-plugin-terser"
+import multi from '@rollup/plugin-multi-entry'
 
 const moduleName = 'ReduxPersist'
 
@@ -20,7 +21,7 @@ const config = [
   // browser
   {
     // entry point
-    input: 'src/index.ts',
+    input: 'src/**/*.ts',
     output: [
       // no minify
       {
@@ -43,6 +44,7 @@ const config = [
       }
     ],
     plugins: [
+      multi(),
       pluginTypescript({
         module: "esnext"
       }),
@@ -61,7 +63,7 @@ const config = [
   // es module
   {
     // entry point
-    input: 'src/index.ts',
+    input: 'src/**/*.ts',
     output: [
       {
         file: pkg.main,
@@ -75,6 +77,7 @@ const config = [
       ...Object.keys(pkg.devDependencies || {})
     ],
     plugins: [
+      multi(),
       pluginTypescript({
         module: "esnext"
       }),

@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "ava": "ava",
-    "build": "tsc --outFile dist/index.js --declaration --module amd && rimraf dist/index.js && rollup -c",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
     "clean": "rimraf dist",
     "prepare": "npm run build",
     "precommit": "lint-staged",
@@ -47,6 +47,7 @@
     "@babel/preset-env": "^7.15.0",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-multi-entry": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-typescript": "^8.2.5",
     "@types/react": "^17.0.16",
