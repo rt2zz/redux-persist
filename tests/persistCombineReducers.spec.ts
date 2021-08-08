@@ -16,6 +16,8 @@ test('persistCombineReducers returns a function', t => {
   t.is(typeof reducer, 'function')
 })
 
+/*
 test.skip('persistCombineReducers merges two levels deep of state', t => {
   
 })
+*/

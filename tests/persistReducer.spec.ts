@@ -1,14 +1,11 @@
 import test from 'ava'
 import sinon from 'sinon'
 
-import configureStore from 'redux-mock-store'
-
 import persistReducer from '../src/persistReducer'
 import createMemoryStorage from './utils/createMemoryStorage'
-import { PERSIST, REHYDRATE } from '../src/constants'
+import { PERSIST } from '../src/constants'
 import sleep from './utils/sleep'
 
-const mockStore = configureStore([])
 const reducer = () => ({})
 const config = {
   key: 'persist-reducer-test',
@@ -35,7 +32,7 @@ test('persistedReducer calls register and rehydrate after PERSIST', async (t) =>
   const persistedReducer = persistReducer(config, reducer)
   const register = sinon.spy()
   const rehydrate = sinon.spy()
-  const state = persistedReducer({}, { type: PERSIST, register, rehydrate })
+  persistedReducer({}, { type: PERSIST, register, rehydrate })
   await sleep(5000)
   t.is(register.callCount, 1)
   t.is(rehydrate.callCount, 1)

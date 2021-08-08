@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Storage } from "../../src/types"
+
 interface StateObj {
   [key: string]: any;
 }
 
-export function createMemoryStorage() {
+export function createMemoryStorage():Storage {
   const state: StateObj = {}
   return {
     getItem(key: string): Promise<string> {

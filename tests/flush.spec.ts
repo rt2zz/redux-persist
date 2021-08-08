@@ -1,15 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import test from 'ava'
-import sinon from 'sinon'
-
-import configureStore from 'redux-mock-store'
 import { createStore } from 'redux'
 
 import getStoredState from '../src/getStoredState'
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
 import createMemoryStorage from './utils/createMemoryStorage'
-import { PERSIST, REHYDRATE } from '../src/constants'
-import sleep from './utils/sleep'
 
 const INCREMENT = 'INCREMENT'
 
@@ -40,7 +36,7 @@ const config = {
 }
 
 test('state before flush is not updated, after flush is', t => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const rootReducer = persistReducer(config, reducer)
     const store = createStore(rootReducer)
     const persistor = persistStore(store, {}, async () => {

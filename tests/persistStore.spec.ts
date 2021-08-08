@@ -11,7 +11,7 @@ const mockStore = configureStore([])
 
 test('persistStore dispatches PERSIST action', t => {
   const store = mockStore()
-  const persistor = persistStore(store)
+  persistStore(store)
   const actions = store.getActions()
   const persistAction = find(actions, { type: PERSIST })
   t.truthy(persistAction)
@@ -28,7 +28,7 @@ test('register method adds a key to the registry', t => {
 
 test('rehydrate method fires with the expected shape', t => {
   const store = mockStore()
-  const persistor = persistStore(store)
+  persistStore(store)
   const actions = store.getActions()
   const persistAction = find(actions, { type: PERSIST })
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
@@ -99,7 +99,7 @@ test('once persistor is flagged as bootstrapped, further registry changes do not
 test('persistStore calls bootstrapped callback (at most once) if provided', t => {
   const store = mockStore()
   const bootstrappedCb = sinon.spy()  
-  const persistor = persistStore(store, {}, bootstrappedCb)
+  persistStore(store, {}, bootstrappedCb)
   const actions = store.getActions()
   const persistAction = find(actions, { type: PERSIST })
   

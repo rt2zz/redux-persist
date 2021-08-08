@@ -1,15 +1,10 @@
 import test from 'ava'
-import sinon from 'sinon'
-
-import configureStore from 'redux-mock-store'
 import { combineReducers, createStore } from 'redux'
 
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
 import createMemoryStorage from './utils/createMemoryStorage'
 import brokenStorage from './utils/brokenStorage'
-import { PERSIST, REHYDRATE } from '../src/constants'
-import sleep from './utils/sleep'
 
 const reducer = () => ({})
 const config = {
@@ -21,7 +16,7 @@ const config = {
 }
 
 test('multiple persistReducers work together', t => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const r1 = persistReducer(config, reducer)
     const r2 = persistReducer(config, reducer)
     const rootReducer = combineReducers({ r1, r2 })
