@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import getStoredStateV5 from '../getStoredState'
 
 import type { KeyAccessState, PersistConfig, Storage, Transform } from '../types'
@@ -12,7 +13,7 @@ type V4Config = {
 }
 
 export default function getStoredState(v4Config: V4Config) {
-  return function(v5Config: PersistConfig<any>) {
+  return function(v5Config: PersistConfig<any>): any {
     return getStoredStateV5(v5Config).then(state => {
       if (state) return state
       else return getStoredStateV4(v4Config)
@@ -43,6 +44,7 @@ function hasLocalStorage() {
   return true
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const noop = (...args: any) => {
   /* noop */ return null
 }
@@ -177,8 +179,4 @@ function getStoredStateV4(v4Config: V4Config) {
       return `${keyPrefix}${key}`
     }
   })
-}
-
-function defaultDeserializer(serial: string) {
-  return JSON.parse(serial)
 }

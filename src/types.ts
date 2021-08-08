@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { REHYDRATE, REGISTER } from './constants'
 
 import { StoreEnhancer } from "redux";
@@ -50,7 +50,7 @@ export interface PersistConfig<S, RS = any, HSS = any, ESS = any> {
   getStoredState?: (config: PersistConfig<S, RS, HSS, ESS>) => Promise<PersistedState>;
   debug?: boolean;
   serialize?: boolean;
-  deserialize?: boolean | Function;
+  deserialize?: boolean | ((x: any) => any);
   timeout?: number;
   writeFailHandler?: (err: Error) => void;
 }

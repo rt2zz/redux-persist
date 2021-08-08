@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Action, AnyAction, Reducer
 } from 'redux'
@@ -13,7 +14,6 @@ import {
 
 import type {
   PersistConfig,
-  MigrationManifest,
   PersistState,
   Persistoid,
 } from './types'
@@ -45,7 +45,6 @@ export default function persistReducer<S, A extends Action>(
 
   const version =
     config.version !== undefined ? config.version : DEFAULT_VERSION
-  const debug = config.debug || false
   const stateReconciler =
     config.stateReconciler === undefined
       ? autoMergeLevel1
@@ -130,7 +129,8 @@ export default function persistReducer<S, A extends Action>(
       getStoredState(config).then(
         restoredState => {
           if (restoredState) {
-            const migrate = config.migrate || ((s, v) => Promise.resolve(s))
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const migrate = config.migrate || ((s, _) => Promise.resolve(s))
             migrate(restoredState as any, version).then(
               migratedState => {
                 _rehydrate(migratedState)

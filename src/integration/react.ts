@@ -1,9 +1,10 @@
-import React, { PureComponent, ReactNode } from 'react' // eslint-disable-line import/no-unresolved
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { PureComponent, ReactNode } from 'react'
 import type { Persistor } from '../types'
 
 type Props = {
-  onBeforeLift?: Function,
-  children: ReactNode | Function,
+  onBeforeLift?: () => void,
+  children: ReactNode | ((state: boolean) => ReactNode),
   loading: ReactNode,
   persistor: Persistor,
 }
@@ -21,16 +22,16 @@ export class PersistGate extends PureComponent<Props, State> {
   state = {
     bootstrapped: false,
   }
-  _unsubscribe?: Function
+  _unsubscribe?: () => void
 
-  componentDidMount() {
+  componentDidMount(): void {
     this._unsubscribe = this.props.persistor.subscribe(
       this.handlePersistorState
     )
     this.handlePersistorState()
   }
 
-  handlePersistorState = () => {
+  handlePersistorState = (): void => {
     const { persistor } = this.props
     const { bootstrapped } = persistor.getState()
     if (bootstrapped) {
@@ -44,11 +45,11 @@ export class PersistGate extends PureComponent<Props, State> {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this._unsubscribe && this._unsubscribe()
   }
 
-  render() {
+  render(): ReactNode {
     if (process.env.NODE_ENV !== 'production') {
       if (typeof this.props.children === 'function' && this.props.loading)
         console.error(

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { KeyAccessState, PersistConfig } from './types'
 
 import { KEY_PREFIX } from './constants'
@@ -11,7 +12,7 @@ export default function getStoredState(
   }${config.key}`
   const storage = config.storage
   const debug = config.debug
-  let deserialize: Function
+  let deserialize: (x: any) => any
   if (config.deserialize === false) {
     deserialize = (x: any) => x
   } else if (typeof config.deserialize === 'function') {

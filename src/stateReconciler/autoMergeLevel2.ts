@@ -55,6 +55,6 @@ export default function autoMergeLevel2<S extends KeyAccessState>(
   return newState
 }
 
-function isPlainEnoughObject(o: any) {
+function isPlainEnoughObject(o: unknown) {
   return o !== null && !Array.isArray(o) && typeof o === 'object'
 }

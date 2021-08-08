@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DEFAULT_VERSION } from './constants'
 
 import type { PersistedState, MigrationManifest } from './types'
@@ -5,7 +6,7 @@ import type { PersistedState, MigrationManifest } from './types'
 export default function createMigrate(
   migrations: MigrationManifest,
   config?: { debug: boolean }
-) {
+): (state: PersistedState, currentVersion: number) => Promise<PersistedState> {
   const { debug } = config || {}
   return function(
     state: PersistedState,

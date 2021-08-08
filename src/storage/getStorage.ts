@@ -1,5 +1,6 @@
 import type { Storage } from '../types'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}
 const noopStorage = {
   getItem: noop,
@@ -9,13 +10,13 @@ const noopStorage = {
   getAllKeys: noop,
 }
 
-function hasStorage(storageType: any) {
+function hasStorage(storageType: string) {
   if (typeof self !== 'object' || !(storageType in self)) {
     return false
   }
 
   try {
-    const storage = self[storageType] as unknown as Storage
+    const storage = (self as unknown as { [key: string]: Storage})[storageType] as unknown as Storage
     const testKey = `redux-persist ${storageType} test`
     storage.setItem(testKey, 'test')
     storage.getItem(testKey)
@@ -32,7 +33,7 @@ function hasStorage(storageType: any) {
 
 export default function getStorage(type: string): Storage {
   const storageType = `${type}Storage`
-  if (hasStorage(storageType)) return (self as { [key: string]: any })[storageType]
+  if (hasStorage(storageType)) return (self as unknown as { [key: string]: Storage })[storageType]
   else {
     if (process.env.NODE_ENV !== 'production') {
       console.error(

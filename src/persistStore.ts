@@ -1,11 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   Persistor,
-  PersistConfig,
   PersistorOptions,
   PersistorState,
-  MigrationManifest,
-  RehydrateAction,
-  RehydrateErrorType,
 } from './types'
 
 import { AnyAction, createStore, Store } from 'redux'
@@ -19,12 +16,12 @@ const initialState: PersistorState = {
 }
 
 const persistorReducer = (state = initialState, action: AnyAction) => {
+  const firstIndex = state.registry.indexOf(action.key)
+  const registry = [...state.registry]
   switch (action.type) {
     case REGISTER:
       return { ...state, registry: [...state.registry, action.key] }
     case REHYDRATE:
-      const firstIndex = state.registry.indexOf(action.key)
-      const registry = [...state.registry]
       registry.splice(firstIndex, 1)
       return { ...state, registry, bootstrapped: registry.length === 0 }
     default:
@@ -73,7 +70,7 @@ export default function persistStore(
     })
   }
 
-  const rehydrate = (key: string, payload: Object, err: any) => {
+  const rehydrate = (key: string, payload: Record<string, unknown>, err: any) => {
     const rehydrateAction = {
       type: REHYDRATE,
       payload,

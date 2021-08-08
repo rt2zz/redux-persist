@@ -1,6 +1,7 @@
-import { KEY_PREFIX, REHYDRATE } from './constants'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { KEY_PREFIX } from './constants'
 
-import type { Persistoid, PersistConfig, Transform } from './types'
+import type { Persistoid, PersistConfig } from './types'
 import { KeyAccessState } from './types'
 
 export default function createPersistoid(config: PersistConfig<any>): Persistoid {
@@ -13,7 +14,7 @@ export default function createPersistoid(config: PersistConfig<any>): Persistoid
     config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
   }${config.key}`
   const storage = config.storage
-  let serialize: Function
+  let serialize: (x: any) => any
   if (config.serialize === false) {
     serialize = (x: any) => x
   } else if (typeof config.serialize === 'function') {
