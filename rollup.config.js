@@ -19,56 +19,6 @@ const banner = `/*!
 
 const config = [
   // browser
-  {
-    // entry point
-    input: 'src/**/*.ts',
-    output: [
-      // no minify
-      {
-        name: moduleName,
-        file: pkg.browser,
-        format: 'iife',
-        sourcemap: 'inline',
-        // copyright
-        banner,
-        globals: {
-          react: 'react'
-        }
-      },
-      // minify
-      {
-        name: moduleName,
-        file: pkg.browser.replace('.js', '.min.js'),
-        format: 'iife',
-        banner,
-        globals: {
-          react: 'react'
-        },
-        plugins: [
-          pluginTerser(),
-        ],
-      }
-    ],
-    external: [
-      'react'
-    ],
-    plugins: [
-      multi(),
-      pluginTypescript({
-        module: "esnext"
-      }),
-      pluginCommonjs({
-        extensions: [".js", ".ts"]
-      }),
-      pluginBabel({
-        babelHelpers: "bundled",
-        configFile: path.resolve(__dirname, ".babelrc.js")
-      }),
-      pluginNodeResolve({
-        browser: true
-      }),
-    ]
-  },
   // es module
   {
     // entry point
