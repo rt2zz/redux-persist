@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "ava": "ava",
-    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "build": "npx tsc --outFile dist/index.js --declaration --module system && rimraf dist/index.js && rimraf dist/index.tsbuildinfo && rollup -c",
     "clean": "rimraf dist",
     "prepare": "npm run build",
     "precommit": "lint-staged",
