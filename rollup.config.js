@@ -43,7 +43,9 @@ const config = [
       }
     ],
     plugins: [
-      pluginTypescript(),
+      pluginTypescript({
+        module: "esnext"
+      }),
       pluginCommonjs({
         extensions: [".js", ".ts"]
       }),
@@ -73,7 +75,9 @@ const config = [
       ...Object.keys(pkg.devDependencies || {})
     ],
     plugins: [
-      pluginTypescript(),
+      pluginTypescript({
+        module: "esnext"
+      }),
       pluginBabel({
         babelHelpers: "bundled",
         configFile: path.resolve(__dirname, ".babelrc.js")
