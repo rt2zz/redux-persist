@@ -3,7 +3,6 @@ import pluginCommonjs from "@rollup/plugin-commonjs"
 import pluginTypescript from "@rollup/plugin-typescript"
 import { babel as pluginBabel } from "@rollup/plugin-babel"
 import { terser as pluginTerser } from "rollup-plugin-terser"
-import multi from '@rollup/plugin-multi-entry'
 
 const moduleName = 'ReduxPersist'
 
@@ -17,33 +16,48 @@ const banner = `/*!
   Released under the ${pkg.license} License.
 */`;
 
+const filePath = 'dist/redux-persist.js'
+
 const config = [
   // browser
-  // es module
   {
     // entry point
-    input: 'src/**/*.ts',
+    input: 'src/index.ts',
     output: [
+      // no minify
       {
-        file: pkg.main,
-        format: "es",
-        sourcemap: "inline",
+        name: moduleName,
+        file: filePath,
+        format: 'umd',
+        sourcemap: true,
+        // copyright
         banner,
-        exports: "named"
       },
-    ],
-    external: [
-      ...Object.keys(pkg.devDependencies || {}),
-      'react'
+      // minify
+      {
+        name: moduleName,
+        file: filePath.replace('.js', '.min.js'),
+        format: 'umd',
+        sourcemap: true,
+        banner,
+        plugins: [
+          pluginTerser(),
+        ],
+      }
     ],
     plugins: [
-      multi(),
       pluginTypescript({
         module: "esnext"
+      }),
+      pluginCommonjs({
+        extensions: [".js", ".ts"]
       }),
       pluginBabel({
         babelHelpers: "bundled",
         configFile: path.resolve(__dirname, ".babelrc.js")
+      }),
+      pluginNodeResolve({
+        browser: true,
       }),
     ]
   },
