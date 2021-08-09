@@ -8,13 +8,3 @@ export { default as createPersistoid } from './createPersistoid'
 export { default as purgeStoredState } from './purgeStoredState'
 
 export * from './constants'
-
-import './integration/getStoredStateMigrateV4'
-import './integration/react'
-import './stateReconciler/autoMergeLevel1'
-import './stateReconciler/autoMergeLevel2'
-import './stateReconciler/hardSet'
-import './storage'
-import './storage/getStorage'
-import './storage/session'
-import './storage/createWebStorage'

@@ -1,7 +1,7 @@
 {
     "name": "redux-persist/integration/react",
     "private": true,
-    "main": "../../dist/integration/react",
-    "module": "../../dist/integration/react",
-    "jsnext:main": "../../dist/integration/react"
+    "main": "../../lib/integration/react",
+    "module": "../../es/integration/react",
+    "jsnext:main": "../../es/integration/react"
   }
