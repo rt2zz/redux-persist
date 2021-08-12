@@ -1,18 +1,14 @@
 // @flow
 
 import test from 'ava'
-import sinon from 'sinon'
 
 import _ from 'lodash'
-import configureStore from 'redux-mock-store'
 import { createStore } from 'redux'
 
 import getStoredState from '../src/getStoredState'
 import persistReducer from '../src/persistReducer'
 import persistStore from '../src/persistStore'
 import { createMemoryStorage } from 'storage-memory'
-import { PERSIST, REHYDRATE, FLUSH } from '../src/constants'
-import sleep from './utils/sleep'
 
 const initialState = { a: 0 }
 const persistObj = {
