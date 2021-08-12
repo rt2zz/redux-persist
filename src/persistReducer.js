@@ -6,6 +6,7 @@ import {
   PURGE,
   REHYDRATE,
   DEFAULT_VERSION,
+  RESYNC,
 } from './constants'
 
 import type {
@@ -154,6 +155,19 @@ export default function persistReducer<State: Object, Action: Object>(
       return {
         ...baseReducer(restState, action),
         _persist,
+      }
+    } else if (action.type === RESYNC) {
+      getStoredState(config)
+        .then(
+          restoredState =>
+            action.rehydrate(config.key, restoredState, undefined),
+          err => action.rehydrate(config.key, undefined, err)
+        )
+        .then(() => action.result())
+
+      return {
+        ...baseReducer(restState, action),
+        _persist: { version, rehydrated: false },
       }
     } else if (action.type === FLUSH) {
       action.result(_persistoid && _persistoid.flush())

@@ -100,6 +100,8 @@ const App = () => {
       - pauses persistence
     - `.persist()`
       - resumes persistence
+    - `.resync()`
+      - overrides redux state with the value in storage
 
 ## State Reconciler
 State reconcilers define how incoming state is merged in with initial state. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, let's look at how each operates:

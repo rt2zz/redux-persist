@@ -11,7 +11,7 @@ import type {
 } from './types'
 
 import { createStore } from 'redux'
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
+import { FLUSH, PAUSE, PERSIST, RESYNC, PURGE, REGISTER, REHYDRATE } from './constants'
 
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
@@ -119,6 +119,15 @@ export default function persistStore(
     },
     persist: () => {
       store.dispatch({ type: PERSIST, register, rehydrate })
+    },
+    resync: () => {
+      return new Promise(resolve => {
+        store.dispatch({
+          type: RESYNC,
+          rehydrate,
+          result: () => resolve(),
+        })
+      })
     },
   }
 

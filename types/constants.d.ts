@@ -2,6 +2,7 @@ declare module "redux-persist/es/constants" {
   const KEY_PREFIX: 'persist:';
   const FLUSH: 'persist/FLUSH';
   const REHYDRATE: 'persist/REHYDRATE';
+  const RESYNC: 'persist/RESYNC';
   const PAUSE: 'persist/PAUSE';
   const PERSIST: 'persist/PERSIST';
   const PURGE: 'persist/PURGE';
