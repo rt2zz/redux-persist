@@ -48,7 +48,7 @@ I'll try to get some discussions up to pull together ideas, so we can properly w
 **Web**: no breaking changes
 **React Native**: Users must now explicitly pass their storage engine in. e.g.
 ```js
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const persistConfig = {
   //...
