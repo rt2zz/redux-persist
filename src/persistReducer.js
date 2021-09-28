@@ -66,6 +66,7 @@ export default function persistReducer<State: Object, Action: Object>(
     let { _persist, ...rest } = state || {}
     // $FlowIgnore need to update State type
     let restState: State = rest
+    let timer: TimeoutID
 
     if (action.type === PERSIST) {
       let _sealed = false
@@ -84,10 +85,11 @@ export default function persistReducer<State: Object, Action: Object>(
         if (!_sealed) {
           action.rehydrate(config.key, payload, err)
           _sealed = true
+          clearTimeout(timer)
         }
       }
-      timeout &&
-        setTimeout(() => {
+      if (timeout) {
+        timer = setTimeout(() => {
           !_sealed &&
             _rehydrate(
               undefined,
@@ -98,6 +100,7 @@ export default function persistReducer<State: Object, Action: Object>(
               )
             )
         }, timeout)
+      }
 
       // @NOTE PERSIST resumes if paused.
       _paused = false
