@@ -45,6 +45,6 @@ export default function getStoredState(
   })
 }
 
-function defaultDeserialize(serial) {
+export function defaultDeserialize(serial) {
   return JSON.parse(serial)
 }
