@@ -21,7 +21,7 @@ import defaultGetStoredState from './getStoredState'
 import purgeStoredState from './purgeStoredState'
 
 type PersistPartial = { _persist: PersistState }
-const DEFAULT_TIMEOUT = 5000
+export const DEFAULT_TIMEOUT = 5000
 /*
   @TODO add validation / handling for:
   - persisting a reducer which has nested _persist
