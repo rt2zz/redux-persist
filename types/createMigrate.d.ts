@@ -11,7 +11,7 @@ declare module "redux-persist/es/createMigrate" {
    * @param config migration configuration
    */
   // tslint:disable-next-line: strict-export-declare-modifiers
-  export default function createMigrate(migrations: MigrationManifest, config?: MigrationConfig): PersistMigrate;
+  export default function createMigrate<T>(migrations: MigrationManifest<T>, config?: MigrationConfig): PersistMigrate;
 }
 
 declare module "redux-persist/lib/createMigrate" {

@@ -72,8 +72,11 @@ declare module "redux-persist/es/types" {
     removeItem(key: string): Promise<void>;
   }
 
-  interface MigrationManifest {
-    [key: string]: (state: PersistedState) => PersistedState;
+  type SubtractiveMigrate<T> = (state: T) => Partial<T>;
+  type AdditiveMigrate<T> = (state: Partial<T>) => T;
+
+  interface MigrationManifest<T extends {} = {}> {
+    [key: string]: SubtractiveMigrate<T> | AdditiveMigrate<T>
   }
 
   /**
