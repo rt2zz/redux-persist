@@ -106,9 +106,10 @@ export default function persistReducer<State: Object, Action: Object>(
       if (!_persistoid) _persistoid = createPersistoid(config)
 
       // @NOTE PERSIST can be called multiple times, noop after the first
-      if (_persist) {
+      if (_persist && !_persist.rehydrated) {
         // We still need to call the base reducer because there might be nested
         // uses of persistReducer which need to be aware of the PERSIST action
+        _sealed = true; // <-- ADDED
         return {
           ...baseReducer(restState, action),
           _persist,
