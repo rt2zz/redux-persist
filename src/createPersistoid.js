@@ -16,14 +16,8 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
     config.keyPrefix !== undefined ? config.keyPrefix : KEY_PREFIX
   }${config.key}`
   const storage = config.storage
-  let serialize
-  if (config.serialize === false) {
-    serialize = x => x
-  } else if (typeof config.serialize === 'function') {
-    serialize = config.serialize
-  } else {
-    serialize = defaultSerialize
-  }
+  // config.serialize : boolean, serialize : function
+  const serialize = config.serialize ? defaultSerialize : (x) => x
   const writeFailHandler = config.writeFailHandler || null
 
   // initialize stateful values
@@ -35,7 +29,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
   const update = (state: Object) => {
     // add any changed keys to the queue
-    Object.keys(state).forEach(key => {
+    Object.keys(state).forEach((key) => {
       if (!passWhitelistBlacklist(key)) return // is keyspace ignored? noop
       if (lastState[key] === state[key]) return // value unchanged? noop
       if (keysToProcess.indexOf(key) !== -1) return // is key already queued? noop
@@ -44,7 +38,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
     //if any key is missing in the new state which was present in the lastState,
     //add it for processing too
-    Object.keys(lastState).forEach(key => {
+    Object.keys(lastState).forEach((key) => {
       if (
         state[key] === undefined &&
         passWhitelistBlacklist(key) &&
@@ -96,7 +90,7 @@ export default function createPersistoid(config: PersistConfig): Persistoid {
 
   function writeStagedState() {
     // cleanup any removed keys just before write.
-    Object.keys(stagedState).forEach(key => {
+    Object.keys(stagedState).forEach((key) => {
       if (lastState[key] === undefined) {
         delete stagedState[key]
       }
