@@ -73,7 +73,7 @@ Provide a writeFailHandler(error) function to be notified if this occurs.
 ### `type MigrationManifest`
 ```js
 {
-  [number]: (State) => State
+  [number]: ((State) => State) | ((State) => Promise<State>)
 }
 ```
 Where the keys are state version numbers and the values are migration functions to modify state.
