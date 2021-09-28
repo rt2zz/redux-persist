@@ -18,7 +18,10 @@ export default function getStoredState(v4Config: V4Config) {
     return getStoredStateV5(v5Config).then(state => {
       if (state) return state
       else return getStoredStateV4(v4Config)
-    })
+    }).catch(e => {
+      if (process.env.NODE_ENV !== 'production') console.warn(e);
+      return getStoredStateV4(v4Config);
+    });
   }
 }
 
