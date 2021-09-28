@@ -16,7 +16,7 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from './constants'
 type PendingRehydrate = [Object, RehydrateErrorType, PersistConfig]
 type Persist = <R>(PersistConfig, MigrationManifest) => R => R
 type CreatePersistor = Object => void
-type BoostrappedCb = () => any
+type BootstrappedCb = () => any
 
 const initialState: PersistorState = {
   registry: [],
@@ -40,7 +40,7 @@ const persistorReducer = (state = initialState, action) => {
 export default function persistStore(
   store: Object,
   options?: ?PersistorOptions,
-  cb?: BoostrappedCb
+  cb?: BootstrappedCb
 ): Persistor {
   // help catch incorrect usage of passing PersistConfig in as PersistorOptions
   if (process.env.NODE_ENV !== 'production') {
@@ -60,7 +60,7 @@ export default function persistStore(
         )
     })
   }
-  let boostrappedCb = cb || false
+  let bootstrappedCb = cb || false
 
   let _pStore = createStore(
     persistorReducer,
@@ -84,9 +84,9 @@ export default function persistStore(
     // dispatch to `store` to rehydrate and `persistor` to track result
     store.dispatch(rehydrateAction)
     _pStore.dispatch(rehydrateAction)
-    if (boostrappedCb && persistor.getState().bootstrapped) {
-      boostrappedCb()
-      boostrappedCb = false
+    if (bootstrappedCb && persistor.getState().bootstrapped) {
+      bootstrappedCb()
+      bootstrappedCb = false
     }
   }
 
@@ -122,7 +122,7 @@ export default function persistStore(
     },
   }
 
-  if (!(options && options.manualPersist)){
+  if (!(options && options.manualPersist)) {
     persistor.persist()
   }
 
