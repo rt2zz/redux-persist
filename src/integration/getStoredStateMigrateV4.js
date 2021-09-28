@@ -18,7 +18,7 @@ export default function getStoredState(v4Config: V4Config) {
     return getStoredStateV5(v5Config).then(state => {
       if (state) return state
       else return getStoredStateV4(v4Config)
-    })
+    }).catch(() => getStoredStateV4(v4Config))
   }
 }
 
