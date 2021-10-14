@@ -2,6 +2,8 @@ declare module "redux-persist/integration/react" {
   import { ReactNode, PureComponent } from "react";
   import { Persistor } from "redux-persist/es/types";
 
+  function usePersistGate(persistor: Persistor): boolean;
+
   /** @see PersistGate */
   interface PersistGateProps {
     persistor: Persistor;
