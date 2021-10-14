@@ -15,8 +15,10 @@ export type PersistConfig = {
   storage: Object,
   key: string,
   keyPrefix?: string, // @TODO remove in v6
-  blacklist?: Array<string>,
-  whitelist?: Array<string>,
+  blacklist?: Array<string>, // Deprecated
+  whitelist?: Array<string>, // Deprecated
+  blocklist?: Array<string>,
+  allowlist?: Array<string>,
   transforms?: Array<Transform>,
   throttle?: number,
   migrate?: (PersistedState, number) => Promise<PersistedState>,
@@ -31,7 +33,7 @@ export type PersistConfig = {
 
 export type PersistorOptions = {
   enhancer?: Function,
-  manualPersist?: boolean
+  manualPersist?: boolean,
 }
 
 export type Storage = {
