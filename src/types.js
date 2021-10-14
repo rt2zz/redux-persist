@@ -86,4 +86,5 @@ export type Persistor = {
   +dispatch: PersistorAction => PersistorAction,
   +getState: () => PersistorState,
   +subscribe: PersistorSubscribeCallback => () => any,
+  ...
 }
