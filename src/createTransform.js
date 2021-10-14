@@ -1,8 +1,8 @@
 // @flow
 
 type TransformConfig = {
-  whitelist?: Array<string>,
-  blacklist?: Array<string>,
+  allowList?: Array<string>,
+  blockList?: Array<string>,
 }
 
 export default function createTransform(
@@ -12,22 +12,22 @@ export default function createTransform(
   outbound: ?Function,
   config: TransformConfig = {}
 ) {
-  let whitelist = config.whitelist || null
-  let blacklist = config.blacklist || null
+  let allowList = config.allowList || null
+  let blockList = config.blockList || null
 
-  function whitelistBlacklistCheck(key) {
-    if (whitelist && whitelist.indexOf(key) === -1) return true
-    if (blacklist && blacklist.indexOf(key) !== -1) return true
+  function allowListBlockListCheck(key) {
+    if (allowList && allowList.indexOf(key) === -1) return true
+    if (blockList && blockList.indexOf(key) !== -1) return true
     return false
   }
 
   return {
     in: (state: Object, key: string, fullState: Object) =>
-      !whitelistBlacklistCheck(key) && inbound
+      !allowListBlockListCheck(key) && inbound
         ? inbound(state, key, fullState)
         : state,
     out: (state: Object, key: string, fullState: Object) =>
-      !whitelistBlacklistCheck(key) && outbound
+      !allowListBlockListCheck(key) && outbound
         ? outbound(state, key, fullState)
         : state,
   }
