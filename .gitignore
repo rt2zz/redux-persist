@@ -1,6 +1,7 @@
 es
 lib
 dist
+types
 .watchmanconfig
 
 # Logs
