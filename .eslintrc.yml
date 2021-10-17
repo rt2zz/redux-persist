@@ -1,6 +1,6 @@
 ---
 
-parser: babel-eslint
+parser: '@typescript-eslint/parser'
 
 globals:
   it: true
@@ -9,14 +9,9 @@ globals:
   test: true
   jest: true
 
-extends:
-- plugin:eslint-plugin-import/warnings
-- plugin:eslint-plugin-import/errors
-
 plugins:
-- flowtype
+- '@typescript-eslint'
 
-rules:
-  flowtype/require-valid-file-annotation: [2, "always"]
-  flowtype/boolean-style: [2, "boolean"]
-  flowtype/use-flow-type: 2
+extends:
+- eslint:recommended
+- plugin:@typescript-eslint/recommended
