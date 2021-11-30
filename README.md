@@ -180,6 +180,14 @@ const persistConfig = {
 Redux persist ships with react integration as a convenience. The `PersistGate` component is the recommended way to delay rendering until persistence is complete. It works in one of two modes:
 1. `loading` prop: The provided loading value will be rendered until persistence is complete at which point children will be rendered.
 2. function children: The function will be invoked with a single `bootstrapped` argument. When bootstrapped is true, persistence is complete and it is safe to render the full app. This can be useful for adding transition animations.
+#### Example
+```
+<PersistGate persistor={persistor}>
+  {(bootstrapped) => {
+	// return fancy animation components here based on the value of bootstrapped
+  }}
+</PersistGate>
+```
 
 ## Blacklist & Whitelist
 By Example:
