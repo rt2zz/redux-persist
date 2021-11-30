@@ -16,6 +16,7 @@ const migrations = {
   1: (state) => {
     // migration to keep only device state
     return {
+      ...state, //Correct me if I am wrong but I think you missed this out 
       device: state.device
     }
   }
