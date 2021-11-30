@@ -90,19 +90,19 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
-export default () => {
-  let store = createStore(persistedReducer)
-  let persistor = persistStore(store)
-  return { store, persistor }
-}
+
+let store = createStore(persistedReducer)
+let persistor = persistStore(store)
+export { store, persistor }
+
 ```
 
 If you are using react, wrap your root component with [PersistGate](./docs/PersistGate.md). This delays the rendering of your app's UI until your persisted state has been retrieved and saved to redux. **NOTE** the `PersistGate` loading prop can be null, or any react instance, e.g. `loading={<Loading />}`
 
 ```js
 import { PersistGate } from 'redux-persist/integration/react'
+import { store, persistor } from './configureStore'
 
-// ... normal setup, create store and persistor, import components etc.
 
 const App = () => {
   return (
