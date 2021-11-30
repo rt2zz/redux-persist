@@ -10,8 +10,8 @@ declare module "redux-persist/es/types" {
     _persist: PersistState;
   } | undefined;
 
-  type PersistMigrate =
-    (state: PersistedState, currentVersion: number) => Promise<PersistedState>;
+  type PersistMigrate<S> =
+    (state: S & PersistedState, currentVersion: number) => Promise<S & PersistedState>;
 
   type StateReconciler<S> =
     (inboundState: any, state: S, reducedState: S, config: PersistConfig<S>) => S;
@@ -35,7 +35,7 @@ declare module "redux-persist/es/types" {
     whitelist?: Array<string>;
     transforms?: Array<Transform<HSS, ESS, S, RS>>;
     throttle?: number;
-    migrate?: PersistMigrate;
+    migrate?: PersistMigrate<S>;
     stateReconciler?: false | StateReconciler<S>;
     /**
      * @desc Used for migrations.
