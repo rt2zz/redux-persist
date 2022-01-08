@@ -51,7 +51,7 @@ I'll try to get some discussions up to pull together ideas, so we can properly w
 
 
 ## v6 upgrade
-**Web**: no breaking changes
+**Web**: no breaking changes\
 **React Native**: Users must now explicitly pass their storage engine in. e.g.
 ```js
 import AsyncStorage from '@react-native-async-storage/async-storage';
