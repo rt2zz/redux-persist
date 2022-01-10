@@ -1,4 +1,3 @@
-import sinon from 'sinon'
 import createMemoryStorage from './utils/createMemoryStorage'
 import createPersistoid from '../src/createPersistoid'
 const memoryStorage = createMemoryStorage()
@@ -10,49 +9,48 @@ const config = {
   debug: true
 }
 
-let spy: sinon.SinonSpy;
-let clock: sinon.SinonFakeTimers;
+let spy: jest.SpyInstance;
+let clock: typeof jest;
 
 beforeEach(() => {
-    spy = sinon.spy(memoryStorage, 'setItem')
-    clock = sinon.useFakeTimers()
+    spy = jest.spyOn(memoryStorage, 'setItem')
+    clock = jest.useFakeTimers()
 });
 
 afterEach(() => {
-    spy.restore()
-    clock.restore()
+    spy.mockRestore()
+    clock.useRealTimers()
 });
 
-// @NOTE these tests broke when updating sinon
-test.skip('it updates changed state', () => {
+test('it updates changed state', () => {
     const { update } = createPersistoid(config)
     update({ a: 1 })
-    clock.tick(1);
+    clock.runAllTimers()
     update({ a: 2 })
-    clock.tick(1);
-    expect(spy.calledTwice).toBe(true);
-    expect(spy.withArgs('persist:persist-reducer-test', '{"a":"1"}').calledOnce).toBe(true);
-    expect(spy.withArgs('persist:persist-reducer-test', '{"a":"2"}').calledOnce).toBe(true);
+    clock.runAllTimers()
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenNthCalledWith(1, 'persist:persist-reducer-test', '{"a":"1"}');
+    expect(spy).toHaveBeenNthCalledWith(2, 'persist:persist-reducer-test', '{"a":"2"}');
 })
 
-test.skip('it does not update unchanged state', () => {
+test('it does not update unchanged state', () => {
     const { update } = createPersistoid(config)
     update({ a: undefined, b: 1 })
-    clock.tick(1);
+    clock.runAllTimers()
     // This update should not cause a write.
     update({ a: undefined, b: 1 })
-    clock.tick(1);
-    expect(spy.calledOnce).toBe(true);
-    expect(spy.withArgs('persist:persist-reducer-test', '{"b":"1"}').calledOnce).toBe(true);
+    clock.runAllTimers()
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith('persist:persist-reducer-test', '{"b":"1"}');
 })
 
-test.skip('it updates removed keys', () => {
+test('it updates removed keys', () => {
     const { update } = createPersistoid(config)
     update({ a: undefined, b: 1 })
-    clock.tick(1);
+    clock.runAllTimers();
     update({ a: undefined, b: undefined })
-    clock.tick(1);
-    expect(spy.calledTwice).toBe(true)
-    expect(spy.withArgs('persist:persist-reducer-test', '{"b":"1"}').calledOnce).toBe(true)
-    expect(spy.withArgs('persist:persist-reducer-test', '{}').calledOnce).toBe(true)
+    clock.runAllTimers();
+    expect(spy).toHaveBeenCalledTimes(2)
+    expect(spy).toHaveBeenNthCalledWith(1,'persist:persist-reducer-test', '{"b":"1"}')
+    expect(spy).toHaveBeenNthCalledWith(2,'persist:persist-reducer-test', '{}')
 })

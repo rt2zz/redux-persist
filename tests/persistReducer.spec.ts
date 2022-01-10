@@ -1,5 +1,3 @@
-import sinon from 'sinon'
-
 import persistReducer from '../src/persistReducer'
 import createMemoryStorage from './utils/createMemoryStorage'
 import { PERSIST } from '../src/constants'
@@ -21,18 +19,18 @@ test('persistedReducer does not automatically set _persist state', () => {
 
 test('persistedReducer does returns versioned, rehydrate tracked _persist state upon PERSIST', () => {
   const persistedReducer = persistReducer(config, reducer)
-  const register = sinon.spy()
-  const rehydrate = sinon.spy()
+  const register = jest.fn()
+  const rehydrate = jest.fn()
   const state = persistedReducer({}, { type: PERSIST, register, rehydrate })
   expect(state._persist).toEqual({ version: 1, rehydrated: false})
 })
 
 test('persistedReducer calls register and rehydrate after PERSIST', async () => {
   const persistedReducer = persistReducer(config, reducer)
-  const register = sinon.spy()
-  const rehydrate = sinon.spy()
+  const register = jest.fn()
+  const rehydrate = jest.fn()
   persistedReducer({}, { type: PERSIST, register, rehydrate })
   await sleep(5000)
-  expect(register.callCount).toBe(1)
-  expect(rehydrate.callCount).toBe(1)
+  expect(register).toHaveBeenCalledTimes(1)
+  expect(rehydrate).toHaveBeenCalledTimes(1)
 })

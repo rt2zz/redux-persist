@@ -1,5 +1,3 @@
-import sinon from 'sinon'
-
 import configureStore from 'redux-mock-store'
 
 import persistStore from '../src/persistStore'
@@ -97,17 +95,17 @@ test('once persistor is flagged as bootstrapped, further registry changes do not
 
 test('persistStore calls bootstrapped callback (at most once) if provided', () => {
   const store = mockStore()
-  const bootstrappedCb = sinon.spy()
+  const bootstrappedCb = jest.fn()
   persistStore(store, {}, bootstrappedCb)
   const actions = store.getActions()
   const persistAction = find(actions, { type: PERSIST })
 
   persistAction.register('canary')
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
-  expect(bootstrappedCb.callCount).toBe(1)
+  expect(bootstrappedCb).toHaveBeenCalledTimes(1)
 
   // further rehydrates do not trigger the cb
   persistAction.register('canary')
   persistAction.rehydrate('canary', { foo: 'bar' }, null)
-  expect(bootstrappedCb.callCount).toBe(1)
+  expect(bootstrappedCb).toHaveBeenCalledTimes(1)
 })
