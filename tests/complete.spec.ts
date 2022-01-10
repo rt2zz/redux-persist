@@ -1,4 +1,3 @@
-import test from 'ava'
 import { combineReducers, createStore } from 'redux'
 
 import persistReducer from '../src/persistReducer'
@@ -15,43 +14,43 @@ const config = {
   timeout: 5,
 }
 
-test('multiple persistReducers work together', t => {
-  return new Promise((resolve) => {
+test('multiple persistReducers work together', async () => {
+  return new Promise<void>((resolve) => {
     const r1 = persistReducer(config, reducer)
     const r2 = persistReducer(config, reducer)
     const rootReducer = combineReducers({ r1, r2 })
     const store = createStore(rootReducer)
     const persistor = persistStore(store, {}, () => {
-      t.is(persistor.getState().bootstrapped, true)
-      resolve()      
+      expect(persistor.getState().bootstrapped).toBe(true)
+      resolve()
     })
   })
 })
 
-test('persistStore timeout 0 never bootstraps', t => {
-  return new Promise((resolve, reject) => {
+test('persistStore timeout 0 never bootstraps', async () => {
+  return new Promise<void>((resolve, reject) => {
     const r1 = persistReducer({...config, storage: brokenStorage, timeout: 0}, reducer)
     const rootReducer = combineReducers({ r1 })
     const store = createStore(rootReducer)
     const persistor = persistStore(store, undefined, () => {
       console.log('resolve')
-      reject()     
+      reject()
     })
     setTimeout(() => {
-      t.is(persistor.getState().bootstrapped, false)
+      expect(persistor.getState().bootstrapped).toBe(false)
       resolve()
     }, 10)
   })
 })
 
 
-test('persistStore timeout forces bootstrap', t => {
-  return new Promise((resolve, reject) => {
+test('persistStore timeout forces bootstrap', async () => {
+  return new Promise<void>((resolve, reject) => {
     const r1 = persistReducer({...config, storage: brokenStorage}, reducer)
     const rootReducer = combineReducers({ r1 })
     const store = createStore(rootReducer)
     const persistor = persistStore(store, undefined, () => {
-      t.is(persistor.getState().bootstrapped, true)
+      expect(persistor.getState().bootstrapped).toBe(true)
       resolve()
     })
     setTimeout(() => {

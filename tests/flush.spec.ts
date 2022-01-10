@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import test from 'ava'
 import { createStore } from 'redux'
 
 import getStoredState from '../src/getStoredState'
@@ -35,7 +33,7 @@ const config = {
   throttle: 1000,
 }
 
-test('state before flush is not updated, after flush is', t => {
+test('state before flush is not updated, after flush is', () => {
   return new Promise((resolve) => {
     const rootReducer = persistReducer(config, reducer)
     const store = createStore(rootReducer)
@@ -43,10 +41,10 @@ test('state before flush is not updated, after flush is', t => {
       store.dispatch({ type: INCREMENT })
       const state = store.getState()
       const storedPreFlush = await getStoredState(config)
-      t.not(storedPreFlush && storedPreFlush.c, state.c)
+      expect(storedPreFlush && storedPreFlush.c).not.toBe(state.c)
       await persistor.flush()
       const storedPostFlush = await getStoredState(config)
-      resolve(t.is(storedPostFlush && storedPostFlush.c, state.c))
+      resolve(expect(storedPostFlush && storedPostFlush.c).toBe(state.c))
     })
   })
 })
