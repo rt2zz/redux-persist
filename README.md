@@ -43,7 +43,7 @@ I ([@ckalika](https://github.com/ckalika)) spoke with [@rt2zz](https://github.co
 
 5. Improve testing and automation
     - [x] Move to GitHub Actions
-    - [ ] Move from Ava to Jest
+    - [x] Move from Ava to Jest
 
 There's a lot to do here, so I'll ask your patience and understanding as I work through it. If you have ideas for how to improve the library, the documentation, or the community, I'd love to hear them, and if you're submitting pull requests (or have submitted some previously), please reach out and help me understand what you're aiming to do with it.
 
