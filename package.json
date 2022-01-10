@@ -15,7 +15,6 @@
     "README.md"
   ],
   "scripts": {
-    "ava": "ava",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd",
     "build:commonjs": "tsc --module commonjs --outDir lib",
     "build:es": "tsc --module es2015 --outDir es",
@@ -36,17 +35,6 @@
   "author": "",
   "license": "MIT",
   "homepage": "https://github.com/rt2zz/redux-persist#readme",
-  "ava": {
-    "files": [
-      "tests/**/*.spec.ts"
-    ],
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ]
-  },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
@@ -58,10 +46,8 @@
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.16",
     "@types/redux-mock-store": "^1.0.3",
-    "@types/sinon": "^10.0.2",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
-    "ava": "^3.15.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.23.4",
     "husky": "^7.0.1",
