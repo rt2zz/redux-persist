@@ -15,7 +15,6 @@
     "README.md"
   ],
   "scripts": {
-    "ava": "ava",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd",
     "build:commonjs": "tsc --module commonjs --outDir lib",
     "build:es": "tsc --module es2015 --outDir es",
@@ -24,7 +23,7 @@
     "prepare": "npm run build",
     "precommit": "lint-staged",
     "stats:size": "node ./scripts/size-estimator.js",
-    "test": "ava",
+    "test": "jest",
     "version": "npm run clean && npm run build && npm run stats:size | tail -1 >> LIBSIZE.md && git add LIBSIZE.md"
   },
   "lint-staged": {
@@ -36,33 +35,23 @@
   "author": "",
   "license": "MIT",
   "homepage": "https://github.com/rt2zz/redux-persist#readme",
-  "ava": {
-    "files": [
-      "tests/**/*.spec.ts"
-    ],
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ]
-  },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.16.7",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-typescript": "^8.2.5",
+    "@types/jest": "^27.4.0",
     "@types/react": "^17.0.16",
     "@types/redux-mock-store": "^1.0.3",
-    "@types/sinon": "^10.0.2",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
-    "ava": "^3.15.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.23.4",
     "husky": "^7.0.1",
+    "jest": "^27.4.7",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
     "redux": "^4.1.1",
