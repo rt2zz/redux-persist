@@ -1,9 +1,16 @@
 # Redux Persist
-Persist and rehydrate a redux store.
 
 [![build status](https://img.shields.io/travis/rt2zz/redux-persist/master.svg?style=flat-square)](https://travis-ci.org/rt2zz/redux-persist) [![npm version](https://img.shields.io/npm/v/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist) [![npm downloads](https://img.shields.io/npm/dm/redux-persist.svg?style=flat-square)](https://www.npmjs.com/package/redux-persist)
 
-## October 15th, 2021 - Move to TypeScript (Thanks [@smellman](https://github.com/smellman))
+## Purpose
+
+Automates the process of persisting and rehydrating state from your Redux store to local device storage and ensures that state remains saved and synced between app sessions
+
+*Note: Without such kind of state persistence, your app would reset to its default Redux store settings after every app close*
+
+## Announcements
+
+### **October 15th, 2021 - Move to TypeScript (Thanks [@smellman](https://github.com/smellman))**
 
 As part of the work to upgrade the infrastructure used to build redux-persist, we're moving from Flow to TypeScript.
 
@@ -11,9 +18,9 @@ As part of the work to upgrade the infrastructure used to build redux-persist, w
 - Move from TravisCI to GitHub Actions ([.github/workflows/ci.yml](.github/workflows/ci.yml))
 - Version updates for some dependencies
 
-## September 22nd, 2021 - Under New Management
+### **September 22nd, 2021 - Under New Management**
 
-Redux Persist is a staple project for Redux developers, both on mobile and on the web. If you're here, it's likely because you need it now or have used it before and need to debug something, and like me have possibly struggled with making it work (especially with newer versions of things) and making it work with _your_ code because the examples you'll find around the internet are inconsistent.
+Redux Persist is a staple project for Redux developers, both on mobile and on the web. If you're here, it's likely because you need it now or have used it before and need to debug something, and like me have possibly struggled with making it work (especially with newer versions of things) and making it work with *your* code because the examples you'll find around the internet are inconsistent.
 
 I ([@ckalika](https://github.com/ckalika)) spoke with [@rt2zz](https://github.com/rt2zz) about taking over maintenance of the project, and we agreed to give it a shot and see how we go. My priorities are as follows:
 
@@ -24,22 +31,18 @@ I ([@ckalika](https://github.com/ckalika)) spoke with [@rt2zz](https://github.co
     - Determine which are actionable immediately or in the short term
     - Establish some semblance of test criteria for each
 
-
 2. Upgrade dependencies (where possible) so that we've got something building with modern versions
-    * Note:  Right now, it's about modernising the project infrastructure and build process without making breaking API changes
-
+    - Note:  Right now, it's about modernising the project infrastructure and build process without making breaking API changes
 
 3. Go through the existing pull requests
     - Merge the ones that deal with documentation, code samples, etc.
     - Review and merge the ones that deal with open issues
     - Review and merge the ones that will require breaking changes and consult authors about `redux-persist@v7` (feature set and requirements to be defined)
 
-
 4. Update the documentation
     - Split it out for both web and mobile
     - Providing code samples and test coverage for how to use the library
     - Provide or link to working examples that integrate with additional libraries (e.g. [RTK Query](https://redux-toolkit.js.org/rtk-query/overview)).
-
 
 5. Improve testing and automation
     - [x] Move to GitHub Actions
@@ -49,10 +52,53 @@ There's a lot to do here, so I'll ask your patience and understanding as I work 
 
 I'll try to get some discussions up to pull together ideas, so we can properly work out what the next version is likely to look like.
 
+## Features
+
+- Allows you to choose from a wide variety of different [storage engines](https://github.com/rt2zz/redux-persist#storage-engines) for various platforms and use-cases
+
+- Allows you to control how incoming state is merged with initial state via [state reconcilers](https://github.com/rt2zz/redux-persist#state-reconciler).
+
+- Allows you to customize how state gets persisted in local storage and rehydrated into your Redux store via [Transforms](https://github.com/rt2zz/redux-persist#transforms).
+
+- Allows you to delay rendering of your app's UI and show a loading indicator until your persisted state has been retrieved and saved to the Redux store via [PersistGate](https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md) component and it's `loading` prop.
+
+- Allows you to choose or filter which data gets persisted via [blacklist](https://github.com/rt2zz/redux-persist#blacklist--whitelist) and [whitelist](https://github.com/rt2zz/redux-persist#blacklist--whitelist)
+
+- Allows you to persist data that is more than one level deep via [nested persists](https://github.com/rt2zz/redux-persist#nested-persists)
+
+- Allows you to create synchronous migrations via [createMigrate](https://github.com/rt2zz/redux-persist#migrations)
+
+- Code Splitting [coming soon]
+
+## Storage Engines
+
+**Note: Redux Persist is not platform dependent so it does not assume anything about the platform you're developing for. You must choose the appropriate storage engine for the specific platform and use-case you need.**
+
+You may choose from the following list of available storage engines:
+
+- **localStorage** `import storage from 'redux-persist/lib/storage'`
+- **sessionStorage** `import storageSession from 'redux-persist/lib/storage/session'`
+- **[electron storage](https://github.com/psperber/redux-persist-electron-storage)** Electron support via [electron store](https://github.com/sindresorhus/electron-store)
+- **[redux-persist-cookie-storage](https://github.com/abersager/redux-persist-cookie-storage)** Cookie storage engine, works in browser and Node.js, for universal / isomorphic apps
+- **[redux-persist-expo-filesystem](https://github.com/t73liu/redux-persist-expo-filesystem)** react-native, similar to redux-persist-filesystem-storage but does not require linking or ejecting CRNA/Expo app. Only available if using Expo SDK (Expo, create-react-native-app, standalone).
+- **[redux-persist-expo-securestore](https://github.com/Cretezy/redux-persist-expo-securestore)** react-native, for sensitive information using Expo's SecureStore. Only available if using Expo SDK (Expo, create-react-native-app, standalone).
+- **[redux-persist-fs-storage](https://github.com/leethree/redux-persist-fs-storage)** react-native-fs engine
+- **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** react-native, to mitigate storage size limitations in android ([#199](https://github.com/rt2zz/redux-persist/issues/199), [#284](https://github.com/rt2zz/redux-persist/issues/284))
+  **[redux-persist-indexeddb-storage](https://github.com/machester4/redux-persist-indexeddb-storage)** recommended for web via [localForage](https://github.com/localForage/localForage)
+- **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
+- **[redux-persist-pouchdb](https://github.com/yanick/redux-persist-pouchdb)** Storage engine for PouchDB.
+- **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** react-native, for sensitive information (uses [react-native-sensitive-info](https://github.com/mCodex/react-native-sensitive-info)).
+- **[redux-persist-weapp-storage](https://github.com/cuijiemmx/redux-casa/tree/master/packages/redux-persist-weapp-storage)** Storage engine for wechat mini program, also compatible with wepy
+- **[redux-persist-webextension-storage](https://github.com/ssorallen/redux-persist-webextension-storage)** Storage engine for browser (Chrome, Firefox) web extension storage
+- **[@bankify/redux-persist-realm](https://github.com/bankifyio/redux-persist-realm)** Storage engine for Realm database, you will need to install Realm first
+- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
 
 ## v6 upgrade
+
 **Web**: no breaking changes
-**React Native**: Users must now explicitly pass their storage engine in. e.g.
+
+**React Native**: Users must now explicitly pass their storage engine in their persist configuration.
+
 ```js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -62,16 +108,29 @@ const persistConfig = {
 }
 ```
 
-## Quickstart
-`npm install redux-persist`
+## Installation
 
-Usage Examples:
+npm:
+
+```bash
+npm install redux-persist
+```
+
+yarn:
+
+```bash
+yarn add redux-persist
+```
+
+## Usage Examples
+
 1. [Basic Usage](#basic-usage)
 2. [Nested Persists](#nested-persists)
 3. [Hot Module Replacement](./docs/hot-module-replacement.md)
 4. Code Splitting [coming soon]
 
-#### Basic Usage
+### Basic Usage
+
 Basic usage involves adding `persistReducer` and `persistStore` to your setup. **IMPORTANT** Every app needs to decide how many levels of state they want to "merge". The default is 1 level. Please read through the [state reconciler docs](#state-reconciler) for more information.
 
 ```js
@@ -116,37 +175,42 @@ const App = () => {
 ```
 
 ## API
+
 [Full API](./docs/api.md)
 
-#### `persistReducer(config, reducer)`
-  - arguments
-    - [**config**](https://github.com/rt2zz/redux-persist/blob/master/src/types.js#L13-L27) *object*
-      - required config: `key, storage`
-      - notable other config: `whitelist, blacklist, version, stateReconciler, debug`
-    - **reducer** *function*
-      - any reducer will work, typically this would be the top level reducer returned by `combineReducers`
-  - returns an enhanced reducer
+### `persistReducer(config, reducer)`
 
-#### `persistStore(store, [config, callback])`
-  - arguments
-    - **store** *redux store* The store to be persisted.
-    - **config** *object* (typically null)
-      - If you want to avoid that the persistence starts immediately after calling `persistStore`, set the option manualPersist. Example: `{ manualPersist: true }` Persistence can then be started at any point with `persistor.persist()`. You usually want to do this if your storage is not ready when the `persistStore` call is made.
-    - **callback** *function* will be called after rehydration is finished.
-  - returns **persistor** object
+- arguments
+  - [**config**](https://github.com/rt2zz/redux-persist/blob/master/docs/api.md#type-persistconfig) *object*
+    - required config: `key, storage`
+    - notable other config: `whitelist, blacklist, version, stateReconciler, debug`
+  - **reducer** *function*
+    - any reducer will work, typically this would be the top level reducer returned by `combineReducers`
+- returns an enhanced reducer
 
-#### `persistor object`
-  - the persistor object is returned by persistStore with the following methods:
-    - `.purge()`
-      - purges state from disk and returns a promise
-    - `.flush()`
-      - immediately writes all pending state to disk and returns a promise
-    - `.pause()`
-      - pauses persistence
-    - `.persist()`
-      - resumes persistence
+### `persistStore(store, [config, callback])`
+
+- arguments
+  - **store** *redux store* The store to be persisted.
+  - **config** *object* (typically null)
+    - If you want to avoid that the persistence starts immediately after calling `persistStore`, set the option manualPersist. Example: `{ manualPersist: true }` Persistence can then be started at any point with `persistor.persist()`. You usually want to do this if your storage is not ready when the `persistStore` call is made.
+  - **callback** *function* will be called after rehydration is finished.
+- returns **persistor** object
+
+### `persistor object`
+
+- the persistor object is returned by persistStore with the following methods:
+  - `.purge()`
+    - purges state from disk and returns a promise
+  - `.flush()`
+    - immediately writes all pending state to disk and returns a promise
+  - `.pause()`
+    - pauses persistence
+  - `.persist()`
+    - resumes persistence
 
 ## State Reconciler
+
 State reconcilers define how incoming state is merged in with initial state. It is critical to choose the right state reconciler for your state. There are three options that ship out of the box, let's look at how each operates:
 
 1. **hardSet** (`import hardSet from 'redux-persist/lib/stateReconciler/hardSet'`)
@@ -165,7 +229,8 @@ This acts just like autoMergeLevel1, except it shallow merges two levels
    - **initial state**: `{ foo: initialFoo, bar: initialBar }`
    - **reconciled state**: `{ foo: mergedFoo, bar: initialBar }` // note: initialFoo and incomingFoo are shallow merged
 
-#### Example
+### Example
+
 ```js
 import hardSet from 'redux-persist/lib/stateReconciler/hardSet'
 
@@ -177,12 +242,16 @@ const persistConfig = {
 ```
 
 ## React Integration
+
 Redux persist ships with react integration as a convenience. The `PersistGate` component is the recommended way to delay rendering until persistence is complete. It works in one of two modes:
+
 1. `loading` prop: The provided loading value will be rendered until persistence is complete at which point children will be rendered.
 2. function children: The function will be invoked with a single `bootstrapped` argument. When bootstrapped is true, persistence is complete and it is safe to render the full app. This can be useful for adding transition animations.
 
 ## Blacklist & Whitelist
+
 By Example:
+
 ```js
 // BLACKLIST
 const persistConfig = {
@@ -200,7 +269,9 @@ const persistConfig = {
 ```
 
 ## Nested Persists
+
 Nested persist can be useful for including different storage adapters, code splitting, or deep filtering. For example while blacklist and whitelist only work one level deep, but we can use a nested persist to blacklist a deeper value:
+
 ```js
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
@@ -229,14 +300,17 @@ export default persistReducer(rootPersistConfig, rootReducer)
 ```
 
 ## Migrations
+
 `persistReducer` has a general purpose "migrate" config which will be called after getting stored state but before actually reconciling with the reducer. It can be any function which takes state as an argument and returns a promise to return a new state object.
 
 Redux Persist ships with `createMigrate`, which helps create a synchronous migration for moving from any version of stored state to the current state version. [[Additional information]](./docs/migrations.md)
 
 ## Transforms
+
 Transforms allow you to customize the state object that gets persisted and rehydrated.
 
 There are several libraries that tackle some common implementations for transforms.
+
 - [immutable](https://github.com/rt2zz/redux-persist-transform-immutable) - support immutable reducers
 - [seamless-immutable](https://github.com/hilkeheremans/redux-persist-seamless-immutable) - support seamless-immutable reducers
 - [compress](https://github.com/rt2zz/redux-persist-transform-compress) - compress your serialized state with lz-string
@@ -272,13 +346,14 @@ export default SetTransform;
 ```
 
 The `createTransform` function takes three parameters.
+
 1. An "inbound" function that gets called right before state is persisted (optional).
 2. An "outbound" function that gets called right before state is rehydrated (optional).
 3. A config object that determines which keys in your state will be transformed (by default no keys are transformed).
 
 In order to take effect transforms need to be added to a `PersistReducer`’s config object.
 
-```
+```javascript
 import storage from 'redux-persist/lib/storage';
 import { SetTransform } from './transforms';
 
@@ -288,24 +363,6 @@ const persistConfig = {
   transforms: [SetTransform]
 };
 ```
-
-## Storage Engines
-- **localStorage** `import storage from 'redux-persist/lib/storage'`
-- **sessionStorage** `import storageSession from 'redux-persist/lib/storage/session'`
-- **[electron storage](https://github.com/psperber/redux-persist-electron-storage)** Electron support via [electron store](https://github.com/sindresorhus/electron-store)
-- **[redux-persist-cookie-storage](https://github.com/abersager/redux-persist-cookie-storage)** Cookie storage engine, works in browser and Node.js, for universal / isomorphic apps
-- **[redux-persist-expo-filesystem](https://github.com/t73liu/redux-persist-expo-filesystem)** react-native, similar to redux-persist-filesystem-storage but does not require linking or ejecting CRNA/Expo app. Only available if using Expo SDK (Expo, create-react-native-app, standalone).
-- **[redux-persist-expo-securestore](https://github.com/Cretezy/redux-persist-expo-securestore)** react-native, for sensitive information using Expo's SecureStore. Only available if using Expo SDK (Expo, create-react-native-app, standalone).
-- **[redux-persist-fs-storage](https://github.com/leethree/redux-persist-fs-storage)** react-native-fs engine
-- **[redux-persist-filesystem-storage](https://github.com/robwalkerco/redux-persist-filesystem-storage)** react-native, to mitigate storage size limitations in android ([#199](https://github.com/rt2zz/redux-persist/issues/199), [#284](https://github.com/rt2zz/redux-persist/issues/284))
-  **[redux-persist-indexeddb-storage](https://github.com/machester4/redux-persist-indexeddb-storage)** recommended for web via [localForage](https://github.com/localForage/localForage)
-- **[redux-persist-node-storage](https://github.com/pellejacobs/redux-persist-node-storage)** for use in nodejs environments.
-- **[redux-persist-pouchdb](https://github.com/yanick/redux-persist-pouchdb)** Storage engine for PouchDB.
-- **[redux-persist-sensitive-storage](https://github.com/CodingZeal/redux-persist-sensitive-storage)** react-native, for sensitive information (uses [react-native-sensitive-info](https://github.com/mCodex/react-native-sensitive-info)).
-- **[redux-persist-weapp-storage](https://github.com/cuijiemmx/redux-casa/tree/master/packages/redux-persist-weapp-storage)** Storage engine for wechat mini program, also compatible with wepy
-- **[redux-persist-webextension-storage](https://github.com/ssorallen/redux-persist-webextension-storage)** Storage engine for browser (Chrome, Firefox) web extension storage
-- **[@bankify/redux-persist-realm](https://github.com/bankifyio/redux-persist-realm)** Storage engine for Realm database, you will need to install Realm first
-- **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
 
 ## Community & Contributing
 
