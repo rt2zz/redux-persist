@@ -1,4 +1,9 @@
-# Redux Persist Migration Example
+
+Redux Persist takes all functions from `migrations` above the inbound persisted store version and runs them in ascending order (by version key) to return the final state
+
+It's mean every time you update your state schema and want to support users with persisted data -- you have to create migration and increase a `version` in [config object](https://github.com/rt2zz/redux-persist/blob/master/types/types.d.ts#L27)
+
+## Redux Persist Migration Example
 
 ### Example with createMigrate
 ```js
