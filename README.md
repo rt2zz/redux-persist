@@ -307,6 +307,21 @@ const persistConfig = {
 - **[@bankify/redux-persist-realm](https://github.com/bankifyio/redux-persist-realm)** Storage engine for Realm database, you will need to install Realm first
 - **custom** any conforming storage api implementing the following methods: `setItem` `getItem` `removeItem`. (**NB**: These methods must support promises)
 
+## Jest mocking
+If you're going to run tests using jest, then add the following to mock redux-persist library
+
+```js
+jest.mock("redux-persist/lib/createPersistoid", () =>
+    jest.fn(() => ({
+        update: jest.fn(),
+        flush: jest.fn(),
+    }))
+);
+```
+credit: @frankenthumbs
+
+issue: [#1235](https://github.com/rt2zz/redux-persist/issues/1235#issuecomment-671454538)
+
 ## Community & Contributing
 
 I will be updating this section shortly. If you have a pull request that you've got outstanding, please reach out and I will try to review it and get it integrated. As we've shifted to TypeScript, that may necessitate some changes, but I'm happy to help in that regard, wherever I can.
