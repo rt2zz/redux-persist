@@ -44,10 +44,12 @@ declare module "redux-persist/es/types" {
     debug?: boolean;
     serialize?: boolean;
     timeout?: number;
+    writeFailHandler?: (err: Error) => void;
   }
 
   interface PersistorOptions {
     enhancer?: StoreEnhancer<any>;
+    manualPersist?: boolean;
   }
 
   interface Storage {
