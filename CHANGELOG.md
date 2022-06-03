@@ -4,6 +4,9 @@ All notable changes to this project (after v6.1.0) should be documented in this 
 The format is (mostly) based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.1] - 2022-06-03
+Change throttle behavior to write all modified keys after one delay instead of
+waiting the set amount of time between each key.
 
 ## [6.1.0] - 2021-10-17
 Thanks to [@smellman](https://github.com/smellman) for the TypeScript updates.
