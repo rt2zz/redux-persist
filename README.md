@@ -228,6 +228,28 @@ const rootReducer = combineReducers({
 export default persistReducer(rootPersistConfig, rootReducer)
 ```
 
+## Nested Persists - Config Alternative
+Since 25th March 2022, it is possible to use an alternative way of setting nested persist configuration.
+There is a new package called [Redux Deep Persist](https://github.com/PiotrKujawa/redux-deep-persist) and there is a helper method _getPersistConfig_ to get a redux persist config for nested state no matter how deep you want it to be persisted. 
+
+**Example of usage:**
+
+```js
+import { getPersistConfig } from 'redux-deep-persist';
+
+const config = getPersistConfig({
+    key: 'root',
+    storage: AsyncStorage, // whatever storage you use
+    whitelist: [
+        'property1.a1.b1',  
+        'property1.a2.b2.c2', // no matter how deep you go
+        'property2.a2',
+    ],
+    rootReducer, // your root reducer must be also passed here
+    ... // any other props from original redux-persist config omitting the stateReconciler
+})
+```
+
 ## Migrations
 `persistReducer` has a general purpose "migrate" config which will be called after getting stored state but before actually reconciling with the reducer. It can be any function which takes state as an argument and returns a promise to return a new state object.
 
