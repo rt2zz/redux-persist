@@ -38,8 +38,8 @@ export interface PersistConfig<S, RS = any, HSS = any, ESS = any> {
    * @deprecated keyPrefix is going to be removed in v6.
    */
   keyPrefix?: string;
-  blacklist?: Array<string>;
-  whitelist?: Array<string>;
+  denylist?: Array<string>;
+  allowlist?: Array<string>;
   transforms?: Array<Transform<HSS, ESS, S, RS>>;
   throttle?: number;
   migrate?: PersistMigrate;

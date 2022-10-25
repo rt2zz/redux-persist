@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type TransformConfig = {
-  whitelist?: Array<string>,
-  blacklist?: Array<string>,
+  allowlist?: Array<string>,
+  denylist?: Array<string>,
 }
 
 export default function createTransform(
@@ -13,22 +13,22 @@ export default function createTransform(
   outbound: Function,
   config: TransformConfig = {}
 ): any {
-  const whitelist = config.whitelist || null
-  const blacklist = config.blacklist || null
+  const allowlist = config.allowlist || null
+  const denylist = config.denylist || null
 
-  function whitelistBlacklistCheck(key: string) {
-    if (whitelist && whitelist.indexOf(key) === -1) return true
-    if (blacklist && blacklist.indexOf(key) !== -1) return true
+  function allowlistDenylistCheck(key: string) {
+    if (allowlist && allowlist.indexOf(key) === -1) return true
+    if (denylist && denylist.indexOf(key) !== -1) return true
     return false
   }
 
   return {
     in: (state: Record<string, unknown>, key: string, fullState: Record<string, unknown>) =>
-      !whitelistBlacklistCheck(key) && inbound
+      !allowlistDenylistCheck(key) && inbound
         ? inbound(state, key, fullState)
         : state,
     out: (state: Record<string, unknown>, key: string, fullState: Record<string, unknown>) =>
-      !whitelistBlacklistCheck(key) && outbound
+      !allowlistDenylistCheck(key) && outbound
         ? outbound(state, key, fullState)
         : state,
   }
