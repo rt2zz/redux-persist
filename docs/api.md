@@ -54,8 +54,8 @@ The Persistor is a redux store unto itself, plus
   key: string, // the key for the persist
   storage: Object, // the storage adapter, following the AsyncStorage api
   version?: number, // the state version as an integer (defaults to -1)
-  blacklist?: Array<string>, // do not persist these keys
-  whitelist?: Array<string>, // only persist these keys
+  denylist?: Array<string>, // do not persist these keys
+  allowlist?: Array<string>, // only persist these keys
   migrate?: (Object, number) => Promise<Object>,
   transforms?: Array<Transform>,
   throttle?: number, // ms to throttle state writes

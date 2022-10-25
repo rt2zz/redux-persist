@@ -122,7 +122,7 @@ const App = () => {
   - arguments
     - [**config**](https://github.com/rt2zz/redux-persist/blob/master/src/types.js#L13-L27) *object*
       - required config: `key, storage`
-      - notable other config: `whitelist, blacklist, version, stateReconciler, debug`
+      - notable other config: `allowlist, denylist, version, stateReconciler, debug`
     - **reducer** *function*
       - any reducer will work, typically this would be the top level reducer returned by `combineReducers`
   - returns an enhanced reducer
@@ -181,26 +181,26 @@ Redux persist ships with react integration as a convenience. The `PersistGate` c
 1. `loading` prop: The provided loading value will be rendered until persistence is complete at which point children will be rendered.
 2. function children: The function will be invoked with a single `bootstrapped` argument. When bootstrapped is true, persistence is complete and it is safe to render the full app. This can be useful for adding transition animations.
 
-## Blacklist & Whitelist
+## Denylist & Allowlist
 By Example:
 ```js
-// BLACKLIST
+// DENYLIST
 const persistConfig = {
   key: 'root',
   storage: storage,
-  blacklist: ['navigation'] // navigation will not be persisted
+  denylist: ['navigation'] // navigation will not be persisted
 };
 
-// WHITELIST
+// ALLOWLIST
 const persistConfig = {
   key: 'root',
   storage: storage,
-  whitelist: ['navigation'] // only navigation will be persisted
+  allowlist: ['navigation'] // only navigation will be persisted
 };
 ```
 
 ## Nested Persists
-Nested persist can be useful for including different storage adapters, code splitting, or deep filtering. For example while blacklist and whitelist only work one level deep, but we can use a nested persist to blacklist a deeper value:
+Nested persist can be useful for including different storage adapters, code splitting, or deep filtering. For example while denylist and allowlist only work one level deep, but we can use a nested persist to denylist a deeper value:
 ```js
 import { combineReducers } from 'redux'
 import { persistReducer } from 'redux-persist'
@@ -211,13 +211,13 @@ import { authReducer, otherReducer } from './reducers'
 const rootPersistConfig = {
   key: 'root',
   storage: storage,
-  blacklist: ['auth']
+  denylist: ['auth']
 }
 
 const authPersistConfig = {
   key: 'auth',
   storage: storage,
-  blacklist: ['somethingTemporary']
+  denylist: ['somethingTemporary']
 }
 
 const rootReducer = combineReducers({
@@ -265,7 +265,7 @@ const SetTransform = createTransform(
     return { ...outboundState, mySet: new Set(outboundState.mySet) };
   },
   // define which reducers this transform gets called for.
-  { whitelist: ['someReducer'] }
+  { allowlist: ['someReducer'] }
 );
 
 export default SetTransform;
