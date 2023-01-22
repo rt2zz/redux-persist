@@ -43,6 +43,11 @@ export default function createMigrate(
     let migratedState: any = state
 
     for (const versionKey of migrationKeys) {
+      if (process.env.NODE_ENV !== 'production' && debug)
+        console.log(
+          'redux-persist: running migration for versionKey',
+          versionKey
+        )
       migratedState = await migrations[versionKey](migratedState)
     }
 
