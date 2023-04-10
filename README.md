@@ -86,6 +86,19 @@ import rootReducer from './reducers'
 const persistConfig = {
   key: 'root',
   storage,
+  version?: number,
+  keyPrefix?: string, // @TODO remove in v6
+  blacklist?: Array<string>,
+  whitelist?: Array<string>,
+  transforms?: Array<Transform>,
+  throttle?: number,
+  migrate?: (PersistedState, number) => Promise<PersistedState>,
+  stateReconciler?: false | Function,
+  getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
+  debug?: boolean,
+  serialize?: boolean,
+  timeout?: number,
+  writeFailHandler?: Function,
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
