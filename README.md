@@ -57,8 +57,21 @@ I'll try to get some discussions up to pull together ideas, so we can properly w
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const persistConfig = {
-  //...
-  storage: AsyncStorage
+  version?: number,
+  storage: Object,
+  key: string,
+  keyPrefix?: string, // @TODO remove in v6
+  blacklist?: Array<string>,
+  whitelist?: Array<string>,
+  transforms?: Array<Transform>,
+  throttle?: number,
+  migrate?: (PersistedState, number) => Promise<PersistedState>,
+  stateReconciler?: false | Function,
+  getStoredState?: PersistConfig => Promise<PersistedState>, // used for migrations
+  debug?: boolean,
+  serialize?: boolean,
+  timeout?: number,
+  writeFailHandler?: Function,
 }
 ```
 
