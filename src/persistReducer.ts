@@ -83,6 +83,8 @@ export default function persistReducer<S, A extends Action>(
 
         // only rehydrate if we are not already sealed
         if (!_sealed) {
+          console.log('++++ not sealed. starting rehydrate ++++')
+          console.log('++++ payload ++++', payload)
           action.rehydrate(config.key, payload, err)
           _sealed = true
         }

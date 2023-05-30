@@ -12,6 +12,7 @@ export default function createMigrate(
     state: PersistedState,
     currentVersion: number
   ): Promise<PersistedState> {
+    console.log('---- starting createMigrate ----')
     if (!state) {
       if (process.env.NODE_ENV !== 'production' && debug)
         console.log('redux-persist: no inbound state, skipping migration')
@@ -49,6 +50,7 @@ export default function createMigrate(
           )
         return migrations[versionKey](state)
       }, state)
+      console.log('---- migratedState ----', migratedState)
       return Promise.resolve(migratedState)
     } catch (err) {
       return Promise.reject(err)
