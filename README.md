@@ -254,18 +254,46 @@ Below is a Transform that successfully persists a Set property, which simply con
 import { createTransform } from 'redux-persist';
 
 const SetTransform = createTransform(
-  // transform state on its way to being serialized and persisted.
-  (inboundState, key) => {
-    // convert mySet to an Array.
-    return { ...inboundState, mySet: [...inboundState.mySet] };
+  // Transform state on its way to being serialized and persisted.
+  // This function is called for every field of the state
+  //
+  // `value` - the value of the current field
+  // `key` - the name of the current field
+  // `fullState` - full Redux state object (with all fields)
+  // 
+  // This function returns updated value of the currently transfomed field
+  (value, key, fullState) => {
+    // If current field is `mySet`, replace it with array
+
+    if (key !== 'mySet') {
+      return value;
+    }
+
+    return [...inboundState.value];
   },
-  // transform state being rehydrated
-  (outboundState, key) => {
-    // convert mySet back to a Set.
-    return { ...outboundState, mySet: new Set(outboundState.mySet) };
+
+  // Transform state being rehydrated
+  // Parameters and return value have the same meaning as in the function above
+  (value, key, fullState) => {
+    // If current field is `mySet`, convert it back to set
+
+    if (ket !== 'mySet') {
+      return value;
+    }
+
+    return new Set(value);
   },
-  // define which reducers this transform gets called for.
-  { whitelist: ['someReducer'] }
+
+  { 
+    // Whitelist - the list of fields which will be transformed
+    // Blacklist - the list of fields that won't be transformed
+
+    // The `if` checks in functions above could be unnecessary, for example,
+    // if we written only `['mySet']` in the `whitelist`
+
+    whitelist: ['thoseFieldsWillBeTransformed', 'mySet'],
+    blacklist: ['thisFieldWillNotBeTransformed']
+  }
 );
 
 export default SetTransform;
