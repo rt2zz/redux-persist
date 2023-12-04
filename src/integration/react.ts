@@ -19,8 +19,13 @@ export class PersistGate extends PureComponent<Props, State> {
     loading: null,
   }
 
-  state = {
-    bootstrapped: false,
+  constructor(props: Props) {
+    super(props);
+    const { persistor } = props;
+    const { bootstrapped } = persistor.getState();
+    this.state = {
+      bootstrapped,
+    };
   }
   _unsubscribe?: () => void
 
